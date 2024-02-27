@@ -58,7 +58,19 @@ const getUniqueValidators = (
 // @TODO
 const getUniqueDelegations = (
   delegations: NonNullable<StakingState["delegations"]>["items"],
-) => delegations;
+) => {
+  const validatorIds = new Set<string>();
+
+  return delegations.filter((delegation) => {
+    if (validatorIds.has(delegation.validatorAddress)) {
+      return false;
+    }
+
+    validatorIds.add(delegation.validatorAddress);
+
+    return true;
+  });
+};
 
 export const reducer = (state: StakingState, action: StakingAction) => {
   switch (action.type) {
@@ -92,7 +104,7 @@ export const reducer = (state: StakingState, action: StakingAction) => {
       currentDelegations.currentPage += 1;
 
       currentDelegations.items = getUniqueDelegations(
-        currentDelegations.items.concat(action.content.items),
+        action.content.items.concat(currentDelegations.items),
       );
 
       return {

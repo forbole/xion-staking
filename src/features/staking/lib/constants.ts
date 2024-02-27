@@ -11,3 +11,4 @@ export const dashboardUrl =
 //     : `${window.location.origin}/rpc`;
 
 export const rpcEndpoint = "https://rpc.xion-testnet-1.burnt.com:443";
+// export const rpcEndpoint = "https://rpc.xion-testnet.forbole.com";
