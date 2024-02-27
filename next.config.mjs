@@ -1,4 +1,5 @@
 const nextConfig = {
+  basePath: "/xion-staking",
   eslint: {
     ignoreDuringBuilds: process.env.QUICK_BUILD === "true",
   },
