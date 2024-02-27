@@ -7,7 +7,7 @@ const resolveCoin = (coin: Coin) => {
 
     return {
       amount: num.div(new BigNumber(10).pow(6)).toString(),
-      denom: "UXION",
+      denom: "XION",
     };
   }
 
