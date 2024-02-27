@@ -1,12 +1,20 @@
 import type { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
-import type { Coin, MsgDelegateEncodeObject, StdFee } from "@cosmjs/stargate";
+import type {
+  Coin,
+  MsgDelegateEncodeObject,
+  MsgUndelegateEncodeObject,
+  StdFee,
+} from "@cosmjs/stargate";
 import {
   QueryClient,
   StargateClient,
   setupStakingExtension,
 } from "@cosmjs/stargate";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
-import { MsgDelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
+import {
+  MsgDelegate,
+  MsgUndelegate,
+} from "cosmjs-types/cosmos/staking/v1beta1/tx";
 
 import { rpcEndpoint } from "./constants";
 
@@ -56,6 +64,36 @@ export const stakeAmount = async (
 
   const msgAny: MsgDelegateEncodeObject = {
     typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
+    value: msg,
+  };
+
+  const fee: StdFee = {
+    amount: [
+      {
+        amount: "1000",
+        denom: "uxion",
+      },
+    ],
+    gas: "200000",
+    granter: addresses.delegator,
+  };
+
+  return await client.signAndBroadcast(addresses.delegator, [msgAny], fee);
+};
+
+export const unstakeAmount = async (
+  addresses: StakeAddresses,
+  client: NonNullable<SigningClient>,
+  amount: Coin,
+) => {
+  const msg = MsgUndelegate.fromPartial({
+    amount,
+    delegatorAddress: addresses.delegator,
+    validatorAddress: addresses.validator,
+  });
+
+  const msgAny: MsgUndelegateEncodeObject = {
+    typeUrl: "/cosmos.staking.v1beta1.MsgUndelegate",
     value: msg,
   };
 

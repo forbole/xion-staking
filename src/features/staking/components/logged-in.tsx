@@ -7,7 +7,7 @@ import Link from "next/link";
 import { memo, useState } from "react";
 
 import type { StakingState } from "../context";
-import { stakeValidator } from "../context/actions";
+import { stakeValidator, unstakeValidator } from "../context/actions";
 import { useStaking } from "../context/hooks";
 import { formatCoin } from "../lib/coins";
 import { chainId } from "../lib/constants";
@@ -89,6 +89,19 @@ function StakingPage() {
                 <Button
                   onClick={() => {
                     setIsLoading(true);
+
+                    if (!client) return;
+
+                    setIsLoading(true);
+
+                    const addresses: StakeAddresses = {
+                      delegator: account.bech32Address,
+                      validator: validator.operatorAddress,
+                    };
+
+                    unstakeValidator(addresses, client, staking).then(() => {
+                      setIsLoading(false);
+                    });
                   }}
                 >
                   Undelegate

@@ -5,6 +5,7 @@ import {
   getDelegations,
   getValidatorsList,
   stakeAmount,
+  unstakeAmount,
 } from "../lib/core";
 import { addDelegations, setTokens, setValidators } from "./reducer";
 
@@ -45,6 +46,19 @@ export const stakeValidator = async (
   staking: StakingContextType,
 ) => {
   await stakeAmount(addressess, client, {
+    amount: "1000",
+    denom: "uxion",
+  });
+
+  await fetchStakingData(addressess.delegator, staking);
+};
+
+export const unstakeValidator = async (
+  addressess: StakeAddresses,
+  client: SigningClient,
+  staking: StakingContextType,
+) => {
+  await unstakeAmount(addressess, client, {
     amount: "1000",
     denom: "uxion",
   });

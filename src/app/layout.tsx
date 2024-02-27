@@ -6,7 +6,7 @@ import "@burnt-labs/ui/dist/index.css";
 import { Inter } from "next/font/google";
 
 import { StakingProvider } from "@/features/staking/context/provider";
-import { dashboardUrl } from "@/features/staking/lib/constants";
+import { dashboardUrl, rpcEndpoint } from "@/features/staking/lib/constants";
 
 import "./globals.css";
 
@@ -15,6 +15,7 @@ const inter = Inter({ subsets: ["latin"] });
 const abstraxionConfig = {
   contracts: [],
   dashboardUrl,
+  rpcUrl: rpcEndpoint,
   stake: true,
 };
 
