@@ -1,4 +1,4 @@
-const useProxy = true;
+const useProxy = false;
 
 const nextConfig = {
   eslint: {
