@@ -17,6 +17,8 @@ const nextConfig = {
         ],
       }
     : {
+        basePath:
+          process.env.NODE_ENV === "production" ? "/xion-staking" : undefined,
         output: "export",
       }),
 };
