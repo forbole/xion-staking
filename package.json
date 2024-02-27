@@ -1,0 +1,48 @@
+{
+  "name": "abstraxion-staking-poc",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "PORT=4000 next dev",
+    "lint": "npm run lint:eslint && npm run lint:prettier",
+    "lint:eslint": "eslint . --ext .ts,.tsx",
+    "lint:prettier": "prettier --check .",
+    "start": "next start",
+    "test": "echo No tests yet",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@burnt-labs/abstraxion": "^1.0.0-alpha.35",
+    "@burnt-labs/constants": "^0.1.0-alpha.6",
+    "@burnt-labs/ui": "^0.1.0-alpha.6",
+    "@cosmjs/cosmwasm-stargate": "^0.31.0",
+    "@cosmjs/stargate": "^0.32.2",
+    "bignumber.js": "^9.1.2",
+    "cosmjs-types": "^0.9.0",
+    "next": "14.1.0",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "@stylistic/eslint-plugin": "^1.6.1",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "autoprefixer": "^10.0.1",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "14.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-perfectionist": "^2.5.0",
+    "eslint-plugin-playwright": "^0.22.2",
+    "eslint-plugin-tailwindcss": "^3.14.3",
+    "postcss": "^8",
+    "prettier": "^3.2.5",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5"
+  }
+}
