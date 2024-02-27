@@ -1,8 +1,10 @@
 import type { StakingContextType } from ".";
+import { normaliseCoin } from "../lib/coins";
 import type { SigningClient, StakeAddresses } from "../lib/core";
 import {
   getBalance,
   getDelegations,
+  getRewards,
   getValidatorsList,
   stakeAmount,
   unstakeAmount,
@@ -17,7 +19,29 @@ export const fetchStakingData = async (
     const [balance, validators, delegations] = await Promise.all([
       getBalance(address),
       getValidatorsList(),
-      getDelegations(address),
+      getDelegations(address).then((newDelegations) =>
+        Promise.all(
+          newDelegations.delegationResponses.map(async (del) => ({
+            balance: del.balance,
+            rewards: await getRewards(
+              address,
+              del.delegation.validatorAddress,
+            ).then((rewards) =>
+              rewards.reduce(
+                (acc, reward) => ({
+                  amount: (
+                    parseFloat(acc.amount) +
+                    parseFloat(normaliseCoin(reward).amount)
+                  ).toString(),
+                  denom: reward.denom,
+                }),
+                { amount: "0", denom: "xion" },
+              ),
+            ),
+            validatorAddress: del.delegation.validatorAddress,
+          })),
+        ),
+      ),
     ]);
 
     staking.dispatch(setTokens(balance));
@@ -29,10 +53,7 @@ export const fetchStakingData = async (
     staking.dispatch(
       addDelegations({
         currentPage: 0,
-        items: delegations.delegationResponses.map((del) => ({
-          amount: del.balance,
-          validatorAddress: del.delegation.validatorAddress,
-        })),
+        items: delegations,
       }),
     );
   } catch (error) {

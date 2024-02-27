@@ -84,28 +84,49 @@ function StakingPage() {
 
             return (
               <div key={delegation.validatorAddress}>
-                <div>{formatCoin(delegation.amount)}</div>
+                <div>Delegated: {formatCoin(delegation.balance)}</div>
+                {delegation.rewards && (
+                  <div>Rewards: {formatCoin(delegation.rewards)}</div>
+                )}
                 <div>{moniker || delegation.validatorAddress}</div>
-                <Button
-                  onClick={() => {
-                    setIsLoading(true);
+                <div className="flex flex-row gap-4">
+                  <Button
+                    onClick={() => {
+                      setIsLoading(true);
 
-                    if (!client) return;
+                      if (!client) return;
 
-                    setIsLoading(true);
+                      setIsLoading(true);
 
-                    const addresses: StakeAddresses = {
-                      delegator: account.bech32Address,
-                      validator: validator.operatorAddress,
-                    };
+                      const addresses: StakeAddresses = {
+                        delegator: account.bech32Address,
+                        validator: validator.operatorAddress,
+                      };
 
-                    unstakeValidator(addresses, client, staking).then(() => {
-                      setIsLoading(false);
-                    });
-                  }}
-                >
-                  Undelegate
-                </Button>
+                      unstakeValidator(addresses, client, staking).then(() => {
+                        setIsLoading(false);
+                      });
+                    }}
+                  >
+                    Undelegate
+                  </Button>
+                  {delegation.rewards && (
+                    <Button
+                      onClick={() => {
+                        // @TODO
+                      }}
+                    >
+                      Claim rewards
+                    </Button>
+                  )}
+                  <Button
+                    onClick={() => {
+                      // @TODO
+                    }}
+                  >
+                    Redelelegate
+                  </Button>
+                </div>
               </div>
             );
           })}

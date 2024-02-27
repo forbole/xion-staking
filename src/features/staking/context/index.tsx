@@ -11,7 +11,8 @@ type Paginated<T> = {
 } | null;
 
 type Delegation = {
-  amount: Coin;
+  balance: Coin;
+  rewards: Coin;
   validatorAddress: string;
 };
 

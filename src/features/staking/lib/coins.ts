@@ -1,7 +1,7 @@
 import type { Coin } from "@cosmjs/stargate";
 import BigNumber from "bignumber.js";
 
-const resolveCoin = (coin: Coin) => {
+export const normaliseCoin = (coin: Coin) => {
   if (coin.denom?.toUpperCase() === "UXION") {
     const num = new BigNumber(coin.amount);
 
@@ -18,11 +18,14 @@ const resolveCoin = (coin: Coin) => {
     };
   }
 
-  return coin;
+  return {
+    ...coin,
+    denom: coin.denom?.toUpperCase(),
+  };
 };
 
 export const formatCoin = (coin: Coin) => {
-  const resolved = resolveCoin(coin);
+  const resolved = normaliseCoin(coin);
   const amount = new BigNumber(resolved.amount);
 
   return `${amount.toFormat()} ${resolved.denom}`;
