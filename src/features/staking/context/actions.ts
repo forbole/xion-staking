@@ -1,6 +1,7 @@
 import type { StakingContextType, Unbonding } from ".";
 import type { SigningClient, StakeAddresses } from "../lib/core/base";
 import {
+  claimRewards,
   getBalance,
   getDelegations,
   getRewards,
@@ -105,24 +106,24 @@ export const fetchStakingData = async (
 };
 
 export const stakeValidator = async (
-  addressess: StakeAddresses,
+  addresses: StakeAddresses,
   client: SigningClient,
   staking: StakingContextType,
 ) => {
-  await stakeAmount(addressess, client, {
+  await stakeAmount(addresses, client, {
     amount: "1000",
     denom: "uxion",
   });
 
-  await fetchStakingData(addressess.delegator, staking);
+  await fetchStakingData(addresses.delegator, staking);
 };
 
 export const unstakeValidator = async (
-  addressess: StakeAddresses,
+  addresses: StakeAddresses,
   client: SigningClient,
   staking: StakingContextType,
 ) => {
-  const result = await unstakeAmount(addressess, client, {
+  const result = await unstakeAmount(addresses, client, {
     amount: "1000",
     denom: "uxion",
   });
@@ -130,5 +131,18 @@ export const unstakeValidator = async (
   // eslint-disable-next-line no-console
   console.log("debug: actions.ts: result", result);
 
-  await fetchStakingData(addressess.delegator, staking);
+  await fetchStakingData(addresses.delegator, staking);
+};
+
+export const claimRewardsAction = async (
+  addresses: StakeAddresses,
+  client: SigningClient,
+  staking: StakingContextType,
+) => {
+  const result = await claimRewards(addresses, client);
+
+  // eslint-disable-next-line no-console
+  console.log("debug: actions.ts: result", result);
+
+  await fetchStakingData(addresses.delegator, staking);
 };

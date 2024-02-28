@@ -4,6 +4,7 @@ import type {
   Coin,
   MsgDelegateEncodeObject,
   MsgUndelegateEncodeObject,
+  MsgWithdrawDelegatorRewardEncodeObject,
   StdFee,
 } from "@cosmjs/stargate";
 import {
@@ -15,6 +16,7 @@ import {
 } from "@cosmjs/stargate";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 import BigNumber from "bignumber.js";
+import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import {
   MsgDelegate,
   MsgUndelegate,
@@ -40,19 +42,20 @@ const getStakingQueryClient = async () => {
 
 type FeeOpts = {
   address: string;
-  amount: Coin[];
+  amount?: Coin[];
   client: SigningClient;
-  gasLimit: string;
-  memo: string;
+  gasLimit?: string;
+  memo?: string;
   msgs: EncodeObject[];
 };
 
 const getCosmosFee = async ({
   address,
-  amount,
+  // @TODO: review
+  amount = [{ amount: "1000", denom: "uxion" }],
   client,
-  gasLimit,
-  memo,
+  gasLimit = "400000",
+  memo = "",
   msgs,
 }: FeeOpts) => {
   // @TODO: create signer from local account
@@ -188,11 +191,7 @@ export const unstakeAmount = async (
 
   const fee: StdFee = await getCosmosFee({
     address: addresses.delegator,
-    // @TODO: review
-    amount: [{ amount: "1000", denom: "uxion" }],
     client,
-    gasLimit: "400000",
-    memo: "",
     msgs: [msgAny],
   });
 
@@ -206,4 +205,27 @@ export const getUnbonding = async (
   const queryClient = await getStakingQueryClient();
 
   return queryClient.staking.unbondingDelegation(address, validatorAddress);
+};
+
+export const claimRewards = async (
+  addresses: StakeAddresses,
+  client: NonNullable<SigningClient>,
+) => {
+  const msg = MsgWithdrawDelegatorReward.fromPartial({
+    delegatorAddress: addresses.delegator,
+    validatorAddress: addresses.validator,
+  });
+
+  const msgAny: MsgWithdrawDelegatorRewardEncodeObject = {
+    typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+    value: msg,
+  };
+
+  const fee: StdFee = await getCosmosFee({
+    address: addresses.delegator,
+    client,
+    msgs: [msgAny],
+  });
+
+  return await client.signAndBroadcast(addresses.delegator, [msgAny], fee);
 };

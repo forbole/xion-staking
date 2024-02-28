@@ -7,7 +7,11 @@ import Link from "next/link";
 import { memo, useState } from "react";
 
 import type { StakingState } from "../context";
-import { stakeValidator, unstakeValidator } from "../context/actions";
+import {
+  claimRewardsAction,
+  stakeValidator,
+  unstakeValidator,
+} from "../context/actions";
 import { useStaking } from "../context/hooks";
 import type { StakeAddresses } from "../lib/core/base";
 import { formatCoin } from "../lib/core/coins";
@@ -99,8 +103,6 @@ function StakingPage() {
                   <Button
                     disabled={isLoading}
                     onClick={() => {
-                      setIsLoading(true);
-
                       if (!client || !validator) return;
 
                       setIsLoading(true);
@@ -110,9 +112,11 @@ function StakingPage() {
                         validator: validator.operatorAddress,
                       };
 
-                      unstakeValidator(addresses, client, staking).then(() => {
-                        setIsLoading(false);
-                      });
+                      unstakeValidator(addresses, client, staking).finally(
+                        () => {
+                          setIsLoading(false);
+                        },
+                      );
                     }}
                   >
                     Undelegate
@@ -121,7 +125,20 @@ function StakingPage() {
                     <Button
                       disabled={isLoading || delegation.rewards.amount === "0"}
                       onClick={() => {
-                        // @TODO
+                        if (!client) return;
+
+                        setIsLoading(true);
+
+                        const addresses: StakeAddresses = {
+                          delegator: account.bech32Address,
+                          validator: delegation.validatorAddress,
+                        };
+
+                        claimRewardsAction(addresses, client, staking).finally(
+                          () => {
+                            setIsLoading(false);
+                          },
+                        );
                       }}
                     >
                       Claim rewards
@@ -191,7 +208,7 @@ function StakingPage() {
                     validator: validator.operatorAddress,
                   };
 
-                  stakeValidator(addresses, client, staking).then(() => {
+                  stakeValidator(addresses, client, staking).finally(() => {
                     setIsLoading(false);
                   });
                 }}
