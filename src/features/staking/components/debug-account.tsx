@@ -3,7 +3,7 @@ import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { chainId } from "../lib/constants";
+import { chainId } from "../lib/core/constants";
 
 const DebugAccount = () => {
   const [address, setAddress] = useState<null | string>(null);

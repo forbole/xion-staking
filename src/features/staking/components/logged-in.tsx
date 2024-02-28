@@ -9,9 +9,9 @@ import { memo, useState } from "react";
 import type { StakingState } from "../context";
 import { stakeValidator, unstakeValidator } from "../context/actions";
 import { useStaking } from "../context/hooks";
-import { formatCoin } from "../lib/coins";
-import { chainId } from "../lib/constants";
-import type { StakeAddresses } from "../lib/core";
+import type { StakeAddresses } from "../lib/core/base";
+import { formatCoin } from "../lib/core/coins";
+import { chainId } from "../lib/core/constants";
 import DebugAccount from "./debug-account";
 
 type ValidatorItemProps = {
@@ -52,15 +52,18 @@ const ValidatorItem = ({
 function StakingPage() {
   const { account, staking } = useStaking();
   const [isLoading, setIsLoading] = useState(false);
-  const { delegations, tokens, validators } = staking.state;
+  const { delegations, tokens, unbondings, validators } = staking.state;
   const { client } = useAbstraxionSigningClient();
 
-  const validatorsMap: Record<string, Validator> =
-    validators?.items.reduce<Record<string, Validator>>((acc, validator) => {
-      acc[validator.operatorAddress] = validator;
+  const validatorsMap: Record<string, undefined | Validator> =
+    validators?.items.reduce<Record<string, undefined | Validator>>(
+      (acc, validator) => {
+        acc[validator.operatorAddress] = validator;
 
-      return acc;
-    }, {}) || {};
+        return acc;
+      },
+      {},
+    ) || {};
 
   return (
     <>
@@ -75,7 +78,7 @@ function StakingPage() {
           </div>
         )}
       </div>
-      {delegations && (
+      {!!delegations?.items.length && (
         <div>
           <div>Delegations:</div>
           {delegations.items.map((delegation) => {
@@ -83,18 +86,22 @@ function StakingPage() {
             const moniker = validator?.description.moniker;
 
             return (
-              <div key={delegation.validatorAddress}>
+              <div
+                key={delegation.validatorAddress}
+                style={{ border: "1px solid #fff", marginBottom: 20 }}
+              >
                 <div>Delegated: {formatCoin(delegation.balance)}</div>
                 {delegation.rewards && (
                   <div>Rewards: {formatCoin(delegation.rewards)}</div>
                 )}
-                <div>{moniker || delegation.validatorAddress}</div>
+                <div>Validator: {moniker || delegation.validatorAddress}</div>
                 <div className="flex flex-row gap-4">
                   <Button
+                    disabled={isLoading}
                     onClick={() => {
                       setIsLoading(true);
 
-                      if (!client) return;
+                      if (!client || !validator) return;
 
                       setIsLoading(true);
 
@@ -112,6 +119,7 @@ function StakingPage() {
                   </Button>
                   {delegation.rewards && (
                     <Button
+                      disabled={isLoading || delegation.rewards.amount === "0"}
                       onClick={() => {
                         // @TODO
                       }}
@@ -120,6 +128,7 @@ function StakingPage() {
                     </Button>
                   )}
                   <Button
+                    disabled={isLoading}
                     onClick={() => {
                       // @TODO
                     }}
@@ -130,6 +139,29 @@ function StakingPage() {
               </div>
             );
           })}
+        </div>
+      )}
+      {!!unbondings?.items.length && (
+        <div>
+          <div>Unbondings:</div>
+          <div>
+            {unbondings?.items.map((unbondingItem) => {
+              const validator = validatorsMap[unbondingItem.validator];
+
+              return (
+                <div
+                  key={`${unbondingItem.completionTime}-${unbondingItem.completionTimeNanos}`}
+                  style={{ border: "1px solid #fff" }}
+                >
+                  Unbonding tokens: {formatCoin(unbondingItem.balance)}{" "}
+                  (completed by:{" "}
+                  {new Date(unbondingItem.completionTime).toString()})
+                  Validator:{" "}
+                  {validator?.description.moniker || unbondingItem.validator}
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
       <div className="flex items-center justify-center gap-4">

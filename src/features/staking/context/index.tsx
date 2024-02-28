@@ -6,9 +6,18 @@ import { createContext } from "react";
 import type { StakingAction } from "./reducer";
 
 type Paginated<T> = {
-  currentPage: number;
   items: T[];
+  nextKey: null | Uint8Array;
+  total: bigint | null;
 } | null;
+
+export type Unbonding = {
+  balance: Coin;
+  completionTime: number;
+  completionTimeNanos: number;
+  id: string;
+  validator: string;
+};
 
 type Delegation = {
   balance: Coin;
@@ -19,6 +28,7 @@ type Delegation = {
 export type StakingState = {
   delegations: Paginated<Delegation>;
   tokens: Coin | null;
+  unbondings: Paginated<Unbonding>;
   validators: Paginated<Validator>;
 };
 
@@ -30,6 +40,7 @@ export type StakingContextType = {
 export const defaultState: StakingState = {
   delegations: null,
   tokens: null,
+  unbondings: null,
   validators: null,
 };
 

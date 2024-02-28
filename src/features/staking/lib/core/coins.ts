@@ -30,3 +30,16 @@ export const formatCoin = (coin: Coin) => {
 
   return `${amount.toFormat()} ${resolved.denom}`;
 };
+
+export const getEmptyXionCoin = () => ({ amount: "0", denom: "xion" });
+
+export const sumAllCoins = (coins: Coin[]) =>
+  coins.reduce(
+    (acc, coin) => ({
+      amount: (
+        parseFloat(acc.amount) + parseFloat(normaliseCoin(coin).amount)
+      ).toString(),
+      denom: coin.denom,
+    }),
+    getEmptyXionCoin(),
+  );

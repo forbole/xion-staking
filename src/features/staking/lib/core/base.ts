@@ -1,4 +1,5 @@
 import type { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
+import type { EncodeObject } from "@cosmjs/proto-signing";
 import type {
   Coin,
   MsgDelegateEncodeObject,
@@ -37,6 +38,46 @@ const getStakingQueryClient = async () => {
   );
 };
 
+type FeeOpts = {
+  address: string;
+  amount: Coin[];
+  client: SigningClient;
+  gasLimit: string;
+  memo: string;
+  msgs: EncodeObject[];
+};
+
+const getCosmosFee = async ({
+  address,
+  amount,
+  client,
+  gasLimit,
+  memo,
+  msgs,
+}: FeeOpts) => {
+  // @TODO: create signer from local account
+  const gasEstimate = false
+    ? await client.simulate(address, msgs, memo).catch((err) => {
+        // eslint-disable-next-line no-console
+        console.log("debug: wallet_operations.ts: Estimate error", err);
+
+        return 0;
+      })
+    : null;
+
+  // This is a factor to increase the gas fee, since the estimate can be a
+  // bit short in some cases (especially for the last events)
+  const gasFeeFactor = 1.2;
+
+  const fee: StdFee = {
+    amount,
+    gas: gasEstimate ? (gasEstimate * gasFeeFactor).toString() : gasLimit,
+    granter: address,
+  };
+
+  return fee;
+};
+
 export const getValidatorsList = async () => {
   const queryClient = await getStakingQueryClient();
 
@@ -53,6 +94,12 @@ export const getDelegations = async (address: string) => {
   const queryClient = await getStakingQueryClient();
 
   return await queryClient.staking.delegatorDelegations(address);
+};
+
+export const getUnbondingDelegations = async (address: string) => {
+  const queryClient = await getStakingQueryClient();
+
+  return await queryClient.staking.delegatorUnbondingDelegations(address);
 };
 
 export const getRewards = async (address: string, validatorAddress: string) => {
@@ -139,16 +186,24 @@ export const unstakeAmount = async (
     value: msg,
   };
 
-  const fee: StdFee = {
-    amount: [
-      {
-        amount: "1000",
-        denom: "uxion",
-      },
-    ],
-    gas: "200000",
-    granter: addresses.delegator,
-  };
+  const fee: StdFee = await getCosmosFee({
+    address: addresses.delegator,
+    // @TODO: review
+    amount: [{ amount: "1000", denom: "uxion" }],
+    client,
+    gasLimit: "400000",
+    memo: "",
+    msgs: [msgAny],
+  });
 
   return await client.signAndBroadcast(addresses.delegator, [msgAny], fee);
+};
+
+export const getUnbonding = async (
+  address: string,
+  validatorAddress: string,
+) => {
+  const queryClient = await getStakingQueryClient();
+
+  return queryClient.staking.unbondingDelegation(address, validatorAddress);
 };
