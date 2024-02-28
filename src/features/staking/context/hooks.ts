@@ -3,7 +3,7 @@ import { useContext, useEffect, useRef } from "react";
 
 import type { StakingContextType } from ".";
 import { StakingContext } from ".";
-import { fetchStakingData } from "./actions";
+import { fetchStakingDataAction } from "./actions";
 
 export const useStaking = () => {
   const stakingRef = useRef<StakingContextType>({} as StakingContextType);
@@ -31,7 +31,7 @@ export const useStakingSync = () => {
 
   useEffect(() => {
     if (isLoggedIn && address) {
-      fetchStakingData(address, staking);
+      fetchStakingDataAction(address, staking);
     }
   }, [isLoggedIn, address, staking]);
 };

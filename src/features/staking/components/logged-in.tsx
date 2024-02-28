@@ -1,16 +1,17 @@
 "use client";
 
-import { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
+import { useAbstraxionSigningClient, useModal } from "@burnt-labs/abstraxion";
 import { Button } from "@burnt-labs/ui";
 import type { Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import Link from "next/link";
-import { memo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 
 import type { StakingState } from "../context";
 import {
   claimRewardsAction,
-  stakeValidator,
-  unstakeValidator,
+  setRedelegateAction,
+  stakeValidatorAction,
+  unstakeValidatorAction,
 } from "../context/actions";
 import { useStaking } from "../context/hooks";
 import type { StakeAddresses } from "../lib/core/base";
@@ -58,16 +59,20 @@ function StakingPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { delegations, tokens, unbondings, validators } = staking.state;
   const { client } = useAbstraxionSigningClient();
+  const [, setShowAbstraxion] = useModal();
 
-  const validatorsMap: Record<string, undefined | Validator> =
-    validators?.items.reduce<Record<string, undefined | Validator>>(
-      (acc, validator) => {
-        acc[validator.operatorAddress] = validator;
+  const validatorsMap: Record<string, undefined | Validator> = useMemo(
+    () =>
+      validators?.items.reduce<Record<string, undefined | Validator>>(
+        (acc, validator) => {
+          acc[validator.operatorAddress] = validator;
 
-        return acc;
-      },
-      {},
-    ) || {};
+          return acc;
+        },
+        {},
+      ) || {},
+    [validators],
+  );
 
   return (
     <>
@@ -75,6 +80,15 @@ function StakingPage() {
         <div>Account</div>
         <div>
           <b>{account.bech32Address}</b>
+        </div>
+        <div>
+          <Button
+            onClick={() => {
+              setShowAbstraxion(true);
+            }}
+          >
+            Open Settings
+          </Button>
         </div>
         {tokens && (
           <div>
@@ -112,11 +126,13 @@ function StakingPage() {
                         validator: validator.operatorAddress,
                       };
 
-                      unstakeValidator(addresses, client, staking).finally(
-                        () => {
-                          setIsLoading(false);
-                        },
-                      );
+                      unstakeValidatorAction(
+                        addresses,
+                        client,
+                        staking,
+                      ).finally(() => {
+                        setIsLoading(false);
+                      });
                     }}
                   >
                     Undelegate
@@ -147,7 +163,17 @@ function StakingPage() {
                   <Button
                     disabled={isLoading}
                     onClick={() => {
-                      // @TODO
+                      if (!client) return;
+
+                      setIsLoading(true);
+
+                      setRedelegateAction(
+                        account.bech32Address,
+                        client,
+                        staking,
+                      ).finally(() => {
+                        setIsLoading(false);
+                      });
                     }}
                   >
                     Redelelegate
@@ -208,9 +234,11 @@ function StakingPage() {
                     validator: validator.operatorAddress,
                   };
 
-                  stakeValidator(addresses, client, staking).finally(() => {
-                    setIsLoading(false);
-                  });
+                  stakeValidatorAction(addresses, client, staking).finally(
+                    () => {
+                      setIsLoading(false);
+                    },
+                  );
                 }}
                 validator={validator}
               />

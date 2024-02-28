@@ -1,5 +1,5 @@
 import StakingPage from "@/features/staking/components/page";
 
-export default function Page(): JSX.Element {
+export default function Page() {
   return <StakingPage />;
 }

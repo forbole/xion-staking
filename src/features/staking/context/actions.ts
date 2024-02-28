@@ -7,6 +7,7 @@ import {
   getRewards,
   getUnbondingDelegations,
   getValidatorsList,
+  setRedelegate,
   stakeAmount,
   unstakeAmount,
 } from "../lib/core/base";
@@ -18,7 +19,7 @@ import {
   setValidators,
 } from "./reducer";
 
-export const fetchStakingData = async (
+export const fetchStakingDataAction = async (
   address: string,
   staking: StakingContextType,
 ) => {
@@ -105,7 +106,7 @@ export const fetchStakingData = async (
   }
 };
 
-export const stakeValidator = async (
+export const stakeValidatorAction = async (
   addresses: StakeAddresses,
   client: SigningClient,
   staking: StakingContextType,
@@ -115,10 +116,10 @@ export const stakeValidator = async (
     denom: "uxion",
   });
 
-  await fetchStakingData(addresses.delegator, staking);
+  await fetchStakingDataAction(addresses.delegator, staking);
 };
 
-export const unstakeValidator = async (
+export const unstakeValidatorAction = async (
   addresses: StakeAddresses,
   client: SigningClient,
   staking: StakingContextType,
@@ -131,7 +132,7 @@ export const unstakeValidator = async (
   // eslint-disable-next-line no-console
   console.log("debug: actions.ts: result", result);
 
-  await fetchStakingData(addresses.delegator, staking);
+  await fetchStakingDataAction(addresses.delegator, staking);
 };
 
 export const claimRewardsAction = async (
@@ -144,5 +145,18 @@ export const claimRewardsAction = async (
   // eslint-disable-next-line no-console
   console.log("debug: actions.ts: result", result);
 
-  await fetchStakingData(addresses.delegator, staking);
+  await fetchStakingDataAction(addresses.delegator, staking);
+};
+
+export const setRedelegateAction = async (
+  delegatorAddress: string,
+  client: SigningClient,
+  staking: StakingContextType,
+) => {
+  const result = await setRedelegate(delegatorAddress, client);
+
+  // eslint-disable-next-line no-console
+  console.log("debug: actions.ts: result", result);
+
+  await fetchStakingDataAction(delegatorAddress, staking);
 };

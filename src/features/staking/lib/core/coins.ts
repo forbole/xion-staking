@@ -31,7 +31,8 @@ export const formatCoin = (coin: Coin) => {
   return `${amount.toFormat()} ${resolved.denom}`;
 };
 
-export const getEmptyXionCoin = () => ({ amount: "0", denom: "xion" });
+export const getEmptyXionCoin = () =>
+  ({ amount: "0", denom: "xion" }) satisfies Coin;
 
 export const sumAllCoins = (coins: Coin[]) =>
   coins.reduce(

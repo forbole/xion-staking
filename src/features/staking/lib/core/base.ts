@@ -2,6 +2,7 @@ import type { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
 import type { EncodeObject } from "@cosmjs/proto-signing";
 import type {
   Coin,
+  MsgBeginRedelegateEncodeObject,
   MsgDelegateEncodeObject,
   MsgUndelegateEncodeObject,
   MsgWithdrawDelegatorRewardEncodeObject,
@@ -18,6 +19,7 @@ import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 import BigNumber from "bignumber.js";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import {
+  MsgBeginRedelegate,
   MsgDelegate,
   MsgUndelegate,
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
@@ -228,4 +230,27 @@ export const claimRewards = async (
   });
 
   return await client.signAndBroadcast(addresses.delegator, [msgAny], fee);
+};
+
+// @TODO: Pass the target delegator
+export const setRedelegate = async (
+  delegatorAddress: string,
+  client: NonNullable<SigningClient>,
+) => {
+  const msg = MsgBeginRedelegate.fromPartial({
+    delegatorAddress,
+  });
+
+  const msgAny: MsgBeginRedelegateEncodeObject = {
+    typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate",
+    value: msg,
+  };
+
+  const fee: StdFee = await getCosmosFee({
+    address: delegatorAddress,
+    client,
+    msgs: [msgAny],
+  });
+
+  return await client.signAndBroadcast(delegatorAddress, [msgAny], fee);
 };
