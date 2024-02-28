@@ -1,4 +1,4 @@
-import type { StakingState } from ".";
+import type { StakingState } from "./state";
 
 export type StakingAction =
   | {

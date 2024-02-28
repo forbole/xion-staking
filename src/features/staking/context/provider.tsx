@@ -3,9 +3,9 @@
 import type { PropsWithChildren } from "react";
 import { useEffect, useReducer } from "react";
 
-import { StakingContext, defaultState } from ".";
 import { useStakingSync } from "./hooks";
 import { reducer } from "./reducer";
+import { StakingContext, defaultState } from "./state";
 
 export const Wrapper = ({ children }: PropsWithChildren) => {
   useStakingSync();

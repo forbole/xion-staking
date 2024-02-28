@@ -1,21 +1,11 @@
-import type { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
-import type { EncodeObject } from "@cosmjs/proto-signing";
+import { StargateClient } from "@cosmjs/stargate";
 import type {
   Coin,
   MsgBeginRedelegateEncodeObject,
   MsgDelegateEncodeObject,
   MsgUndelegateEncodeObject,
   MsgWithdrawDelegatorRewardEncodeObject,
-  StdFee,
 } from "@cosmjs/stargate";
-import {
-  QueryClient,
-  StargateClient,
-  setupDistributionExtension,
-  setupIbcExtension,
-  setupStakingExtension,
-} from "@cosmjs/stargate";
-import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 import BigNumber from "bignumber.js";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import {
@@ -24,64 +14,11 @@ import {
   MsgUndelegate,
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 
+import type { AbstraxionSigningClient } from "./client";
+import { getStakingQueryClient } from "./client";
 import { normaliseCoin } from "./coins";
 import { rpcEndpoint } from "./constants";
-
-export type SigningClient = NonNullable<
-  ReturnType<typeof useAbstraxionSigningClient>["client"]
->;
-
-const getStakingQueryClient = async () => {
-  const cometClient = await Tendermint34Client.connect(rpcEndpoint);
-
-  return QueryClient.withExtensions(
-    cometClient,
-    setupStakingExtension,
-    setupDistributionExtension,
-    setupIbcExtension,
-  );
-};
-
-type FeeOpts = {
-  address: string;
-  amount?: Coin[];
-  client: SigningClient;
-  gasLimit?: string;
-  memo?: string;
-  msgs: EncodeObject[];
-};
-
-const getCosmosFee = async ({
-  address,
-  // @TODO: review
-  amount = [{ amount: "1000", denom: "uxion" }],
-  client,
-  gasLimit = "400000",
-  memo = "",
-  msgs,
-}: FeeOpts) => {
-  // @TODO: create signer from local account
-  const gasEstimate = false
-    ? await client.simulate(address, msgs, memo).catch((err) => {
-        // eslint-disable-next-line no-console
-        console.log("debug: wallet_operations.ts: Estimate error", err);
-
-        return 0;
-      })
-    : null;
-
-  // This is a factor to increase the gas fee, since the estimate can be a
-  // bit short in some cases (especially for the last events)
-  const gasFeeFactor = 1.2;
-
-  const fee: StdFee = {
-    amount,
-    gas: gasEstimate ? (gasEstimate * gasFeeFactor).toString() : gasLimit,
-    granter: address,
-  };
-
-  return fee;
-};
+import { getCosmosFee } from "./fee";
 
 export const getValidatorsList = async () => {
   const queryClient = await getStakingQueryClient();
@@ -147,7 +84,7 @@ export type StakeAddresses = {
 
 export const stakeAmount = async (
   addresses: StakeAddresses,
-  client: NonNullable<SigningClient>,
+  client: NonNullable<AbstraxionSigningClient>,
   amount: Coin,
 ) => {
   const msg = MsgDelegate.fromPartial({
@@ -156,28 +93,26 @@ export const stakeAmount = async (
     validatorAddress: addresses.validator,
   });
 
-  const msgAny: MsgDelegateEncodeObject = {
+  const messageWrapper: MsgDelegateEncodeObject = {
     typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
     value: msg,
   };
 
-  const fee: StdFee = {
-    amount: [
-      {
-        amount: "1000",
-        denom: "uxion",
-      },
-    ],
-    gas: "200000",
-    granter: addresses.delegator,
-  };
+  const fee = await getCosmosFee({
+    address: addresses.delegator,
+    msgs: [messageWrapper],
+  });
 
-  return await client.signAndBroadcast(addresses.delegator, [msgAny], fee);
+  return await client.signAndBroadcast(
+    addresses.delegator,
+    [messageWrapper],
+    fee,
+  );
 };
 
 export const unstakeAmount = async (
   addresses: StakeAddresses,
-  client: NonNullable<SigningClient>,
+  client: NonNullable<AbstraxionSigningClient>,
   amount: Coin,
 ) => {
   const msg = MsgUndelegate.fromPartial({
@@ -186,18 +121,21 @@ export const unstakeAmount = async (
     validatorAddress: addresses.validator,
   });
 
-  const msgAny: MsgUndelegateEncodeObject = {
+  const messageWrapper: MsgUndelegateEncodeObject = {
     typeUrl: "/cosmos.staking.v1beta1.MsgUndelegate",
     value: msg,
   };
 
-  const fee: StdFee = await getCosmosFee({
+  const fee = await getCosmosFee({
     address: addresses.delegator,
-    client,
-    msgs: [msgAny],
+    msgs: [messageWrapper],
   });
 
-  return await client.signAndBroadcast(addresses.delegator, [msgAny], fee);
+  return await client.signAndBroadcast(
+    addresses.delegator,
+    [messageWrapper],
+    fee,
+  );
 };
 
 export const getUnbonding = async (
@@ -211,46 +149,48 @@ export const getUnbonding = async (
 
 export const claimRewards = async (
   addresses: StakeAddresses,
-  client: NonNullable<SigningClient>,
+  client: NonNullable<AbstraxionSigningClient>,
 ) => {
   const msg = MsgWithdrawDelegatorReward.fromPartial({
     delegatorAddress: addresses.delegator,
     validatorAddress: addresses.validator,
   });
 
-  const msgAny: MsgWithdrawDelegatorRewardEncodeObject = {
+  const messageWrapper: MsgWithdrawDelegatorRewardEncodeObject = {
     typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
     value: msg,
   };
 
-  const fee: StdFee = await getCosmosFee({
+  const fee = await getCosmosFee({
     address: addresses.delegator,
-    client,
-    msgs: [msgAny],
+    msgs: [messageWrapper],
   });
 
-  return await client.signAndBroadcast(addresses.delegator, [msgAny], fee);
+  return await client.signAndBroadcast(
+    addresses.delegator,
+    [messageWrapper],
+    fee,
+  );
 };
 
 // @TODO: Pass the target delegator
 export const setRedelegate = async (
   delegatorAddress: string,
-  client: NonNullable<SigningClient>,
+  client: NonNullable<AbstraxionSigningClient>,
 ) => {
   const msg = MsgBeginRedelegate.fromPartial({
     delegatorAddress,
   });
 
-  const msgAny: MsgBeginRedelegateEncodeObject = {
+  const messageWrapper: MsgBeginRedelegateEncodeObject = {
     typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate",
     value: msg,
   };
 
-  const fee: StdFee = await getCosmosFee({
+  const fee = await getCosmosFee({
     address: delegatorAddress,
-    client,
-    msgs: [msgAny],
+    msgs: [messageWrapper],
   });
 
-  return await client.signAndBroadcast(delegatorAddress, [msgAny], fee);
+  return await client.signAndBroadcast(delegatorAddress, [messageWrapper], fee);
 };

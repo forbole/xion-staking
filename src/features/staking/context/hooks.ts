@@ -1,9 +1,9 @@
 import { useAbstraxionAccount } from "@burnt-labs/abstraxion";
 import { useContext, useEffect, useRef } from "react";
 
-import type { StakingContextType } from ".";
-import { StakingContext } from ".";
 import { fetchStakingDataAction } from "./actions";
+import { StakingContext } from "./state";
+import type { StakingContextType } from "./state";
 
 export const useStaking = () => {
   const stakingRef = useRef<StakingContextType>({} as StakingContextType);
@@ -14,24 +14,24 @@ export const useStaking = () => {
   stakingRef.current.state = staking.state;
   stakingRef.current.dispatch = staking.dispatch;
 
-  const { data: account } = useAbstraxionAccount();
+  const { data: account, isConnected } = useAbstraxionAccount();
 
   const address = account?.bech32Address;
 
   return {
     account,
     address,
-    isLoggedIn: !!account?.bech32Address,
+    isConnected,
     staking: stakingRef.current,
   };
 };
 
 export const useStakingSync = () => {
-  const { address, isLoggedIn, staking } = useStaking();
+  const { address, isConnected, staking } = useStaking();
 
   useEffect(() => {
-    if (isLoggedIn && address) {
+    if (isConnected && address) {
       fetchStakingDataAction(address, staking);
     }
-  }, [isLoggedIn, address, staking]);
+  }, [isConnected, address, staking]);
 };

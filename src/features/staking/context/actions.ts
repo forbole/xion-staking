@@ -1,5 +1,4 @@
-import type { StakingContextType, Unbonding } from ".";
-import type { SigningClient, StakeAddresses } from "../lib/core/base";
+import type { StakeAddresses } from "../lib/core/base";
 import {
   claimRewards,
   getBalance,
@@ -11,6 +10,7 @@ import {
   stakeAmount,
   unstakeAmount,
 } from "../lib/core/base";
+import type { AbstraxionSigningClient } from "../lib/core/client";
 import { sumAllCoins } from "../lib/core/coins";
 import {
   addDelegations,
@@ -18,6 +18,7 @@ import {
   setTokens,
   setValidators,
 } from "./reducer";
+import type { StakingContextType, Unbonding } from "./state";
 
 export const fetchStakingDataAction = async (
   address: string,
@@ -108,7 +109,7 @@ export const fetchStakingDataAction = async (
 
 export const stakeValidatorAction = async (
   addresses: StakeAddresses,
-  client: SigningClient,
+  client: AbstraxionSigningClient,
   staking: StakingContextType,
 ) => {
   await stakeAmount(addresses, client, {
@@ -121,7 +122,7 @@ export const stakeValidatorAction = async (
 
 export const unstakeValidatorAction = async (
   addresses: StakeAddresses,
-  client: SigningClient,
+  client: AbstraxionSigningClient,
   staking: StakingContextType,
 ) => {
   const result = await unstakeAmount(addresses, client, {
@@ -137,7 +138,7 @@ export const unstakeValidatorAction = async (
 
 export const claimRewardsAction = async (
   addresses: StakeAddresses,
-  client: SigningClient,
+  client: AbstraxionSigningClient,
   staking: StakingContextType,
 ) => {
   const result = await claimRewards(addresses, client);
@@ -150,7 +151,7 @@ export const claimRewardsAction = async (
 
 export const setRedelegateAction = async (
   delegatorAddress: string,
-  client: SigningClient,
+  client: AbstraxionSigningClient,
   staking: StakingContextType,
 ) => {
   const result = await setRedelegate(delegatorAddress, client);

@@ -6,7 +6,6 @@ import type { Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import Link from "next/link";
 import { memo, useMemo, useState } from "react";
 
-import type { StakingState } from "../context";
 import {
   claimRewardsAction,
   setRedelegateAction,
@@ -14,6 +13,7 @@ import {
   unstakeValidatorAction,
 } from "../context/actions";
 import { useStaking } from "../context/hooks";
+import type { StakingState } from "../context/state";
 import type { StakeAddresses } from "../lib/core/base";
 import { formatCoin } from "../lib/core/coins";
 import { chainId } from "../lib/core/constants";
@@ -196,11 +196,17 @@ function StakingPage() {
                   key={`${unbondingItem.completionTime}-${unbondingItem.completionTimeNanos}`}
                   style={{ border: "1px solid #fff" }}
                 >
-                  Unbonding tokens: {formatCoin(unbondingItem.balance)}{" "}
-                  (completed by:{" "}
-                  {new Date(unbondingItem.completionTime).toString()})
-                  Validator:{" "}
-                  {validator?.description.moniker || unbondingItem.validator}
+                  <div>
+                    Unbonding tokens: {formatCoin(unbondingItem.balance)}
+                  </div>
+                  <div>
+                    Completed by:{" "}
+                    {new Date(unbondingItem.completionTime).toString()}
+                  </div>
+                  <div>
+                    Validator:{" "}
+                    {validator?.description.moniker || unbondingItem.validator}
+                  </div>
                 </div>
               );
             })}
