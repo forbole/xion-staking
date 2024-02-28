@@ -24,9 +24,9 @@ const simulateMsgsWithExec = async (msgs: EncodeObject[], memo: string) => {
     .then((estimate) => {
       // This is a factor to increase the gas fee, since the estimate can be a
       // bit short in some cases (especially for the last events)
-      const gasFeeFactor = 1.2;
+      const gasFeeFactor = 2;
 
-      return (estimate * gasFeeFactor).toString();
+      return Math.ceil(estimate * gasFeeFactor).toString();
     })
     .catch((err) => {
       // eslint-disable-next-line no-console

@@ -10,7 +10,8 @@ export const useStaking = () => {
   const staking = useContext(StakingContext);
 
   // It is important to not override the `current` object reference so it
-  // doesn't trigger more hooks than it should
+  // doesn't trigger more hooks than it should if it is added as a hook
+  // dependency
   stakingRef.current.state = staking.state;
   stakingRef.current.dispatch = staking.dispatch;
 

@@ -5,6 +5,7 @@ import { Button } from "@burnt-labs/ui";
 import type { Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import Link from "next/link";
 import { memo, useMemo, useState } from "react";
+import { toast } from "react-toastify";
 
 import {
   claimRewardsAction,
@@ -57,7 +58,10 @@ const ValidatorItem = ({
 function StakingPage() {
   const { account, staking } = useStaking();
   const [isLoading, setIsLoading] = useState(false);
-  const { delegations, tokens, unbondings, validators } = staking.state;
+
+  const { delegations, isInfoLoading, tokens, unbondings, validators } =
+    staking.state;
+
   const { client } = useAbstraxionSigningClient();
   const [, setShowAbstraxion] = useModal();
 
@@ -96,6 +100,7 @@ function StakingPage() {
           </div>
         )}
       </div>
+      {isInfoLoading && <div>Loading ...</div>}
       {!!delegations?.items.length && (
         <div>
           <div>Delegations:</div>
@@ -126,13 +131,20 @@ function StakingPage() {
                         validator: validator.operatorAddress,
                       };
 
-                      unstakeValidatorAction(
-                        addresses,
-                        client,
-                        staking,
-                      ).finally(() => {
-                        setIsLoading(false);
-                      });
+                      unstakeValidatorAction(addresses, client, staking)
+                        .then(() => {
+                          toast("Unstake successful", {
+                            type: "success",
+                          });
+                        })
+                        .catch(() => {
+                          toast("Unstake error", {
+                            type: "error",
+                          });
+                        })
+                        .finally(() => {
+                          setIsLoading(false);
+                        });
                     }}
                   >
                     Undelegate
@@ -150,11 +162,16 @@ function StakingPage() {
                           validator: delegation.validatorAddress,
                         };
 
-                        claimRewardsAction(addresses, client, staking).finally(
-                          () => {
+                        claimRewardsAction(addresses, client, staking)
+                          .then(() => {
+                            toast("Claim success", { type: "success" });
+                          })
+                          .catch(() => {
+                            toast("Claim error", { type: "error" });
+                          })
+                          .finally(() => {
                             setIsLoading(false);
-                          },
-                        );
+                          });
                       }}
                     >
                       Claim rewards
@@ -240,11 +257,20 @@ function StakingPage() {
                     validator: validator.operatorAddress,
                   };
 
-                  stakeValidatorAction(addresses, client, staking).finally(
-                    () => {
+                  stakeValidatorAction(addresses, client, staking)
+                    .then(() => {
+                      toast("Staking successful", {
+                        type: "success",
+                      });
+                    })
+                    .catch(() => {
+                      toast("Staking error", {
+                        type: "error",
+                      });
+                    })
+                    .finally(() => {
                       setIsLoading(false);
-                    },
-                  );
+                    });
                 }}
                 validator={validator}
               />

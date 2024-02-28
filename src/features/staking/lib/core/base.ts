@@ -1,6 +1,7 @@
 import { StargateClient } from "@cosmjs/stargate";
 import type {
   Coin,
+  DeliverTxResponse,
   MsgBeginRedelegateEncodeObject,
   MsgDelegateEncodeObject,
   MsgUndelegateEncodeObject,
@@ -30,6 +31,26 @@ export const getBalance = async (address: string) => {
   const client = await StargateClient.connect(rpcEndpoint);
 
   return await client.getBalance(address, "uxion");
+};
+
+const getTxVerifier = (eventType: string) => (result: DeliverTxResponse) => {
+  // @TODO
+  // eslint-disable-next-line no-console
+  console.log("debug: base.ts: result", result);
+
+  if (!result.events.find((e) => e.type === eventType)) {
+    console.error(result);
+    throw new Error("Out of gas");
+  }
+
+  return result;
+};
+
+const handleTxError = (err: unknown) => {
+  // eslint-disable-next-line no-console
+  console.error(err);
+
+  throw err;
 };
 
 export const getDelegations = async (address: string) => {
@@ -103,11 +124,10 @@ export const stakeAmount = async (
     msgs: [messageWrapper],
   });
 
-  return await client.signAndBroadcast(
-    addresses.delegator,
-    [messageWrapper],
-    fee,
-  );
+  return await client
+    .signAndBroadcast(addresses.delegator, [messageWrapper], fee)
+    .then(getTxVerifier("delegate"))
+    .catch(handleTxError);
 };
 
 export const unstakeAmount = async (
@@ -131,11 +151,10 @@ export const unstakeAmount = async (
     msgs: [messageWrapper],
   });
 
-  return await client.signAndBroadcast(
-    addresses.delegator,
-    [messageWrapper],
-    fee,
-  );
+  return await client
+    .signAndBroadcast(addresses.delegator, [messageWrapper], fee)
+    .then(getTxVerifier("unbond"))
+    .catch(handleTxError);
 };
 
 export const getUnbonding = async (
@@ -156,21 +175,22 @@ export const claimRewards = async (
     validatorAddress: addresses.validator,
   });
 
-  const messageWrapper: MsgWithdrawDelegatorRewardEncodeObject = {
-    typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
-    value: msg,
-  };
+  const messageWrapper = [
+    {
+      typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+      value: msg,
+    } satisfies MsgWithdrawDelegatorRewardEncodeObject,
+  ];
 
   const fee = await getCosmosFee({
     address: addresses.delegator,
-    msgs: [messageWrapper],
+    msgs: messageWrapper,
   });
 
-  return await client.signAndBroadcast(
-    addresses.delegator,
-    [messageWrapper],
-    fee,
-  );
+  return await client
+    .signAndBroadcast(addresses.delegator, messageWrapper, fee)
+    .then(getTxVerifier("withdraw_rewards"))
+    .catch(handleTxError);
 };
 
 // @TODO: Pass the target delegator

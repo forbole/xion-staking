@@ -4,6 +4,8 @@ import { AbstraxionProvider } from "@burnt-labs/abstraxion";
 import "@burnt-labs/abstraxion/dist/index.css";
 import "@burnt-labs/ui/dist/index.css";
 import { Inter } from "next/font/google";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { StakingProvider } from "@/features/staking/context/provider";
 import {
@@ -33,6 +35,7 @@ export default function RootLayout({
         <AbstraxionProvider config={abstraxionConfig}>
           <StakingProvider>{children}</StakingProvider>
         </AbstraxionProvider>
+        <ToastContainer closeOnClick />
       </body>
     </html>
   );

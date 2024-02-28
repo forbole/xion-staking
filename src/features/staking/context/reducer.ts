@@ -17,6 +17,10 @@ export type StakingAction =
       type: "ADD_VALIDATORS";
     }
   | {
+      content: StakingState["isInfoLoading"];
+      type: "SET_IS_INFO_LOADING";
+    }
+  | {
       content: StakingState["tokens"];
       type: "SET_TOKENS";
     };
@@ -29,6 +33,13 @@ type Content<T extends StakingAction["type"]> = Extract<
 export const setTokens = (tokens: Content<"SET_TOKENS">): StakingAction => ({
   content: tokens,
   type: "SET_TOKENS",
+});
+
+export const setIsInfoLoading = (
+  isInfoLoading: Content<"SET_IS_INFO_LOADING">,
+): StakingAction => ({
+  content: isInfoLoading,
+  type: "SET_IS_INFO_LOADING",
 });
 
 export const setValidators = (
@@ -171,6 +182,13 @@ export const reducer = (state: StakingState, action: StakingAction) => {
       return {
         ...state,
         unbondings: currentUnbondings,
+      };
+    }
+
+    case "SET_IS_INFO_LOADING": {
+      return {
+        ...state,
+        isInfoLoading: action.content,
       };
     }
 

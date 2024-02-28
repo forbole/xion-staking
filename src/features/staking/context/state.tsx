@@ -27,6 +27,7 @@ type Delegation = {
 
 export type StakingState = {
   delegations: Paginated<Delegation>;
+  isInfoLoading: boolean;
   tokens: Coin | null;
   unbondings: Paginated<Unbonding>;
   validators: Paginated<Validator>;
@@ -39,6 +40,7 @@ export type StakingContextType = {
 
 export const defaultState: StakingState = {
   delegations: null,
+  isInfoLoading: false,
   tokens: null,
   unbondings: null,
   validators: null,
