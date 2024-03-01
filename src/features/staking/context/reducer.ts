@@ -21,6 +21,10 @@ export type StakingAction =
       type: "SET_IS_INFO_LOADING";
     }
   | {
+      content: StakingState["pool"];
+      type: "SET_POOL";
+    }
+  | {
       content: StakingState["tokens"];
       type: "SET_TOKENS";
     }
@@ -78,6 +82,11 @@ export const setValidatorDetails = (
 ): StakingAction => ({
   content,
   type: "SET_VALIDATOR_DETAILS",
+});
+
+export const setPool = (content: Content<"SET_POOL">): StakingAction => ({
+  content,
+  type: "SET_POOL",
 });
 
 // Used for pagination
@@ -207,6 +216,13 @@ export const reducer = (state: StakingState, action: StakingAction) => {
       return {
         ...state,
         validatorDetails: action.content,
+      };
+    }
+
+    case "SET_POOL": {
+      return {
+        ...state,
+        pool: action.content,
       };
     }
 

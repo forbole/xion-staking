@@ -1,5 +1,8 @@
 import type { Coin } from "@cosmjs/stargate";
-import type { Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
+import type {
+  Pool,
+  Validator,
+} from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import type { Dispatch } from "react";
 import { createContext } from "react";
 
@@ -28,6 +31,7 @@ type Delegation = {
 export type StakingState = {
   delegations: Paginated<Delegation>;
   isInfoLoading: boolean;
+  pool: null | Pool;
   tokens: Coin | null;
   unbondings: Paginated<Unbonding>;
   validatorDetails: null | Validator;
@@ -42,6 +46,7 @@ export type StakingContextType = {
 export const defaultState: StakingState = {
   delegations: null,
   isInfoLoading: false,
+  pool: null,
   tokens: null,
   unbondings: null,
   validatorDetails: null,

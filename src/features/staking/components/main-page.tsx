@@ -4,7 +4,7 @@ import { useAbstraxionSigningClient, useModal } from "@burnt-labs/abstraxion";
 import { Button } from "@burnt-labs/ui";
 import type { Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import Link from "next/link";
-import { memo, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 
 import {
@@ -18,6 +18,7 @@ import type { StakingState } from "../context/state";
 import type { StakeAddresses } from "../lib/core/base";
 import { formatCoin } from "../lib/core/coins";
 import { chainId } from "../lib/core/constants";
+import { keybaseClient } from "../lib/utils/keybase-client";
 import DebugAccount from "./debug-account";
 
 type ValidatorItemProps = {
@@ -26,15 +27,33 @@ type ValidatorItemProps = {
   validator: NonNullable<StakingState["validators"]>["items"][number];
 };
 
-const ValidatorItem = ({
-  disabled,
-  onStake,
-  validator,
-}: ValidatorItemProps) => {
+const ValidatorRow = ({ disabled, onStake, validator }: ValidatorItemProps) => {
   const { website } = validator.description;
+  const [logo, setLogo] = useState<null | string>(null);
+
+  const { identity } = validator.description;
+
+  useEffect(() => {
+    (async () => {
+      if (identity) {
+        const logoResponse = await keybaseClient.getIdentityLogo(identity);
+
+        setLogo(logoResponse);
+      }
+    })();
+  }, [identity]);
 
   return (
-    <div style={{ border: "solid 1ps white", marginBottom: 10 }}>
+    <div style={{ border: "solid 1px white", marginBottom: 10 }}>
+      {logo && (
+        <div>
+          <img
+            alt="Validator logo"
+            src={logo}
+            style={{ height: 50, width: 50 }}
+          />
+        </div>
+      )}
       <Link href={`/validator?address=${validator.operatorAddress}`}>
         <div>
           <b>{validator.description.moniker}</b>
@@ -246,7 +265,7 @@ function StakingPage() {
           <div>Validators:</div>
           <div className="max-h-[200px] max-w-max overflow-auto">
             {validators.items.map((validator) => (
-              <ValidatorItem
+              <ValidatorRow
                 disabled={isLoading}
                 key={validator.operatorAddress}
                 onStake={() => {

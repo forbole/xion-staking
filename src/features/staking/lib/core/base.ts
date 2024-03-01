@@ -9,7 +9,11 @@ import type {
 } from "@cosmjs/stargate";
 import BigNumber from "bignumber.js";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
-import type { Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
+import type { QueryValidatorsResponse } from "cosmjs-types/cosmos/staking/v1beta1/query";
+import type {
+  Pool,
+  Validator,
+} from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import {
   MsgBeginRedelegate,
   MsgDelegate,
@@ -22,10 +26,22 @@ import { normaliseCoin } from "./coins";
 import { rpcEndpoint } from "./constants";
 import { getCosmosFee } from "./fee";
 
+let validatorsRequest: null | Promise<QueryValidatorsResponse> = null;
+
 export const getValidatorsList = async () => {
+  if (validatorsRequest) return validatorsRequest;
+
   const queryClient = await getStakingQueryClient();
 
-  return await queryClient.staking.validators("BOND_STATUS_BONDED");
+  validatorsRequest = queryClient.staking
+    .validators("BOND_STATUS_BONDED")
+    .then((res) => {
+      validatorsRequest = null;
+
+      return res;
+    });
+
+  return validatorsRequest;
 };
 
 let validatorDetailsRequest: [string, Promise<Validator>] | null = null;
@@ -46,6 +62,22 @@ export const getValidatorDetails = async (address: string) => {
   validatorDetailsRequest = [address, promise];
 
   return promise;
+};
+
+let poolRequest: null | Promise<Pool> = null;
+
+export const getPool = async () => {
+  if (poolRequest) return poolRequest;
+
+  const queryClient = await getStakingQueryClient();
+
+  poolRequest = queryClient.staking.pool().then((res) => {
+    poolRequest = null;
+
+    return res.pool;
+  });
+
+  return poolRequest;
 };
 
 export const getBalance = async (address: string) => {
