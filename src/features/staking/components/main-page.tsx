@@ -3,10 +3,9 @@
 import { useAbstraxionSigningClient, useModal } from "@burnt-labs/abstraxion";
 import { Button } from "@burnt-labs/ui";
 import type { Coin } from "@cosmjs/stargate";
-import type { NewBlockEvent } from "@cosmjs/tendermint-rpc/build/tendermint34/responses";
 import type { Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import Link from "next/link";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 
 import {
@@ -16,11 +15,14 @@ import {
 } from "../context/actions";
 import { useStaking } from "../context/hooks";
 import { getTotalDelegation, getTotalUnbonding } from "../context/selectors";
-import { getAccountExplorerLink } from "../lib/core/accounts";
-import { subscribeToLastBlock } from "../lib/core/base";
+import { useSubscribeLastBlockHeader } from "../hooks";
 import { sumAllCoins } from "../lib/core/coins";
+import {
+  getAccountExplorerLink,
+  getBlockExplorerLink,
+} from "../lib/core/explorer";
 import type { StakeAddresses } from "../lib/core/tx";
-import { formatCoin } from "../lib/formatters";
+import { formatCoin, formatLastBlockTime } from "../lib/formatters";
 import DebugAccount from "./debug-account";
 import ValidatorRow from "./validator-row";
 
@@ -33,32 +35,7 @@ function StakingPage() {
 
   const { client } = useAbstraxionSigningClient();
   const [, setShowAbstraxion] = useModal();
-  const [lastBlock, setLastBlock] = useState<NewBlockEvent | null>(null);
-
-  useEffect(() => {
-    let unsubscribe = () => {};
-
-    subscribeToLastBlock(
-      (newLastBlock) => {
-        setLastBlock(newLastBlock);
-      },
-      (err: unknown) => {
-        // eslint-disable-next-line no-console
-        console.log("debug: main-page.tsx: err", err);
-      },
-      () => {
-        // eslint-disable-next-line no-console
-        console.log("Subscription Completed");
-        setLastBlock(null);
-      },
-    ).then((fn) => {
-      unsubscribe = fn;
-    });
-
-    return () => {
-      unsubscribe?.();
-    };
-  }, []);
+  const lastBlockHeader = useSubscribeLastBlockHeader();
 
   const validatorsMap: Record<string, undefined | Validator> = useMemo(
     () =>
@@ -96,7 +73,23 @@ function StakingPage() {
             Open Settings
           </Button>
         </div>
-        {!!lastBlock && <div>Block: #{lastBlock.header.height}</div>}
+        {!!lastBlockHeader && (
+          <>
+            <div>
+              Last block time: {formatLastBlockTime(lastBlockHeader.time)}
+            </div>
+            <div>
+              Block:{" "}
+              <Link
+                href={getBlockExplorerLink(lastBlockHeader.height)}
+                style={{ textDecoration: "underline" }}
+                target="_blank"
+              >
+                #{lastBlockHeader.height}
+              </Link>
+            </div>
+          </>
+        )}
         {tokens && (
           <div>
             Tokens: <b>{formatCoin(tokens)}</b>

@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { getValidatorDetailsAction } from "../context/actions";
 import { useStaking } from "../context/hooks";
 import { getVotingPowerPerc } from "../context/selectors";
-import { getValidatorExplorerLink } from "../lib/core/accounts";
+import { getValidatorExplorerLink } from "../lib/core/explorer";
 import { formatCommission, formatVotingPowerPerc } from "../lib/formatters";
 import { keybaseClient } from "../lib/utils/keybase-client";
 

@@ -5,3 +5,6 @@ export const getAccountExplorerLink = (address: string) =>
 
 export const getValidatorExplorerLink = (address: string) =>
   `https://explorer.burnt.com/${chainId}/staking/${address}`;
+
+export const getBlockExplorerLink = (blockNum: number) =>
+  `https://explorer.burnt.com/${chainId}/block/${blockNum}`;

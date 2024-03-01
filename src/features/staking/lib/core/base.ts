@@ -1,5 +1,5 @@
 import { StargateClient } from "@cosmjs/stargate";
-import type { NewBlockEvent } from "@cosmjs/tendermint-rpc/build/tendermint34/responses";
+import type { NewBlockHeaderEvent } from "@cosmjs/tendermint-rpc/build/tendermint34/responses";
 import BigNumber from "bignumber.js";
 import type { QueryValidatorsResponse } from "cosmjs-types/cosmos/staking/v1beta1/query";
 import type {
@@ -121,19 +121,19 @@ export const getRewards = async (address: string, validatorAddress: string) => {
     .map((r) => normaliseCoin(r));
 };
 
-export const subscribeToLastBlock = async (
-  onNext: (b: NewBlockEvent) => void,
-  onError: (err: unknown) => void,
-  onComplete: () => void,
+export const subscribeToLastBlockHeader = async (
+  next: (b: NewBlockHeaderEvent) => void,
+  error: (err: unknown) => void,
+  complete: () => void,
 ) => {
   const wsClient = await getWSClient();
 
-  const subscription = wsClient.subscribeNewBlock();
+  const subscription = wsClient.subscribeNewBlockHeader();
 
   const listener = {
-    complete: onComplete,
-    error: onError,
-    next: onNext,
+    complete,
+    error,
+    next,
   };
 
   subscription.addListener(listener);

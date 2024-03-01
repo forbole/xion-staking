@@ -1,4 +1,5 @@
 import type { Coin } from "@cosmjs/stargate";
+import type { ReadonlyDateWithNanoseconds } from "@cosmjs/tendermint-rpc/build/dates";
 import BigNumber from "bignumber.js";
 
 import { normaliseCoin } from "./core/coins";
@@ -27,3 +28,10 @@ export const formatCommission = (commissionRate: string) => {
 
   return `${(comission * 100).toFixed(0)}%`;
 };
+
+export const formatLastBlockTime = (time: ReadonlyDateWithNanoseconds) =>
+  [
+    time.getHours().toString().padStart(2, "0"),
+    time.getMinutes().toString().padStart(2, "0"),
+    time.getSeconds().toString().padStart(2, "0"),
+  ].join(":");
