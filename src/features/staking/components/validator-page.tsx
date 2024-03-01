@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@burnt-labs/ui";
 import { BondStatus } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -8,6 +9,7 @@ import { useEffect, useState } from "react";
 import { getValidatorDetailsAction } from "../context/actions";
 import { useStaking } from "../context/hooks";
 import { getVotingPowerPerc } from "../context/selectors";
+import { getValidatorExplorerLink } from "../lib/core/accounts";
 import { formatCommission, formatVotingPowerPerc } from "../lib/formatters";
 import { keybaseClient } from "../lib/utils/keybase-client";
 
@@ -63,10 +65,19 @@ export default function ValidatorPage() {
         </div>
       )}
       <div>{validatorDetails.description.moniker}</div>
+      <div>
+        <Link
+          href={getValidatorExplorerLink(validatorDetails.operatorAddress)}
+          target="_blank"
+        >
+          <Button>View in Explorer</Button>
+        </Link>
+      </div>
       <div>{validatorDetails.description.details}</div>
-      <div>{validatorDetails.description.identity}</div>
+      <div>Identity: {validatorDetails.description.identity}</div>
       <div>{validatorDetails.description.securityContact}</div>
       <div>{validatorDetails.description.website}</div>
+      <div>Pub key: {validatorDetails.consensusPubkey?.value}</div>
       <div>
         Commission:{" "}
         {formatCommission(validatorDetails.commission.commissionRates.rate)}
@@ -89,7 +100,9 @@ export default function ValidatorPage() {
           : validatorDetails.status}
       </div>
       {votingPowerPercStr && <div>Voting Power: {votingPowerPercStr}</div>}
-      <Link href="/">Back</Link>
+      <Link href="/">
+        <Button>Back</Button>
+      </Link>
     </div>
   );
 }

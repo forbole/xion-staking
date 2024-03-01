@@ -1,6 +1,4 @@
-import type { StakeAddresses } from "../lib/core/base";
 import {
-  claimRewards,
   getBalance,
   getDelegations,
   getPool,
@@ -8,12 +6,16 @@ import {
   getUnbondingDelegations,
   getValidatorDetails,
   getValidatorsList,
-  setRedelegate,
-  stakeAmount,
-  unstakeAmount,
 } from "../lib/core/base";
 import type { AbstraxionSigningClient } from "../lib/core/client";
 import { sumAllCoins } from "../lib/core/coins";
+import type { StakeAddresses } from "../lib/core/tx";
+import {
+  claimRewards,
+  setRedelegate,
+  stakeAmount,
+  unstakeAmount,
+} from "../lib/core/tx";
 import {
   addDelegations,
   addUnbondings,

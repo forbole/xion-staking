@@ -15,6 +15,18 @@ export const getTotalDelegation = (state: StakingState) => {
   return sumAllCoins(delegationCoins);
 };
 
+export const getTotalUnbonding = (state: StakingState) => {
+  const { unbondings } = state;
+
+  if (!unbondings?.items.length) {
+    return null;
+  }
+
+  const unbondingCoins = unbondings.items.map((d) => d.balance);
+
+  return sumAllCoins(unbondingCoins);
+};
+
 export const getVotingPowerPerc = (
   validatorTokens: string,
   state: StakingState,
