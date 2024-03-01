@@ -7,6 +7,7 @@ import { Inter } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import BaseWrapper from "@/features/core/components/base-wrapper";
 import { StakingProvider } from "@/features/staking/context/provider";
 import {
   dashboardUrl,
@@ -33,7 +34,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AbstraxionProvider config={abstraxionConfig}>
-          <StakingProvider>{children}</StakingProvider>
+          <StakingProvider>
+            <BaseWrapper>{children}</BaseWrapper>
+          </StakingProvider>
         </AbstraxionProvider>
         <ToastContainer closeOnClick />
       </body>

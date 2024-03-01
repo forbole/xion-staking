@@ -23,6 +23,10 @@ export type StakingAction =
   | {
       content: StakingState["tokens"];
       type: "SET_TOKENS";
+    }
+  | {
+      content: StakingState["validatorDetails"];
+      type: "SET_VALIDATOR_DETAILS";
     };
 
 type Content<T extends StakingAction["type"]> = Extract<
@@ -67,6 +71,13 @@ export const addUnbondings = (
   content: unbondings,
   reset,
   type: "ADD_UNBONDINGS",
+});
+
+export const setValidatorDetails = (
+  content: Content<"SET_VALIDATOR_DETAILS">,
+): StakingAction => ({
+  content,
+  type: "SET_VALIDATOR_DETAILS",
 });
 
 // Used for pagination
@@ -189,6 +200,13 @@ export const reducer = (state: StakingState, action: StakingAction) => {
       return {
         ...state,
         isInfoLoading: action.content,
+      };
+    }
+
+    case "SET_VALIDATOR_DETAILS": {
+      return {
+        ...state,
+        validatorDetails: action.content,
       };
     }
 

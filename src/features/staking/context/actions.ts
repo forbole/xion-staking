@@ -5,6 +5,7 @@ import {
   getDelegations,
   getRewards,
   getUnbondingDelegations,
+  getValidatorDetails,
   getValidatorsList,
   setRedelegate,
   stakeAmount,
@@ -17,6 +18,7 @@ import {
   addUnbondings,
   setIsInfoLoading,
   setTokens,
+  setValidatorDetails,
   setValidators,
 } from "./reducer";
 import type { StakingContextType, Unbonding } from "./state";
@@ -156,4 +158,19 @@ export const setRedelegateAction = async (
   await setRedelegate(delegatorAddress, client);
 
   await fetchStakingDataAction(delegatorAddress, staking);
+};
+
+export const getValidatorDetailsAction = async (
+  validatorAddress: string,
+  staking: StakingContextType,
+) => {
+  if (staking.state.validatorDetails?.operatorAddress === validatorAddress) {
+    return staking.state.validatorDetails;
+  }
+
+  const details = await getValidatorDetails(validatorAddress);
+
+  staking.dispatch(setValidatorDetails(details));
+
+  return details;
 };

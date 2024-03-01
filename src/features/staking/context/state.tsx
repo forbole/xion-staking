@@ -30,6 +30,7 @@ export type StakingState = {
   isInfoLoading: boolean;
   tokens: Coin | null;
   unbondings: Paginated<Unbonding>;
+  validatorDetails: null | Validator;
   validators: Paginated<Validator>;
 };
 
@@ -43,6 +44,7 @@ export const defaultState: StakingState = {
   isInfoLoading: false,
   tokens: null,
   unbondings: null,
+  validatorDetails: null,
   validators: null,
 };
 

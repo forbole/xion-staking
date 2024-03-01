@@ -35,10 +35,12 @@ const ValidatorItem = ({
 
   return (
     <div style={{ border: "solid 1ps white", marginBottom: 10 }}>
-      <div>
-        <b>{validator.description.moniker}</b>
-      </div>
-      <div>{validator.operatorAddress}</div>
+      <Link href={`/validator?address=${validator.operatorAddress}`}>
+        <div>
+          <b>{validator.description.moniker}</b>
+        </div>
+        <div>{validator.operatorAddress}</div>
+      </Link>
       <div>
         <Button disabled={disabled} onClick={onStake} structure="naked">
           Stake here
@@ -239,7 +241,7 @@ function StakingPage() {
         </Link>
         <DebugAccount />
       </div>
-      {validators && (
+      {!!validators?.items.length && (
         <div>
           <div>Validators:</div>
           <div className="max-h-[200px] max-w-max overflow-auto">

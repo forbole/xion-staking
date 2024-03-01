@@ -9,6 +9,7 @@ import type {
 } from "@cosmjs/stargate";
 import BigNumber from "bignumber.js";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
+import type { Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import {
   MsgBeginRedelegate,
   MsgDelegate,
@@ -25,6 +26,26 @@ export const getValidatorsList = async () => {
   const queryClient = await getStakingQueryClient();
 
   return await queryClient.staking.validators("BOND_STATUS_BONDED");
+};
+
+let validatorDetailsRequest: [string, Promise<Validator>] | null = null;
+
+export const getValidatorDetails = async (address: string) => {
+  if (validatorDetailsRequest?.[0] === address) {
+    return validatorDetailsRequest[1];
+  }
+
+  const queryClient = await getStakingQueryClient();
+
+  const promise = queryClient.staking.validator(address).then((resp) => {
+    validatorDetailsRequest = null;
+
+    return resp.validator;
+  });
+
+  validatorDetailsRequest = [address, promise];
+
+  return promise;
 };
 
 export const getBalance = async (address: string) => {
