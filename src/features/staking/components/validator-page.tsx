@@ -1,6 +1,5 @@
 "use client";
 
-import BigNumber from "bignumber.js";
 import { BondStatus } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -8,14 +7,14 @@ import { useEffect, useState } from "react";
 
 import { getValidatorDetailsAction } from "../context/actions";
 import { useStaking } from "../context/hooks";
+import { getVotingPowerPerc } from "../context/selectors";
+import { formatCommission, formatVotingPowerPerc } from "../lib/formatters";
 import { keybaseClient } from "../lib/utils/keybase-client";
 
 export default function ValidatorPage() {
   const searchParams = useSearchParams();
   const address = searchParams.get("address");
   const stakingRef = useStaking();
-
-  const { pool } = stakingRef.staking.state;
 
   const [logo, setLogo] = useState<null | string>(null);
 
@@ -48,29 +47,12 @@ export default function ValidatorPage() {
     return <div>Loading ...</div>;
   }
 
-  const parseCommissionRate = (commissionRate: string) => {
-    const comission = new BigNumber(commissionRate)
-      .div(new BigNumber(10).pow(18))
-      .toNumber();
+  const votingPowerPerc = getVotingPowerPerc(
+    validatorDetails.tokens,
+    stakingRef.staking.state,
+  );
 
-    return `${(comission * 100).toFixed(0)}%`;
-  };
-
-  const votingPowerPercentage = (() => {
-    const validatorTokens = validatorDetails.tokens;
-
-    if (!validatorTokens || typeof pool?.bondedTokens !== "string") {
-      return null;
-    }
-
-    const perc = new BigNumber(validatorTokens)
-      .div(new BigNumber(pool.bondedTokens))
-      .toNumber();
-
-    const percNum = perc < 0.0001 ? "<0.1" : (perc * 100).toFixed(1);
-
-    return `${percNum}%`;
-  })();
+  const votingPowerPercStr = formatVotingPowerPerc(votingPowerPerc);
 
   return (
     <div>
@@ -87,7 +69,17 @@ export default function ValidatorPage() {
       <div>{validatorDetails.description.website}</div>
       <div>
         Commission:{" "}
-        {parseCommissionRate(validatorDetails.commission.commissionRates.rate)}
+        {formatCommission(validatorDetails.commission.commissionRates.rate)}
+      </div>
+      <div>
+        Max commission:{" "}
+        {formatCommission(validatorDetails.commission.commissionRates.maxRate)}
+      </div>
+      <div>
+        Max commission change:{" "}
+        {formatCommission(
+          validatorDetails.commission.commissionRates.maxChangeRate,
+        )}
       </div>
       <div>Jailed: {validatorDetails.jailed.toString()}</div>
       <div>
@@ -96,9 +88,7 @@ export default function ValidatorPage() {
           ? "Bonded"
           : validatorDetails.status}
       </div>
-      {votingPowerPercentage && (
-        <div>Voting Power: {votingPowerPercentage}</div>
-      )}
+      {votingPowerPercStr && <div>Voting Power: {votingPowerPercStr}</div>}
       <Link href="/">Back</Link>
     </div>
   );

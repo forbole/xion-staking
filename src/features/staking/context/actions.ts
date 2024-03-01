@@ -156,7 +156,9 @@ export const claimRewardsAction = async (
   await fetchStakingDataAction(addresses.delegator, staking);
 };
 
-export const setRedelegateAction = async (
+// @TODO
+// eslint-disable-next-line
+const setRedelegateAction = async (
   delegatorAddress: string,
   client: AbstraxionSigningClient,
   staking: StakingContextType,

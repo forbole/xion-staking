@@ -9,15 +9,15 @@ import { toast } from "react-toastify";
 
 import {
   claimRewardsAction,
-  setRedelegateAction,
   stakeValidatorAction,
   unstakeValidatorAction,
 } from "../context/actions";
 import { useStaking } from "../context/hooks";
+import { getTotalDelegation } from "../context/selectors";
 import type { StakingState } from "../context/state";
 import type { StakeAddresses } from "../lib/core/base";
-import { formatCoin } from "../lib/core/coins";
 import { chainId } from "../lib/core/constants";
+import { formatCoin } from "../lib/formatters";
 import { keybaseClient } from "../lib/utils/keybase-client";
 import DebugAccount from "./debug-account";
 
@@ -99,6 +99,8 @@ function StakingPage() {
     [validators],
   );
 
+  const totalDelegation = getTotalDelegation(staking.state);
+
   return (
     <>
       <div className="flex flex-col gap-2">
@@ -118,6 +120,11 @@ function StakingPage() {
         {tokens && (
           <div>
             Tokens: <b>{formatCoin(tokens)}</b>
+          </div>
+        )}
+        {totalDelegation && (
+          <div>
+            Total delegation: <b>{formatCoin(totalDelegation)}</b>
           </div>
         )}
       </div>
@@ -198,24 +205,6 @@ function StakingPage() {
                       Claim rewards
                     </Button>
                   )}
-                  <Button
-                    disabled={isLoading}
-                    onClick={() => {
-                      if (!client) return;
-
-                      setIsLoading(true);
-
-                      setRedelegateAction(
-                        account.bech32Address,
-                        client,
-                        staking,
-                      ).finally(() => {
-                        setIsLoading(false);
-                      });
-                    }}
-                  >
-                    Redelelegate
-                  </Button>
                 </div>
               </div>
             );

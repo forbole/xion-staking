@@ -64,6 +64,9 @@ export const getValidatorDetails = async (address: string) => {
   return promise;
 };
 
+// @TODO: This returns the unbonding time
+// const params = await queryClient.staking.params();
+
 let poolRequest: null | Promise<Pool> = null;
 
 export const getPool = async () => {
@@ -208,15 +211,6 @@ export const unstakeAmount = async (
     .signAndBroadcast(addresses.delegator, [messageWrapper], fee)
     .then(getTxVerifier("unbond"))
     .catch(handleTxError);
-};
-
-export const getUnbonding = async (
-  address: string,
-  validatorAddress: string,
-) => {
-  const queryClient = await getStakingQueryClient();
-
-  return queryClient.staking.unbondingDelegation(address, validatorAddress);
 };
 
 export const claimRewards = async (

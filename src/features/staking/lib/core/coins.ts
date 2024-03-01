@@ -24,23 +24,15 @@ export const normaliseCoin = (coin: Coin) => {
   };
 };
 
-export const formatCoin = (coin: Coin) => {
-  const resolved = normaliseCoin(coin);
-  const amount = new BigNumber(resolved.amount);
-
-  return `${amount.toFormat()} ${resolved.denom}`;
-};
-
-export const getEmptyXionCoin = () =>
-  ({ amount: "0", denom: "xion" }) satisfies Coin;
+const getEmptyXionCoin = () => ({ amount: "0", denom: "xion" }) satisfies Coin;
 
 export const sumAllCoins = (coins: Coin[]) =>
   coins.reduce(
     (acc, coin) => ({
-      amount: (
-        parseFloat(acc.amount) + parseFloat(normaliseCoin(coin).amount)
-      ).toString(),
-      denom: coin.denom,
+      amount: new BigNumber(acc.amount)
+        .plus(normaliseCoin(coin).amount)
+        .toString(),
+      denom: acc.denom,
     }),
     getEmptyXionCoin(),
   );

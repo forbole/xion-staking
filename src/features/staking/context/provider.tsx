@@ -7,7 +7,7 @@ import { useStakingSync } from "./hooks";
 import { reducer } from "./reducer";
 import { StakingContext, defaultState } from "./state";
 
-export const Wrapper = ({ children }: PropsWithChildren) => {
+const Wrapper = ({ children }: PropsWithChildren) => {
   useStakingSync();
 
   // eslint-disable-next-line react/jsx-no-useless-fragment
