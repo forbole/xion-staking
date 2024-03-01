@@ -13,3 +13,4 @@ export const dashboardUrl = undefined;
 
 // export const rpcEndpoint = "https://rpc.xion-testnet-1.burnt.com:443";
 export const rpcEndpoint = "https://rpc.xion-testnet.forbole.com";
+export const wssEndpoint = rpcEndpoint.replace("https://", "wss://");
