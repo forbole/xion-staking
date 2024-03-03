@@ -9,7 +9,7 @@ import {
 } from "@cosmjs/stargate";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 
-import { rpcEndpoint, wssEndpoint } from "./constants";
+import { rpcEndpoint } from "./constants";
 
 export type AbstraxionSigningClient = NonNullable<
   ReturnType<typeof useAbstraxionSigningClient>["client"]
@@ -48,5 +48,3 @@ export const createLocalSigningClient = async () => {
 
   return { client, granteeAddress };
 };
-
-export const getWSClient = () => Tendermint34Client.connect(wssEndpoint);

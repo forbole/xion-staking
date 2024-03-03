@@ -27,59 +27,14 @@ import {
 } from "./reducer";
 import type { StakingContextType, Unbonding } from "./state";
 
-export const fetchStakingDataAction = async (
-  address: string,
-  staking: StakingContextType,
-) => {
+export const fetchStakingDataAction = async (staking: StakingContextType) => {
   try {
     staking.dispatch(setIsInfoLoading(true));
 
-    const [balance, validators, pool, delegations, unbondings] =
-      await Promise.all([
-        getBalance(address),
-        getValidatorsList(),
-        getPool(),
-        getDelegations(address).then(async (newDelegations) => ({
-          items: await Promise.all(
-            newDelegations.delegationResponses.map(async (del) => ({
-              balance: del.balance,
-              rewards: await getRewards(
-                address,
-                del.delegation.validatorAddress,
-              ).then((rewards) => sumAllCoins(rewards)),
-              validatorAddress: del.delegation.validatorAddress,
-            })),
-          ),
-          pagination: newDelegations.pagination,
-        })),
-        getUnbondingDelegations(address)
-          .then((unbondingResponse) => ({
-            items: unbondingResponse.unbondingResponses.reduce((acc, res) => {
-              acc.push(
-                ...res.entries.map((entry) => ({
-                  balance: { amount: entry.balance, denom: "uxion" },
-                  completionTime: Number(entry.completionTime.seconds),
-                  completionTimeNanos: entry.completionTime.nanos,
-                  id: entry.unbondingId.toString(),
-                  validator: res.validatorAddress,
-                })),
-              );
-
-              return acc;
-            }, [] as Unbonding[]),
-            pagination: unbondingResponse.pagination,
-          }))
-          .catch(() =>
-            // It is expected that this will throw when there are no unbondings
-            ({ items: [], pagination: null }),
-          )
-          .then((result) => ({
-            items: result.items,
-            pagination: result.pagination,
-          })),
-      ]);
-
-    staking.dispatch(setTokens(balance));
+    const [validators, pool] = await Promise.all([
+      getValidatorsList(),
+      getPool(),
+    ]);
 
     staking.dispatch(
       setValidators(
@@ -91,6 +46,65 @@ export const fetchStakingDataAction = async (
         true,
       ),
     );
+
+    staking.dispatch(setPool(pool));
+
+    staking.dispatch(setIsInfoLoading(false));
+  } catch (error) {
+    console.error("error fetching staking data:", error);
+  }
+};
+
+export const fetchUserDataAction = async (
+  address: string,
+  staking: StakingContextType,
+) => {
+  try {
+    staking.dispatch(setIsInfoLoading(true));
+
+    const [balance, delegations, unbondings] = await Promise.all([
+      getBalance(address),
+      getDelegations(address).then(async (newDelegations) => ({
+        items: await Promise.all(
+          newDelegations.delegationResponses.map(async (del) => ({
+            balance: del.balance,
+            rewards: await getRewards(
+              address,
+              del.delegation.validatorAddress,
+            ).then((rewards) => sumAllCoins(rewards)),
+            validatorAddress: del.delegation.validatorAddress,
+          })),
+        ),
+        pagination: newDelegations.pagination,
+      })),
+      getUnbondingDelegations(address)
+        .then((unbondingResponse) => ({
+          items: unbondingResponse.unbondingResponses.reduce((acc, res) => {
+            acc.push(
+              ...res.entries.map((entry) => ({
+                balance: { amount: entry.balance, denom: "uxion" },
+                completionTime: Number(entry.completionTime.seconds),
+                completionTimeNanos: entry.completionTime.nanos,
+                id: entry.unbondingId.toString(),
+                validator: res.validatorAddress,
+              })),
+            );
+
+            return acc;
+          }, [] as Unbonding[]),
+          pagination: unbondingResponse.pagination,
+        }))
+        .catch(() =>
+          // It is expected that this will throw when there are no unbondings
+          ({ items: [], pagination: null }),
+        )
+        .then((result) => ({
+          items: result.items,
+          pagination: result.pagination,
+        })),
+    ]);
+
+    staking.dispatch(setTokens(balance));
 
     staking.dispatch(
       addDelegations(
@@ -114,8 +128,6 @@ export const fetchStakingDataAction = async (
       ),
     );
 
-    staking.dispatch(setPool(pool));
-
     staking.dispatch(setIsInfoLoading(false));
   } catch (error) {
     console.error("error fetching staking data:", error);
@@ -132,7 +144,7 @@ export const stakeValidatorAction = async (
     denom: "uxion",
   });
 
-  await fetchStakingDataAction(addresses.delegator, staking);
+  await fetchUserDataAction(addresses.delegator, staking);
 };
 
 export const unstakeValidatorAction = async (
@@ -145,7 +157,7 @@ export const unstakeValidatorAction = async (
     denom: "uxion",
   });
 
-  await fetchStakingDataAction(addresses.delegator, staking);
+  await fetchUserDataAction(addresses.delegator, staking);
 };
 
 export const claimRewardsAction = async (
@@ -155,7 +167,7 @@ export const claimRewardsAction = async (
 ) => {
   await claimRewards(addresses, client);
 
-  await fetchStakingDataAction(addresses.delegator, staking);
+  await fetchUserDataAction(addresses.delegator, staking);
 };
 
 // @TODO
@@ -167,7 +179,7 @@ const setRedelegateAction = async (
 ) => {
   await setRedelegate(delegatorAddress, client);
 
-  await fetchStakingDataAction(delegatorAddress, staking);
+  await fetchUserDataAction(delegatorAddress, staking);
 };
 
 export const getValidatorDetailsAction = async (

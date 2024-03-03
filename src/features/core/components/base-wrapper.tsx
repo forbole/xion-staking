@@ -1,27 +1,39 @@
 "use client";
 
-import {
-  Abstraxion,
-  useAbstraxionAccount,
-  useModal,
-} from "@burnt-labs/abstraxion";
+import { Abstraxion, useModal } from "@burnt-labs/abstraxion";
+import Head from "next/head";
+import Link from "next/link";
 
-import LoggedOut from "./logged-out";
+import { basePath } from "@/features/staking/lib/core/constants";
+
+import NavAccount from "./nav-account";
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { isConnected } = useAbstraxionAccount();
   const [showAbstraction, setShowAbstraxion] = useModal();
 
   return (
-    <main className="m-auto flex min-h-screen max-w-xs flex-col items-center justify-center gap-4 p-4">
-      <h1 className="text-2xl font-bold tracking-tighter text-black dark:text-white">
-        XION Staking
-      </h1>
-      {isConnected ? children : <LoggedOut />}
+    <main className="flex min-h-screen flex-col items-center">
+      <Head>
+        <title>XION Staking</title>
+      </Head>
+      <nav
+        className="flex w-full flex-row"
+        style={{ borderBottom: "1px solid #333" }}
+      >
+        <div className="page-container m-auto flex h-[80px] flex-row items-center justify-between px-[16px]">
+          <div>
+            <Link className="cursor-pointer" href="/">
+              <img alt="Xion Logo" src={`${basePath}/xion-logo.svg`} />
+            </Link>
+          </div>
+          <NavAccount />
+        </div>
+      </nav>
+      {children}
       {showAbstraction && (
         <Abstraxion
           onClose={() => {

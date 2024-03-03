@@ -6,6 +6,7 @@ import type {
   MsgUndelegateEncodeObject,
   MsgWithdrawDelegatorRewardEncodeObject,
 } from "@cosmjs/stargate";
+import BigNumber from "bignumber.js";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import {
   MsgBeginRedelegate,
@@ -14,6 +15,7 @@ import {
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 
 import type { AbstraxionSigningClient } from "./client";
+import { normaliseCoin } from "./coins";
 import { getCosmosFee } from "./fee";
 
 const getTxVerifier = (eventType: string) => (result: DeliverTxResponse) => {
@@ -142,4 +144,11 @@ export const setRedelegate = async (
   });
 
   return await client.signAndBroadcast(delegatorAddress, [messageWrapper], fee);
+};
+
+export const getIsMinimumClaimable = (amount: Coin) => {
+  const minClaimableXion = 0.0001;
+  const normalised = normaliseCoin(amount);
+
+  return new BigNumber(normalised.amount).gte(minClaimableXion);
 };

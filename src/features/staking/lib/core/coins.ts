@@ -24,7 +24,17 @@ export const normaliseCoin = (coin: Coin) => {
   };
 };
 
-const getEmptyXionCoin = () => ({ amount: "0", denom: "xion" }) satisfies Coin;
+export const getEmptyXionCoin = () =>
+  ({ amount: "0", denom: "XION" }) satisfies Coin;
+
+export const getXionCoin = (bn: BigNumber) =>
+  ({ amount: bn.toString(), denom: "XION" }) satisfies Coin;
+
+export const getXionCoinFromUXion = (bn: BigNumber) =>
+  ({
+    amount: bn.div(new BigNumber(10).pow(6)).toString(),
+    denom: "XION",
+  }) satisfies Coin;
 
 export const sumAllCoins = (coins: Coin[]) =>
   coins.reduce(

@@ -1,42 +1,20 @@
-import type { NewBlockHeaderEvent } from "@cosmjs/tendermint-rpc/build/tendermint34/responses";
 import { useEffect, useState } from "react";
 
-import { subscribeToLastBlockHeader } from "./lib/core/base";
+import { defaultAvatar } from "./lib/core/constants";
+import { keybaseClient } from "./lib/utils/keybase-client";
 
-export const useSubscribeLastBlockHeader = () => {
-  const [lastBlockHeader, setLastBlockHeader] =
-    useState<NewBlockHeaderEvent | null>(null);
+export const useValidatorLogo = (identity?: string) => {
+  const [logo, setLogo] = useState<null | string>(null);
 
   useEffect(() => {
-    let unsubscribe = () => {};
-    let unmounted = false;
+    (async () => {
+      if (identity) {
+        const logoResponse = await keybaseClient.getIdentityLogo(identity);
 
-    subscribeToLastBlockHeader(
-      (newLastBlockHeader) => {
-        setLastBlockHeader(newLastBlockHeader);
-      },
-      (err: unknown) => {
-        // eslint-disable-next-line no-console
-        console.log("debug: hooks.ts: err", err);
-      },
-      () => {
-        // eslint-disable-next-line no-console
-        console.log("Subscription Completed");
-        setLastBlockHeader(null);
-      },
-    ).then((fn) => {
-      if (unmounted) {
-        fn();
-      } else {
-        unsubscribe = fn;
+        setLogo(logoResponse);
       }
-    });
+    })();
+  }, [identity]);
 
-    return () => {
-      unsubscribe();
-      unmounted = true;
-    };
-  }, []);
-
-  return lastBlockHeader;
+  return logo || defaultAvatar;
 };

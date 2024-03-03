@@ -4,7 +4,8 @@ import { useModal } from "@burnt-labs/abstraxion";
 import { Button } from "@burnt-labs/ui";
 import { useCallback } from "react";
 
-export default function StakingPage() {
+// eslint-disable-next-line
+function LoggedOut() {
   const [, setShowAbstraxion] = useModal();
 
   const onViewAccount = useCallback(() => {

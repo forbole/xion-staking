@@ -3,17 +3,9 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 0;
 }
 
 body {
@@ -29,5 +21,39 @@ body {
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+@layer components {
+  .heading2 {
+    @apply text-[40px] leading-[36px] font-bold text-white;
+  }
+
+  .heading8 {
+    @apply text-[14px] leading-[16px] font-bold;
+  }
+
+  .typo-hero {
+    @apply text-[32px] leading-[38px] font-light;
+  }
+
+  .typo-title {
+    @apply text-white text-[24px] font-bold leading-[28px];
+  }
+
+  .typo-body-medium {
+    @apply text-[16px] leading-[24px] font-normal text-typo-125;
+  }
+
+  .typo-validator-name {
+    @apply text-white text-[32px] font-bold leading-[36px];
+  }
+
+  .page-container {
+    @apply max-w-[1136px] w-full;
+  }
+
+  .button-pill {
+    @apply rounded-full px-[8px] py-[4px] bg-bg-400 hover:bg-bg-600 text-white cursor-pointer;
   }
 }

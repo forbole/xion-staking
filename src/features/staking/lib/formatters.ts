@@ -1,14 +1,32 @@
 import type { Coin } from "@cosmjs/stargate";
-import type { ReadonlyDateWithNanoseconds } from "@cosmjs/tendermint-rpc/build/dates";
 import BigNumber from "bignumber.js";
 
-import { normaliseCoin } from "./core/coins";
+import { getEmptyXionCoin, normaliseCoin } from "./core/coins";
+import { xionToUSD } from "./core/constants";
 
-export const formatCoin = (coin: Coin) => {
+export const formatCoin = (coin: Coin, compact?: boolean) => {
   const resolved = normaliseCoin(coin);
   const amount = new BigNumber(resolved.amount);
 
-  return `${amount.toFormat()} ${resolved.denom}`;
+  if (amount.eq(0)) {
+    return `${amount.toFormat()} ${resolved.denom}`;
+  }
+
+  const minDisplayed = 0.0001;
+
+  if (amount.lt(minDisplayed)) {
+    return `<${minDisplayed} ${resolved.denom}`;
+  }
+
+  if (compact) {
+    const formatter = Intl.NumberFormat("en", {
+      notation: "compact",
+    });
+
+    return `${formatter.format(amount.toNumber())} ${resolved.denom}`;
+  }
+
+  return `${amount.toFormat(4)} ${resolved.denom}`;
 };
 
 export const formatVotingPowerPerc = (perc: null | number) => {
@@ -21,17 +39,21 @@ export const formatVotingPowerPerc = (perc: null | number) => {
   return `${percNum}%`;
 };
 
-export const formatCommission = (commissionRate: string) => {
+export const formatToSmallDisplay = (num: BigNumber) =>
+  Intl.NumberFormat("en", { notation: "compact" }).format(num.toNumber());
+
+export const formatCommission = (commissionRate: string, decimals: number) => {
   const comission = new BigNumber(commissionRate)
     .div(new BigNumber(10).pow(18))
     .toNumber();
 
-  return `${(comission * 100).toFixed(0)}%`;
+  return `${(comission * 100).toFixed(decimals)}%`;
 };
 
-export const formatLastBlockTime = (time: ReadonlyDateWithNanoseconds) =>
-  [
-    time.getHours().toString().padStart(2, "0"),
-    time.getMinutes().toString().padStart(2, "0"),
-    time.getSeconds().toString().padStart(2, "0"),
-  ].join(":");
+export const formatXionToUSD = (coin: Coin | null, compact?: boolean) => {
+  const normalised = normaliseCoin(coin || getEmptyXionCoin());
+  const value = coin ? new BigNumber(normalised.amount) : new BigNumber(0);
+  const usd = value.times(xionToUSD);
+
+  return `$${compact ? formatToSmallDisplay(usd) : usd.toFormat(2)}`;
+};

@@ -10,10 +10,24 @@ const config: Config = {
   plugins: [],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+      colors: {
+        bg: {
+          400: "#949494",
+          50: "#FFF",
+          500: "#474747",
+          600: "#1A1A1A",
+        },
+        success: "#04C700",
+        successBg: "#04C7001A",
+        typo: {
+          100: "#F2F2F2",
+          125: "#BBBBBB",
+          150: "#A5A5A5",
+          200: "#949494",
+          300: "#8E919A",
+          600: "#575454",
+          DEFAULT: "#FFFFFF",
+        },
       },
     },
   },

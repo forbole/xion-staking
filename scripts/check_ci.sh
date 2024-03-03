@@ -2,8 +2,8 @@
 
 set -e
 
-yarn lint
-yarn type-check
-yarn test
+npm run lint
+npm run type-check
+npm run test
 
 QUICK_BUILD=true yarn build

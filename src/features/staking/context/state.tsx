@@ -28,9 +28,12 @@ type Delegation = {
   validatorAddress: string;
 };
 
+type ModalType = "delegate" | "rewards" | "undelegate" | null;
+
 export type StakingState = {
   delegations: Paginated<Delegation>;
   isInfoLoading: boolean;
+  modalOpened: ModalType | null;
   pool: null | Pool;
   tokens: Coin | null;
   unbondings: Paginated<Unbonding>;
@@ -46,6 +49,7 @@ export type StakingContextType = {
 export const defaultState: StakingState = {
   delegations: null,
   isInfoLoading: false,
+  modalOpened: null,
   pool: null,
   tokens: null,
   unbondings: null,
