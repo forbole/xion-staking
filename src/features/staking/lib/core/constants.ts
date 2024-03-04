@@ -13,7 +13,7 @@ export const dashboardUrl = undefined;
 export const rpcEndpoint = "https://rpc.xion-testnet.forbole.com";
 
 export const basePath =
-  process.env.NODE_ENV === "production" ? "/xion-staking" : "";
+  process.env.NEXT_PUBLIC_IS_DEPLOYMENT === "true" ? "/xion-staking" : "";
 
 export const xionToUSD = 10;
 

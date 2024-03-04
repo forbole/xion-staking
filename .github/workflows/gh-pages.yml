@@ -29,6 +29,8 @@ jobs:
         run: |
           npm i
           npm run build
+        env:
+          NEXT_PUBLIC_IS_DEPLOYMENT: "true"
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
