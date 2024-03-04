@@ -1,4 +1,3 @@
-import { StargateClient } from "@cosmjs/stargate";
 import BigNumber from "bignumber.js";
 import type { QueryValidatorsResponse } from "cosmjs-types/cosmos/staking/v1beta1/query";
 import type {
@@ -6,9 +5,8 @@ import type {
   Validator,
 } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 
-import { getStakingQueryClient } from "./client";
+import { getStakingQueryClient, getStargateClient } from "./client";
 import { normaliseCoin } from "./coins";
-import { rpcEndpoint } from "./constants";
 
 let validatorsRequest: null | Promise<QueryValidatorsResponse> = null;
 
@@ -70,7 +68,7 @@ export const getPool = async () => {
 };
 
 export const getBalance = async (address: string) => {
-  const client = await StargateClient.connect(rpcEndpoint);
+  const client = await getStargateClient();
 
   return await client.getBalance(address, "uxion");
 };

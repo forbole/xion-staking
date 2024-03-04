@@ -105,11 +105,28 @@ export const OpenInput = (props: InputProps) => (
 type ButtonProps = React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
   HTMLButtonElement
->;
+> & {
+  variant?: "danger" | "default" | "success";
+};
 
-export const Button = (props: ButtonProps) => (
-  <button
-    {...props}
-    className="w-full rounded-[8px] bg-white py-[16px] text-black"
-  />
-);
+export const Button = ({ variant, ...props }: ButtonProps) => {
+  const colors = (() => {
+    if (variant === "danger")
+      return "text-danger disabled:text-typo-150 bg-[#D745061A]";
+
+    if (variant === "success")
+      return "bg-success text-black disabled:bg-green-400";
+
+    return "bg-white text-black disabled:bg-bg-400";
+  })();
+
+  return (
+    <button
+      {...props}
+      className={[
+        "w-full rounded-[8px] px-[12px] py-[16px] text-black disabled:cursor-not-allowed",
+        colors,
+      ].join(" ")}
+    />
+  );
+};

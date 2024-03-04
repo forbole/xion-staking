@@ -17,6 +17,10 @@ export type StakingAction =
       type: "ADD_VALIDATORS";
     }
   | {
+      content: null;
+      type: "LOGOUT";
+    }
+  | {
       content: StakingState["isInfoLoading"];
       type: "SET_IS_INFO_LOADING";
     }
@@ -91,6 +95,11 @@ export const setValidatorDetails = (
 export const setPool = (content: Content<"SET_POOL">): StakingAction => ({
   content,
   type: "SET_POOL",
+});
+
+export const logout = (): StakingAction => ({
+  content: null,
+  type: "LOGOUT",
 });
 
 export const setModalOpened = (
@@ -241,6 +250,15 @@ export const reducer = (state: StakingState, action: StakingAction) => {
       return {
         ...state,
         modal: action.content,
+      };
+    }
+
+    case "LOGOUT": {
+      return {
+        ...state,
+        delegations: null,
+        unbondings: null,
+        validators: null,
       };
     }
 

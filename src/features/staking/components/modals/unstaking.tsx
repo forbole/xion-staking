@@ -13,10 +13,10 @@ import {
 } from "@/features/core/components/base";
 import CommonModal from "@/features/core/components/common-modal";
 
-import { stakeValidatorAction } from "../../context/actions";
+import { unstakeValidatorAction } from "../../context/actions";
 import { useStaking } from "../../context/hooks";
 import { setModalOpened } from "../../context/reducer";
-import { getTokensAvailableBG } from "../../context/selectors";
+import { getTotalDelegation } from "../../context/selectors";
 import { getXionCoin } from "../../lib/core/coins";
 import { xionToUSD } from "../../lib/core/constants";
 import type { StakeAddresses } from "../../lib/core/tx";
@@ -27,7 +27,7 @@ type Step = "completed" | "input";
 // @TODO
 const initialStep: Step = "input";
 
-const StakingModal = () => {
+const UnstakingModal = () => {
   const stakingRef = useStaking();
   const { client } = useAbstraxionSigningClient();
   const [step, setStep] = useState<Step>(initialStep);
@@ -38,7 +38,7 @@ const StakingModal = () => {
 
   const { account, staking } = stakingRef;
   const { modal } = staking.state;
-  const isOpen = modal?.type === "delegate";
+  const isOpen = modal?.type === "undelegate";
 
   useEffect(
     () => () => {
@@ -59,7 +59,10 @@ const StakingModal = () => {
     return new BigNumber(amount / xionToUSD);
   })();
 
-  const availableTokens = getTokensAvailableBG(staking.state);
+  const delegatedTokens = getTotalDelegation(
+    staking.state,
+    validator.operatorAddress,
+  );
 
   const onSubmit = () => {
     if (!client || !amountXion) return;
@@ -71,7 +74,7 @@ const StakingModal = () => {
       validator: validator.operatorAddress,
     };
 
-    stakeValidatorAction(
+    unstakeValidatorAction(
       addresses,
       getXionCoin(amountXion),
       memo,
@@ -142,19 +145,21 @@ const StakingModal = () => {
           return (
             <>
               <div className="text-center uppercase">
-                <HeroText>Delegate To {validator.description.moniker}</HeroText>
+                <HeroText>
+                  Unstake From {validator.description.moniker}
+                </HeroText>
               </div>
-              {availableTokens &&
+              {delegatedTokens &&
                 (() => {
-                  const availableUSD = availableTokens.times(xionToUSD);
+                  const availableUSD = new BigNumber(
+                    delegatedTokens.amount,
+                  ).times(xionToUSD);
 
                   return (
                     <div className="mt-[40px] flex w-full flex-col items-center justify-center gap-[12px] uppercase">
                       <Heading8>Available for delegation</Heading8>
                       <Heading2>${formatToSmallDisplay(availableUSD)}</Heading2>
-                      <Heading8>
-                        {formatCoin(getXionCoin(availableTokens), true)}
-                      </Heading8>
+                      <Heading8>{formatCoin(delegatedTokens, true)}</Heading8>
                     </div>
                   );
                 })()}
@@ -185,7 +190,7 @@ const StakingModal = () => {
               </div>
               <div className="mt-[48px] w-full">
                 <Button disabled={isLoading} onClick={onSubmit}>
-                  Delegate Now
+                  Unstake Now
                 </Button>
               </div>
             </>
@@ -196,4 +201,4 @@ const StakingModal = () => {
   );
 };
 
-export default StakingModal;
+export default UnstakingModal;

@@ -2,6 +2,7 @@ import { useAbstraxionAccount } from "@burnt-labs/abstraxion";
 import { useContext, useEffect, useRef } from "react";
 
 import { fetchStakingDataAction, fetchUserDataAction } from "./actions";
+import { logout } from "./reducer";
 import { StakingContext } from "./state";
 import type { StakingContextType } from "./state";
 
@@ -37,6 +38,10 @@ export const useStakingSync = () => {
   useEffect(() => {
     if (isConnected && address) {
       fetchUserDataAction(address, staking);
+
+      return () => {
+        staking.dispatch(logout());
+      };
     }
   }, [isConnected, address, staking]);
 };

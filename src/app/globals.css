@@ -26,35 +26,35 @@ body {
 
 @layer components {
   .heading2 {
-    @apply text-[40px] leading-[36px] font-bold text-white;
+    @apply text-[40px] font-bold leading-[36px] text-white;
   }
 
   .heading8 {
-    @apply text-[14px] leading-[16px] font-bold;
+    @apply text-[14px] font-bold leading-[16px];
   }
 
   .typo-hero {
-    @apply text-[32px] leading-[38px] font-light;
+    @apply text-[32px] font-light leading-[38px];
   }
 
   .typo-title {
-    @apply text-white text-[24px] font-bold leading-[28px];
+    @apply text-[24px] font-bold leading-[28px] text-white;
   }
 
   .typo-body-medium {
-    @apply text-[16px] leading-[24px] font-normal text-typo-125;
+    @apply text-[16px] font-normal leading-[24px] text-typo-125;
   }
 
   .typo-validator-name {
-    @apply text-white text-[32px] font-bold leading-[36px];
+    @apply text-[32px] font-bold leading-[36px] text-white;
   }
 
   .page-container {
-    @apply max-w-[1136px] w-full;
+    @apply w-full max-w-[1136px];
   }
 
   .button-pill {
-    @apply rounded-full px-[8px] py-[4px] bg-bg-400 hover:bg-bg-600 text-white cursor-pointer;
+    @apply cursor-pointer rounded-full bg-bg-400 px-[8px] py-[4px] text-white hover:bg-bg-600;
   }
 }
 

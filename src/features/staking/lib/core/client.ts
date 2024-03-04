@@ -1,8 +1,14 @@
 import type { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import type {
+  DistributionExtension,
+  IbcExtension,
+  StakingExtension,
+} from "@cosmjs/stargate";
 import {
   QueryClient,
   SigningStargateClient,
+  StargateClient,
   setupDistributionExtension,
   setupIbcExtension,
   setupStakingExtension,
@@ -15,15 +21,41 @@ export type AbstraxionSigningClient = NonNullable<
   ReturnType<typeof useAbstraxionSigningClient>["client"]
 >;
 
-export const getStakingQueryClient = async () => {
-  const cometClient = await Tendermint34Client.connect(rpcEndpoint);
+let stakingQueryClientPromise:
+  | Promise<
+      QueryClient & StakingExtension & DistributionExtension & IbcExtension
+    >
+  | undefined = undefined;
 
-  return QueryClient.withExtensions(
-    cometClient,
-    setupStakingExtension,
-    setupDistributionExtension,
-    setupIbcExtension,
-  );
+export const getStakingQueryClient = () => {
+  if (!stakingQueryClientPromise) {
+    stakingQueryClientPromise = (async () => {
+      const cometClient = await Tendermint34Client.connect(rpcEndpoint);
+
+      return QueryClient.withExtensions(
+        cometClient,
+        setupStakingExtension,
+        setupDistributionExtension,
+        setupIbcExtension,
+      );
+    })();
+  }
+
+  return stakingQueryClientPromise;
+};
+
+let stargateClientPromise: Promise<StargateClient> | undefined = undefined;
+
+export const getStargateClient = () => {
+  if (!stargateClientPromise) {
+    stargateClientPromise = (async () => {
+      const client = await StargateClient.connect(rpcEndpoint);
+
+      return client;
+    })();
+  }
+
+  return stargateClientPromise;
 };
 
 // @TODO: Discuss

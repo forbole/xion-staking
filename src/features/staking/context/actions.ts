@@ -147,15 +147,16 @@ export const stakeValidatorAction = async (
 
 export const unstakeValidatorAction = async (
   addresses: StakeAddresses,
+  amount: Coin,
+  memo: string,
   client: AbstraxionSigningClient,
   staking: StakingContextType,
 ) => {
-  await unstakeAmount(addresses, client, {
-    amount: "1000",
-    denom: "uxion",
-  });
+  await unstakeAmount(addresses, client, amount, memo);
 
-  await fetchUserDataAction(addresses.delegator, staking);
+  return async () => {
+    await fetchUserDataAction(addresses.delegator, staking);
+  };
 };
 
 export const claimRewardsAction = async (

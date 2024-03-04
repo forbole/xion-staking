@@ -1,5 +1,11 @@
 import StakingModal from "./modals/staking";
+import UnstakingModal from "./modals/unstaking";
 
-const StakingModals = () => <StakingModal />;
+const StakingModals = () => (
+  <>
+    <StakingModal />
+    <UnstakingModal />
+  </>
+);
 
 export default StakingModals;

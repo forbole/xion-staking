@@ -1,6 +1,5 @@
 "use client";
 
-import { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
 import { Button } from "@burnt-labs/ui";
 import BigNumber from "bignumber.js";
 import Link from "next/link";
@@ -8,29 +7,18 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import {
-  ButtonPill,
   ClipboardCopy,
   Heading2,
   Heading8,
   NavLink,
-  Title,
 } from "@/features/core/components/base";
 
-import {
-  claimRewardsAction,
-  getValidatorDetailsAction,
-  unstakeValidatorAction,
-} from "../context/actions";
+import { getValidatorDetailsAction } from "../context/actions";
 import { useStaking } from "../context/hooks";
 import { setModalOpened } from "../context/reducer";
-import {
-  getDelegationToValidator,
-  getTokensAvailableBG,
-  getTotalRewards,
-  getVotingPowerPerc,
-} from "../context/selectors";
+import { getTotalDelegation, getVotingPowerPerc } from "../context/selectors";
 import { useValidatorLogo } from "../hooks";
-import { getXionCoin } from "../lib/core/coins";
+import { getXionCoin, normaliseCoin } from "../lib/core/coins";
 import { basePath, defaultAvatar } from "../lib/core/constants";
 import {
   formatCommission,
@@ -40,6 +28,7 @@ import {
 } from "../lib/formatters";
 import { DivisorHorizontal, DivisorVertical } from "./divisor";
 import StakingModals from "./staking-modals";
+import ValidatorDelegation from "./validator-delegation";
 
 export default function ValidatorPage() {
   const searchParams = useSearchParams();
@@ -49,8 +38,6 @@ export default function ValidatorPage() {
   const [validatorDetails, setValidatorDetails] = useState<Awaited<
     ReturnType<typeof getValidatorDetailsAction>
   > | null>(null);
-
-  const { client } = useAbstraxionSigningClient();
 
   const logo = useValidatorLogo(validatorDetails?.description.identity);
 
@@ -82,16 +69,9 @@ export default function ValidatorPage() {
     new BigNumber(10).pow(6),
   );
 
-  const availableToStakeBN = getTokensAvailableBG(stakingRef.staking.state);
-
-  const delegationToValidator = getDelegationToValidator(
-    validatorDetails.operatorAddress,
+  const myDelegationToValidator = getTotalDelegation(
     stakingRef.staking.state,
-  );
-
-  const totalRewards = getTotalRewards(
     validatorDetails.operatorAddress,
-    stakingRef.staking.state,
   );
 
   return (
@@ -175,12 +155,16 @@ export default function ValidatorPage() {
               <Heading8>My Delegation (XION)</Heading8>
               <div className="mb-[8px] mt-[12px]">
                 <Heading2>
-                  {formatToSmallDisplay(delegationToValidator)}
+                  {myDelegationToValidator
+                    ? formatToSmallDisplay(
+                        new BigNumber(
+                          normaliseCoin(myDelegationToValidator).amount,
+                        ),
+                      )
+                    : "-"}
                 </Heading2>
               </div>
-              <Heading8>
-                {formatXionToUSD(getXionCoin(delegationToValidator))}
-              </Heading8>
+              <Heading8>{formatXionToUSD(myDelegationToValidator)}</Heading8>
             </div>
           </div>
           <DivisorHorizontal />
@@ -235,91 +219,7 @@ export default function ValidatorPage() {
             </div>
           </div>
         </div>
-        <div className="mb-[24px] mt-[32px]">
-          <Title>My Delegations</Title>
-        </div>
-        <div className="grid grid-cols-4 rounded-[24px] bg-bg-600 p-[24px]">
-          <div className="relative">
-            <Heading8>Claimable Rewards</Heading8>
-            <div className="mb-[8px] mt-[12px] flex flex-row items-center gap-[8px]">
-              <Heading2>{formatXionToUSD(totalRewards)}</Heading2>
-              {totalRewards && totalRewards?.amount !== "0" && (
-                <ButtonPill
-                  onClick={() => {
-                    if (!client) return;
-
-                    const addresses = {
-                      delegator: stakingRef.account.bech32Address,
-                      validator: validatorDetails.operatorAddress,
-                    };
-
-                    claimRewardsAction(addresses, client, stakingRef.staking);
-                  }}
-                >
-                  Claim
-                </ButtonPill>
-              )}
-            </div>
-            <div className="absolute bottom-0 right-[20px] top-0">
-              <DivisorVertical />
-            </div>
-          </div>
-          <div className="relative">
-            <Heading8>My Delegation (XION)</Heading8>
-            <div className="mb-[8px] mt-[12px]">
-              <Heading2>{formatToSmallDisplay(delegationToValidator)}</Heading2>
-            </div>
-            <Heading8>
-              {formatXionToUSD(getXionCoin(delegationToValidator))}
-            </Heading8>
-            <div className="absolute bottom-0 right-[20px] top-0">
-              <DivisorVertical />
-            </div>
-          </div>
-          <div className="col-span-2 flex flex-row gap-[16px]">
-            <div>
-              <Heading8>Available For Delegation (XION)</Heading8>
-              <div className="mb-[8px] mt-[12px]">
-                <Heading2>
-                  {availableToStakeBN
-                    ? formatToSmallDisplay(availableToStakeBN)
-                    : "-"}
-                </Heading2>
-              </div>
-              <Heading8>
-                {availableToStakeBN
-                  ? formatXionToUSD(getXionCoin(availableToStakeBN))
-                  : "-"}
-              </Heading8>
-            </div>
-            <div className="flex h-full flex-row items-end gap-[16px]">
-              <div>
-                <Button disabled={!stakingRef.isConnected}>Delegate</Button>
-              </div>
-              <div>
-                <Button
-                  disabled={!stakingRef.isConnected}
-                  onClick={() => {
-                    if (!client) return;
-
-                    const addresses = {
-                      delegator: stakingRef.account.bech32Address,
-                      validator: validatorDetails.operatorAddress,
-                    };
-
-                    unstakeValidatorAction(
-                      addresses,
-                      client,
-                      stakingRef.staking,
-                    );
-                  }}
-                >
-                  Unstake
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ValidatorDelegation />
       </div>
       <StakingModals />
     </>

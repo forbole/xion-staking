@@ -17,6 +17,7 @@ const config: Config = {
           500: "#474747",
           600: "#1A1A1A",
         },
+        danger: "#D74506",
         success: "#04C700",
         successBg: "#04C7001A",
         typo: {

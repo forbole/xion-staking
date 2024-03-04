@@ -36,7 +36,7 @@ const StakingOverview = () => {
   }
 
   const totalDelegation =
-    getTotalDelegation(staking.state) || getEmptyXionCoin();
+    getTotalDelegation(staking.state, null) || getEmptyXionCoin();
 
   const totalRewards =
     getTotalRewards(null, staking.state) || getEmptyXionCoin();

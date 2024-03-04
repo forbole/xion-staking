@@ -83,6 +83,7 @@ export const unstakeAmount = async (
   addresses: StakeAddresses,
   client: NonNullable<AbstraxionSigningClient>,
   amount: Coin,
+  memo: string,
 ) => {
   const msg = MsgUndelegate.fromPartial({
     amount,
@@ -97,11 +98,12 @@ export const unstakeAmount = async (
 
   const fee = await getCosmosFee({
     address: addresses.delegator,
+    memo,
     msgs: [messageWrapper],
   });
 
   return await client
-    .signAndBroadcast(addresses.delegator, [messageWrapper], fee)
+    .signAndBroadcast(addresses.delegator, [messageWrapper], fee, memo)
     .then(getTxVerifier("unbond"))
     .catch(handleTxError);
 };
