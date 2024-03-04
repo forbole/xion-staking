@@ -1,6 +1,7 @@
 import { Button } from "@burnt-labs/ui";
 import { useEffect, useState } from "react";
 
+import { InputBox } from "@/features/core/components/base";
 import CommonModal from "@/features/core/components/common-modal";
 
 import { useStaking } from "../../context/hooks";
@@ -59,7 +60,7 @@ const StakingModal = () => {
             <div>24 XION</div>
             <div>Amount</div>
             <div>
-              <input />
+              <InputBox />
             </div>
             <div>Memo (Optional)</div>
             <div>

@@ -68,3 +68,5 @@ export const ClipboardCopy = ({ textToCopy }: { textToCopy: string }) => (
     }}
   />
 );
+
+export const InputBox = () => <input />;

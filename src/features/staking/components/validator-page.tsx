@@ -31,14 +31,14 @@ import {
 } from "../context/selectors";
 import { useValidatorLogo } from "../hooks";
 import { getXionCoin } from "../lib/core/coins";
-import { defaultAvatar } from "../lib/core/constants";
+import { basePath, defaultAvatar } from "../lib/core/constants";
 import {
   formatCommission,
   formatToSmallDisplay,
   formatVotingPowerPerc,
   formatXionToUSD,
 } from "../lib/formatters";
-import { DivisorHorizontal } from "./divisor";
+import { DivisorHorizontal, DivisorVertical } from "./divisor";
 import StakingModals from "./staking-modals";
 
 export default function ValidatorPage() {
@@ -104,7 +104,7 @@ export default function ValidatorPage() {
         <div
           className="flex flex-col gap-[24px] p-[24px]"
           style={{
-            backgroundImage: "url(/overview-bg.png)",
+            backgroundImage: `url(${basePath}/overview-bg.png)`,
             backgroundSize: "cover",
             borderRadius: 16,
           }}
@@ -133,15 +133,18 @@ export default function ValidatorPage() {
           </div>
           <DivisorHorizontal />
           <div className="grid grid-cols-4">
-            <div>
+            <div className="relative">
               <Heading8>Total Stake (XION)</Heading8>
               <div className="mb-[8px] mt-[12px]">
                 <Heading2>{formatToSmallDisplay(totalStakeBN)}</Heading2>
               </div>
               <Heading8>{formatXionToUSD(getXionCoin(totalStakeBN))}</Heading8>
+              <div className="absolute bottom-0 right-[20px] top-0">
+                <DivisorVertical />
+              </div>
             </div>
-            <div>
-              <Heading8>Comminssion Rate</Heading8>
+            <div className="relative">
+              <Heading8>Commission Rate</Heading8>
               <div className="mb-[8px] mt-[12px]">
                 <Heading2>
                   {formatCommission(
@@ -150,14 +153,20 @@ export default function ValidatorPage() {
                   )}
                 </Heading2>
               </div>
+              <div className="absolute bottom-0 right-[20px] top-0">
+                <DivisorVertical />
+              </div>
             </div>
-            <div>
+            <div className="relative">
               <Heading8>Voting Power</Heading8>
               <div className="mb-[8px] mt-[12px]">
                 <Heading2>{votingPowerPercStr}</Heading2>
               </div>
+              <div className="absolute bottom-0 right-[20px] top-0">
+                <DivisorVertical />
+              </div>
             </div>
-            <div>
+            <div className="relative">
               <Heading8>My Delegation (XION)</Heading8>
               <div className="mb-[8px] mt-[12px]">
                 <Heading2>
@@ -225,7 +234,7 @@ export default function ValidatorPage() {
           <Title>My Delegations</Title>
         </div>
         <div className="grid grid-cols-4 rounded-[24px] bg-bg-600 p-[24px]">
-          <div>
+          <div className="relative">
             <Heading8>Claimable Rewards</Heading8>
             <div className="mb-[8px] mt-[12px] flex flex-row items-center gap-[8px]">
               <Heading2>{formatXionToUSD(totalRewards)}</Heading2>
@@ -246,8 +255,11 @@ export default function ValidatorPage() {
                 </ButtonPill>
               )}
             </div>
+            <div className="absolute bottom-0 right-[20px] top-0">
+              <DivisorVertical />
+            </div>
           </div>
-          <div>
+          <div className="relative">
             <Heading8>My Delegation (XION)</Heading8>
             <div className="mb-[8px] mt-[12px]">
               <Heading2>{formatToSmallDisplay(delegationToValidator)}</Heading2>
@@ -255,6 +267,9 @@ export default function ValidatorPage() {
             <Heading8>
               {formatXionToUSD(getXionCoin(delegationToValidator))}
             </Heading8>
+            <div className="absolute bottom-0 right-[20px] top-0">
+              <DivisorVertical />
+            </div>
           </div>
           <div className="col-span-2 flex flex-row gap-[16px]">
             <div>

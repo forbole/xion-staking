@@ -12,6 +12,7 @@ import {
 import { useStaking } from "../context/hooks";
 import { getTotalDelegation, getTotalRewards } from "../context/selectors";
 import { getEmptyXionCoin } from "../lib/core/coins";
+import { basePath } from "../lib/core/constants";
 import { getIsMinimumClaimable } from "../lib/core/tx";
 import { formatCoin, formatXionToUSD } from "../lib/formatters";
 
@@ -23,7 +24,10 @@ const StakingOverview = () => {
     return (
       <div
         className="flex min-h-[212px] flex-col items-center justify-center gap-[32px] uppercase"
-        style={{ backgroundImage: "url(/overview-bg.png)", borderRadius: 24 }}
+        style={{
+          backgroundImage: `url(${basePath}/overview-bg.png)`,
+          borderRadius: 24,
+        }}
       >
         <HeroText>Please Log In To View</HeroText>
         <div>Log In</div>
@@ -43,7 +47,7 @@ const StakingOverview = () => {
     <div
       className="grid min-h-[144px] flex-col items-center justify-center gap-[32px]"
       style={{
-        backgroundImage: "url(/overview-bg.png)",
+        backgroundImage: `url(${basePath}/overview-bg.png)`,
         borderRadius: 24,
         gridTemplateColumns: "1fr 1fr 1fr 1fr",
       }}
