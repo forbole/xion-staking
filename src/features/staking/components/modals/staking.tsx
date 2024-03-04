@@ -50,6 +50,8 @@ const StakingModal = () => {
     () => () => {
       setStep(initialStep);
       setFormError({});
+      setAmount("");
+      setMemo("");
     },
     [isOpen],
   );

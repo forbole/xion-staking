@@ -44,6 +44,8 @@ const UnstakingModal = () => {
   useEffect(
     () => () => {
       setStep(initialStep);
+      setAmount("");
+      setMemo("");
     },
     [isOpen],
   );

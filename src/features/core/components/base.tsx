@@ -119,7 +119,7 @@ type ButtonProps = React.DetailedHTMLProps<
   variant?: "danger" | "default" | "success";
 };
 
-export const Button = ({ variant, ...props }: ButtonProps) => {
+export const Button = ({ className, variant, ...props }: ButtonProps) => {
   const colors = (() => {
     if (variant === "danger")
       return "text-danger disabled:text-typo-150 bg-[#D745061A]";
@@ -136,6 +136,7 @@ export const Button = ({ variant, ...props }: ButtonProps) => {
       className={[
         "w-full rounded-[8px] px-[12px] py-[16px] text-black disabled:cursor-not-allowed",
         colors,
+        className || "",
       ].join(" ")}
     />
   );

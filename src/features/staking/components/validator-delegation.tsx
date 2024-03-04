@@ -157,44 +157,42 @@ export default function ValidatorDelegation() {
               : "-"}
           </Heading8>
         </div>
-        <div className="flex h-full flex-row items-end gap-[16px]">
-          <div>
-            <Button
-              disabled={!stakingRef.isConnected || isLoadingBlocking}
-              onClick={() => {
-                staking.dispatch(
-                  setModalOpened({
-                    content: { validator: validatorDetails },
-                    type: "delegate",
-                  }),
-                );
-              }}
-              variant="success"
-            >
-              Delegate
-            </Button>
-          </div>
-          <div>
-            <Button
-              disabled={
-                isLoadingBlocking ||
-                !stakingRef.isConnected ||
-                !userDelegationToValidator ||
-                userDelegationToValidator?.amount === "0"
-              }
-              onClick={() => {
-                staking.dispatch(
-                  setModalOpened({
-                    content: { validator: validatorDetails },
-                    type: "undelegate",
-                  }),
-                );
-              }}
-              variant="danger"
-            >
-              Unstake
-            </Button>
-          </div>
+        <div className="flex h-full flex-1 flex-row items-end gap-[16px]">
+          <Button
+            className="flex-1"
+            disabled={!stakingRef.isConnected || isLoadingBlocking}
+            onClick={() => {
+              staking.dispatch(
+                setModalOpened({
+                  content: { validator: validatorDetails },
+                  type: "delegate",
+                }),
+              );
+            }}
+            variant="success"
+          >
+            Delegate
+          </Button>
+          <Button
+            className="flex-1"
+            disabled={
+              isLoadingBlocking ||
+              !stakingRef.isConnected ||
+              !userDelegationToValidator ||
+              userDelegationToValidator?.amount === "0"
+            }
+            onClick={() => {
+              staking.dispatch(
+                setModalOpened({
+                  content: { validator: validatorDetails },
+                  type: "undelegate",
+                }),
+              );
+            }}
+            variant="danger"
+          >
+            Unstake
+          </Button>
         </div>
       </div>
     </div>
