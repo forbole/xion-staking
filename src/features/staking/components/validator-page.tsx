@@ -96,7 +96,7 @@ export default function ValidatorPage() {
 
   return (
     <>
-      <div className="page-container flex w-full flex-col gap-[16px] px-[16px]">
+      <div className="page-container flex w-full flex-col gap-[16px] px-[16px] pb-[32px]">
         <div className="mb-[32px] mt-[40px]">
           <NavLink href="/">STAKING</NavLink> {"> "}
           <span>{validatorDetails.description.moniker}</span>

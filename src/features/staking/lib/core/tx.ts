@@ -1,7 +1,6 @@
 import type {
   Coin,
   DeliverTxResponse,
-  MsgBeginRedelegateEncodeObject,
   MsgDelegateEncodeObject,
   MsgUndelegateEncodeObject,
   MsgWithdrawDelegatorRewardEncodeObject,
@@ -9,7 +8,6 @@ import type {
 import BigNumber from "bignumber.js";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import {
-  MsgBeginRedelegate,
   MsgDelegate,
   MsgUndelegate,
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
@@ -47,9 +45,19 @@ export const stakeAmount = async (
   addresses: StakeAddresses,
   client: NonNullable<AbstraxionSigningClient>,
   amount: Coin,
+  memo: string,
 ) => {
+  const uxionAmount = new BigNumber(normaliseCoin(amount).amount)
+    .times(new BigNumber(10).pow(6))
+    .toString();
+
+  const uxionCoin = {
+    amount: uxionAmount,
+    denom: "uxion",
+  };
+
   const msg = MsgDelegate.fromPartial({
-    amount,
+    amount: uxionCoin,
     delegatorAddress: addresses.delegator,
     validatorAddress: addresses.validator,
   });
@@ -61,11 +69,12 @@ export const stakeAmount = async (
 
   const fee = await getCosmosFee({
     address: addresses.delegator,
+    memo,
     msgs: [messageWrapper],
   });
 
   return await client
-    .signAndBroadcast(addresses.delegator, [messageWrapper], fee)
+    .signAndBroadcast(addresses.delegator, [messageWrapper], fee, memo)
     .then(getTxVerifier("delegate"))
     .catch(handleTxError);
 };
@@ -122,28 +131,6 @@ export const claimRewards = async (
     .signAndBroadcast(addresses.delegator, messageWrapper, fee)
     .then(getTxVerifier("withdraw_rewards"))
     .catch(handleTxError);
-};
-
-// @TODO: Pass the target delegator
-export const setRedelegate = async (
-  delegatorAddress: string,
-  client: NonNullable<AbstraxionSigningClient>,
-) => {
-  const msg = MsgBeginRedelegate.fromPartial({
-    delegatorAddress,
-  });
-
-  const messageWrapper: MsgBeginRedelegateEncodeObject = {
-    typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate",
-    value: msg,
-  };
-
-  const fee = await getCosmosFee({
-    address: delegatorAddress,
-    msgs: [messageWrapper],
-  });
-
-  return await client.signAndBroadcast(delegatorAddress, [messageWrapper], fee);
 };
 
 export const getIsMinimumClaimable = (amount: Coin) => {

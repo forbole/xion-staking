@@ -3,7 +3,6 @@
 import { AbstraxionProvider } from "@burnt-labs/abstraxion";
 import "@burnt-labs/abstraxion/dist/index.css";
 import "@burnt-labs/ui/dist/index.css";
-import { Inter } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -15,8 +14,6 @@ import {
 } from "@/features/staking/lib/core/constants";
 
 import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
 
 const abstraxionConfig = {
   contracts: [],
@@ -32,7 +29,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         <AbstraxionProvider config={abstraxionConfig}>
           <StakingProvider>
             <BaseWrapper>{children}</BaseWrapper>

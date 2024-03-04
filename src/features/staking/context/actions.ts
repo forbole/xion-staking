@@ -1,3 +1,5 @@
+import type { Coin } from "@cosmjs/stargate";
+
 import {
   getBalance,
   getDelegations,
@@ -10,12 +12,7 @@ import {
 import type { AbstraxionSigningClient } from "../lib/core/client";
 import { sumAllCoins } from "../lib/core/coins";
 import type { StakeAddresses } from "../lib/core/tx";
-import {
-  claimRewards,
-  setRedelegate,
-  stakeAmount,
-  unstakeAmount,
-} from "../lib/core/tx";
+import { claimRewards, stakeAmount, unstakeAmount } from "../lib/core/tx";
 import {
   addDelegations,
   addUnbondings,
@@ -136,15 +133,16 @@ export const fetchUserDataAction = async (
 
 export const stakeValidatorAction = async (
   addresses: StakeAddresses,
+  amount: Coin,
+  memo: string,
   client: AbstraxionSigningClient,
   staking: StakingContextType,
 ) => {
-  await stakeAmount(addresses, client, {
-    amount: "1000",
-    denom: "uxion",
-  });
+  await stakeAmount(addresses, client, amount, memo);
 
-  await fetchUserDataAction(addresses.delegator, staking);
+  return async () => {
+    await fetchUserDataAction(addresses.delegator, staking);
+  };
 };
 
 export const unstakeValidatorAction = async (
@@ -168,18 +166,6 @@ export const claimRewardsAction = async (
   await claimRewards(addresses, client);
 
   await fetchUserDataAction(addresses.delegator, staking);
-};
-
-// @TODO
-// eslint-disable-next-line
-const setRedelegateAction = async (
-  delegatorAddress: string,
-  client: AbstraxionSigningClient,
-  staking: StakingContextType,
-) => {
-  await setRedelegate(delegatorAddress, client);
-
-  await fetchUserDataAction(delegatorAddress, staking);
 };
 
 export const getValidatorDetailsAction = async (

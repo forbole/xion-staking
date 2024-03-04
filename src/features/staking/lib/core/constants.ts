@@ -17,4 +17,4 @@ export const basePath =
 
 export const xionToUSD = 10;
 
-export const defaultAvatar = `${basePath}/default-avatar.png`;
+export const defaultAvatar = `${basePath}/default-avatar.svg`;

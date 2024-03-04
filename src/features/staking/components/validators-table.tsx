@@ -2,6 +2,7 @@
 
 import BigNumber from "bignumber.js";
 import type { PropsWithChildren } from "react";
+import { useState } from "react";
 
 import { ButtonPill, NavLink } from "@/features/core/components/base";
 
@@ -106,26 +107,116 @@ const ValidatorRow = ({
   );
 };
 
-type Props = PropsWithChildren;
+type Props = PropsWithChildren & {
+  onSort?: (method: SortMethod) => void;
+  sort: SortMethod;
+  sorting?: [string, string];
+};
 
-const HeaderTitle = ({ children }: Props) => (
-  <div className="text-[14px] font-normal leading-[14px] tracking-wider">
-    <span className="relative">
-      {children}{" "}
-      <div
-        className="absolute right-[-16px] top-[6px] cursor-pointer"
-        dangerouslySetInnerHTML={{ __html: chevron }}
-      />
-    </span>
-  </div>
-);
+const HeaderTitle = ({ children, onSort, sort, sorting }: Props) => {
+  const sortingOrder = ((sorting || []) as string[]).concat(["none"]);
+  const sortingIndex = sortingOrder.indexOf(sort);
+
+  return (
+    <div className="text-[14px] font-normal leading-[14px] tracking-wider">
+      <span className="relative">
+        {children}{" "}
+        {!!onSort && (
+          <button
+            className="absolute right-[-16px] top-[6px] cursor-pointer"
+            dangerouslySetInnerHTML={{ __html: chevron }}
+            onClick={() => {
+              if (!onSort) return;
+
+              const nextIndex =
+                (1 + sortingOrder.indexOf(sort)) % sortingOrder.length;
+
+              const nextSorting = sortingOrder[nextIndex];
+
+              onSort?.(nextSorting as SortMethod);
+            }}
+            style={{
+              rotate: (() => {
+                if (sortingIndex === 0) {
+                  return "180deg";
+                }
+
+                return sortingIndex === 1 ? "0deg" : "90deg";
+              })(),
+            }}
+          />
+        )}
+      </span>
+    </div>
+  );
+};
+
+type SortMethod =
+  | "commission-asc"
+  | "commission-desc"
+  | "name-asc"
+  | "name-desc"
+  | "none"
+  | "staked-asc"
+  | "staked-desc"
+  | "voting-power-asc"
+  | "voting-power-desc";
 
 const ValidatorsTable = () => {
   const { staking } = useStaking();
+  const [sortMethod, setSortMethod] = useState<SortMethod>("none");
 
   const { validators } = staking.state;
 
   if (!validators?.items.length) return null;
+
+  const sortedItems = validators.items.slice().sort((a, b) => {
+    if (sortMethod === "none") return 0;
+
+    if (["voting-power-asc", "voting-power-desc"].includes(sortMethod)) {
+      const votingPowerA = getVotingPowerPerc(a.tokens, staking.state);
+      const votingPowerB = getVotingPowerPerc(b.tokens, staking.state);
+
+      if (!votingPowerA || !votingPowerB) return 0;
+
+      return sortMethod === "voting-power-asc"
+        ? votingPowerA - votingPowerB
+        : votingPowerB - votingPowerA;
+    }
+
+    if (["commission-asc", "commission-desc"].includes(sortMethod)) {
+      const commissionA = parseFloat(a.commission.commissionRates.rate);
+      const commissionB = parseFloat(b.commission.commissionRates.rate);
+
+      if (!commissionA || !commissionB) return 0;
+
+      return sortMethod === "commission-asc"
+        ? commissionA - commissionB
+        : commissionB - commissionA;
+    }
+
+    if (["name-asc", "name-desc"].includes(sortMethod)) {
+      const nameA = a.description.moniker.toLowerCase();
+      const nameB = b.description.moniker.toLowerCase();
+
+      if (!nameA || !nameB) return 0;
+
+      return sortMethod === "name-asc"
+        ? nameA.localeCompare(nameB)
+        : nameB.localeCompare(nameA);
+    }
+
+    if (["staked-asc", "staked-desc"].includes(sortMethod)) {
+      const aTokens = new BigNumber(a.tokens);
+      const bTokens = new BigNumber(b.tokens);
+
+      return sortMethod === "staked-asc"
+        ? aTokens.minus(bTokens).toNumber()
+        : bTokens.minus(aTokens).toNumber();
+    }
+
+    return 0;
+  });
 
   return (
     <div className="overflow-hidden rounded-[24px] bg-bg-600 pb-4 text-typo-100">
@@ -134,18 +225,36 @@ const ValidatorsTable = () => {
         style={gridStyle}
       >
         <div />
-        <HeaderTitle>Validator</HeaderTitle>
-        <HeaderTitle>
+        <HeaderTitle
+          onSort={setSortMethod}
+          sort={sortMethod}
+          sorting={["name-asc", "name-desc"]}
+        >
+          Validator
+        </HeaderTitle>
+        <HeaderTitle
+          onSort={setSortMethod}
+          sort={sortMethod}
+          sorting={["staked-asc", "staked-desc"]}
+        >
           <div className="text-right">Staked Amount</div>
         </HeaderTitle>
-        <HeaderTitle>
+        <HeaderTitle
+          onSort={setSortMethod}
+          sort={sortMethod}
+          sorting={["commission-asc", "commission-desc"]}
+        >
           <div className="text-right">Commission</div>
         </HeaderTitle>
-        <HeaderTitle>
+        <HeaderTitle
+          onSort={setSortMethod}
+          sort={sortMethod}
+          sorting={["voting-power-asc", "voting-power-desc"]}
+        >
           <div className="text-right">Voting Power</div>
         </HeaderTitle>
       </div>
-      {validators.items.map((validator) => (
+      {sortedItems.map((validator) => (
         <ValidatorRow
           key={validator.operatorAddress}
           onStake={() => {
