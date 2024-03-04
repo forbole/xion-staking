@@ -61,7 +61,7 @@ export const getTokensAvailableBG = (state: StakingState) => {
   return new BigNumber(normaliseCoin(tokens).amount);
 };
 
-export const hasStakedInValidator = (
+export const getHasStakedInValidator = (
   validatorAddress: string,
   state: StakingState,
 ) =>

@@ -36,6 +36,7 @@ type ModalContent = {
 export type StakingState = {
   delegations: Paginated<Delegation>;
   isInfoLoading: boolean;
+  isLoadingBlocking: boolean;
   modal: ModalContent | null;
   pool: null | Pool;
   tokens: Coin | null;
@@ -52,6 +53,7 @@ export type StakingContextType = {
 export const defaultState: StakingState = {
   delegations: null,
   isInfoLoading: false,
+  isLoadingBlocking: false,
   modal: null,
   pool: null,
   tokens: null,

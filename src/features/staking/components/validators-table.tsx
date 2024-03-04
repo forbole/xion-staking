@@ -8,7 +8,10 @@ import { ButtonPill, NavLink } from "@/features/core/components/base";
 
 import { useStaking } from "../context/hooks";
 import { setModalOpened } from "../context/reducer";
-import { getVotingPowerPerc, hasStakedInValidator } from "../context/selectors";
+import {
+  getHasStakedInValidator,
+  getVotingPowerPerc,
+} from "../context/selectors";
 import type { StakingContextType, StakingState } from "../context/state";
 import { useValidatorLogo } from "../hooks";
 import { getXionCoinFromUXion } from "../lib/core/coins";
@@ -67,7 +70,10 @@ const ValidatorRow = ({
             <AddressShort address={validator.operatorAddress} />
           </div>
           <div className="flex min-w-max flex-col items-center justify-center">
-            {hasStakedInValidator(validator.operatorAddress, staking.state) && (
+            {getHasStakedInValidator(
+              validator.operatorAddress,
+              staking.state,
+            ) && (
               <div className="rounded-[2px] bg-successBg p-[2px] text-[11px] font-medium leading-[16px] tracking-normal text-success">
                 You staked
               </div>

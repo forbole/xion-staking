@@ -16,7 +16,11 @@ import {
 import { getValidatorDetailsAction } from "../context/actions";
 import { useStaking } from "../context/hooks";
 import { setModalOpened } from "../context/reducer";
-import { getTotalDelegation, getVotingPowerPerc } from "../context/selectors";
+import {
+  getHasStakedInValidator,
+  getTotalDelegation,
+  getVotingPowerPerc,
+} from "../context/selectors";
 import { useValidatorLogo } from "../hooks";
 import { getXionCoin, normaliseCoin } from "../lib/core/coins";
 import { basePath, defaultAvatar } from "../lib/core/constants";
@@ -34,6 +38,7 @@ export default function ValidatorPage() {
   const searchParams = useSearchParams();
   const address = searchParams.get("address");
   const stakingRef = useStaking();
+  const { isLoadingBlocking } = stakingRef.staking.state;
 
   const [validatorDetails, setValidatorDetails] = useState<Awaited<
     ReturnType<typeof getValidatorDetailsAction>
@@ -74,6 +79,11 @@ export default function ValidatorPage() {
     validatorDetails.operatorAddress,
   );
 
+  const hasStakedInValidator = getHasStakedInValidator(
+    validatorDetails.operatorAddress,
+    stakingRef.staking.state,
+  );
+
   return (
     <>
       <div className="page-container flex w-full flex-col gap-[16px] px-[16px] pb-[32px]">
@@ -99,10 +109,15 @@ export default function ValidatorPage() {
               <div className="typo-validator-name">
                 {validatorDetails.description.moniker || ""}
               </div>
+              {hasStakedInValidator && (
+                <div className="rounded-[4px] bg-successBg px-[8px] py-[4px] text-[11px] text-success">
+                  You staked
+                </div>
+              )}
             </div>
             <div>
               <Button
-                disabled={!stakingRef.isConnected}
+                disabled={!stakingRef.isConnected || isLoadingBlocking}
                 onClick={() => {
                   stakingRef.staking.dispatch(
                     setModalOpened({

@@ -19,7 +19,7 @@ import {
   getValidatorDetailsAction,
 } from "../context/actions";
 import { useStaking } from "../context/hooks";
-import { setModalOpened } from "../context/reducer";
+import { setIsLoadingBlocking, setModalOpened } from "../context/reducer";
 import {
   getTokensAvailableBG,
   getTotalDelegation,
@@ -36,6 +36,8 @@ export default function ValidatorDelegation() {
   const [, setShowAbstraxion] = useModal();
 
   const { isConnected, staking } = stakingRef;
+
+  const { isLoadingBlocking } = staking.state;
 
   const [validatorDetails, setValidatorDetails] = useState<Awaited<
     ReturnType<typeof getValidatorDetailsAction>
@@ -81,6 +83,7 @@ export default function ValidatorDelegation() {
     <div className="flex h-[220px] flex-col items-center justify-center gap-[32px] rounded-[24px] bg-bg-600 uppercase">
       <HeroText>Please log in to view</HeroText>
       <Button
+        disabled={isLoadingBlocking}
         onClick={() => {
           setShowAbstraxion(true);
         }}
@@ -96,6 +99,7 @@ export default function ValidatorDelegation() {
           <Heading2>{formatXionToUSD(totalRewards)}</Heading2>
           {totalRewards && totalRewards?.amount !== "0" && (
             <ButtonPill
+              disabled={isLoadingBlocking}
               onClick={() => {
                 if (!client) return;
 
@@ -104,7 +108,15 @@ export default function ValidatorDelegation() {
                   validator: validatorDetails.operatorAddress,
                 };
 
-                claimRewardsAction(addresses, client, stakingRef.staking);
+                staking.dispatch(setIsLoadingBlocking(true));
+
+                claimRewardsAction(
+                  addresses,
+                  client,
+                  stakingRef.staking,
+                ).finally(() => {
+                  staking.dispatch(setIsLoadingBlocking(false));
+                });
               }}
             >
               Claim
@@ -148,7 +160,7 @@ export default function ValidatorDelegation() {
         <div className="flex h-full flex-row items-end gap-[16px]">
           <div>
             <Button
-              disabled={!stakingRef.isConnected}
+              disabled={!stakingRef.isConnected || isLoadingBlocking}
               onClick={() => {
                 staking.dispatch(
                   setModalOpened({
@@ -165,6 +177,7 @@ export default function ValidatorDelegation() {
           <div>
             <Button
               disabled={
+                isLoadingBlocking ||
                 !stakingRef.isConnected ||
                 !userDelegationToValidator ||
                 userDelegationToValidator?.amount === "0"

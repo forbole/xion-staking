@@ -1,10 +1,12 @@
 import { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
 import BigNumber from "bignumber.js";
+import type { FormEventHandler } from "react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 import {
   Button,
+  FormError,
   Heading2,
   Heading8,
   HeroText,
@@ -36,6 +38,10 @@ const StakingModal = () => {
   const [amountUSD, setAmount] = useState("");
   const [memo, setMemo] = useState("");
 
+  const [formError, setFormError] = useState<
+    Record<string, string | undefined>
+  >({ amount: undefined, memo: undefined });
+
   const { account, staking } = stakingRef;
   const { modal } = staking.state;
   const isOpen = modal?.type === "delegate";
@@ -43,6 +49,7 @@ const StakingModal = () => {
   useEffect(
     () => () => {
       setStep(initialStep);
+      setFormError({});
     },
     [isOpen],
   );
@@ -59,39 +66,9 @@ const StakingModal = () => {
     return new BigNumber(amount / xionToUSD);
   })();
 
+  const hasErrors = Object.values(formError).some((v) => !!v);
+
   const availableTokens = getTokensAvailableBG(staking.state);
-
-  const onSubmit = () => {
-    if (!client || !amountXion) return;
-
-    setIsLoading(true);
-
-    const addresses: StakeAddresses = {
-      delegator: account.bech32Address,
-      validator: validator.operatorAddress,
-    };
-
-    stakeValidatorAction(
-      addresses,
-      getXionCoin(amountXion),
-      memo,
-      client,
-      staking,
-    )
-      .then((fetchDataFn) => {
-        setStep("completed");
-
-        return fetchDataFn();
-      })
-      .catch(() => {
-        toast("Staking error", {
-          type: "error",
-        });
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
 
   return (
     <CommonModal
@@ -139,6 +116,47 @@ const StakingModal = () => {
             );
           }
 
+          const getHasAmountError = () =>
+            !amountXion ||
+            !availableTokens ||
+            amountXion.isNaN() ||
+            amountXion.gt(availableTokens);
+
+          const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+            e?.stopPropagation();
+
+            if (!client || !amountXion || hasErrors || getHasAmountError())
+              return;
+
+            setIsLoading(true);
+
+            const addresses: StakeAddresses = {
+              delegator: account.bech32Address,
+              validator: validator.operatorAddress,
+            };
+
+            stakeValidatorAction(
+              addresses,
+              getXionCoin(amountXion),
+              memo,
+              client,
+              staking,
+            )
+              .then((fetchDataFn) => {
+                setStep("completed");
+
+                return fetchDataFn();
+              })
+              .catch(() => {
+                toast("Staking error", {
+                  type: "error",
+                });
+              })
+              .finally(() => {
+                setIsLoading(false);
+              });
+          };
+
           return (
             <>
               <div className="text-center uppercase">
@@ -164,30 +182,50 @@ const StakingModal = () => {
                   <Heading8>={formatToSmallDisplay(amountXion)} XION</Heading8>
                 )}
               </div>
-              <div className="mt-[8px]">
-                <InputBox
-                  disabled={isLoading}
-                  onChange={(e) => {
-                    setAmount(e.target.value);
-                  }}
-                  value={amountUSD}
-                />
-              </div>
-              <div className="mt-[40px] w-full">
-                <OpenInput
-                  disabled={isLoading}
-                  onChange={(e) => {
-                    setMemo(e.target.value);
-                  }}
-                  placeholder="Memo (Optional)"
-                  value={memo}
-                />
-              </div>
-              <div className="mt-[48px] w-full">
-                <Button disabled={isLoading} onClick={onSubmit}>
-                  Delegate Now
-                </Button>
-              </div>
+              <form onSubmit={onSubmit}>
+                <div className="mt-[8px]">
+                  <InputBox
+                    disabled={isLoading}
+                    error={!!formError.amount}
+                    onBlur={() => {
+                      if (getHasAmountError()) {
+                        setFormError({
+                          ...formError,
+                          amount: "Invalid amount",
+                        });
+                      }
+                    }}
+                    onChange={(e) => {
+                      if (formError.amount) {
+                        setFormError({ ...formError, amount: undefined });
+                      }
+
+                      setAmount(e.target.value);
+                    }}
+                    value={amountUSD}
+                  />
+                  {formError.amount && (
+                    <div>
+                      <FormError>{formError.amount}</FormError>
+                    </div>
+                  )}
+                </div>
+                <div className="mt-[40px] w-full">
+                  <OpenInput
+                    disabled={isLoading}
+                    onChange={(e) => {
+                      setMemo(e.target.value);
+                    }}
+                    placeholder="Memo (Optional)"
+                    value={memo}
+                  />
+                </div>
+                <div className="mt-[48px] w-full">
+                  <Button disabled={isLoading || hasErrors} type="submit">
+                    Delegate Now
+                  </Button>
+                </div>
+              </form>
             </>
           );
         })()}

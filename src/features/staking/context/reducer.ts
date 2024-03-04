@@ -25,6 +25,10 @@ export type StakingAction =
       type: "SET_IS_INFO_LOADING";
     }
   | {
+      content: StakingState["isLoadingBlocking"];
+      type: "SET_IS_LOADING_BLOCKING";
+    }
+  | {
       content: StakingState["modal"];
       type: "SET_MODAL";
     }
@@ -160,6 +164,13 @@ const getUniqueUnbondings = (
   });
 };
 
+export const setIsLoadingBlocking = (
+  content: Content<"SET_IS_LOADING_BLOCKING">,
+): StakingAction => ({
+  content,
+  type: "SET_IS_LOADING_BLOCKING",
+});
+
 export const reducer = (state: StakingState, action: StakingAction) => {
   switch (action.type) {
     case "SET_TOKENS":
@@ -259,6 +270,13 @@ export const reducer = (state: StakingState, action: StakingAction) => {
         delegations: null,
         unbondings: null,
         validators: null,
+      };
+    }
+
+    case "SET_IS_LOADING_BLOCKING": {
+      return {
+        ...state,
+        isLoadingBlocking: action.content,
       };
     }
 

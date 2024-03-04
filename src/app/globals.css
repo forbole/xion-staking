@@ -52,10 +52,6 @@ body {
   .page-container {
     @apply w-full max-w-[1136px];
   }
-
-  .button-pill {
-    @apply cursor-pointer rounded-full bg-bg-400 px-[8px] py-[4px] text-white hover:bg-bg-600;
-  }
 }
 
 @font-face {

@@ -1,5 +1,6 @@
 import { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
 import BigNumber from "bignumber.js";
+import type { FormEventHandler } from "react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -64,7 +65,9 @@ const UnstakingModal = () => {
     validator.operatorAddress,
   );
 
-  const onSubmit = () => {
+  const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+    e?.stopPropagation();
+
     if (!client || !amountXion) return;
 
     setIsLoading(true);
@@ -169,30 +172,32 @@ const UnstakingModal = () => {
                   <Heading8>={formatToSmallDisplay(amountXion)} XION</Heading8>
                 )}
               </div>
-              <div className="mt-[8px]">
-                <InputBox
-                  disabled={isLoading}
-                  onChange={(e) => {
-                    setAmount(e.target.value);
-                  }}
-                  value={amountUSD}
-                />
-              </div>
-              <div className="mt-[40px] w-full">
-                <OpenInput
-                  disabled={isLoading}
-                  onChange={(e) => {
-                    setMemo(e.target.value);
-                  }}
-                  placeholder="Memo (Optional)"
-                  value={memo}
-                />
-              </div>
-              <div className="mt-[48px] w-full">
-                <Button disabled={isLoading} onClick={onSubmit}>
-                  Unstake Now
-                </Button>
-              </div>
+              <form onSubmit={onSubmit}>
+                <div className="mt-[8px]">
+                  <InputBox
+                    disabled={isLoading}
+                    onChange={(e) => {
+                      setAmount(e.target.value);
+                    }}
+                    value={amountUSD}
+                  />
+                </div>
+                <div className="mt-[40px] w-full">
+                  <OpenInput
+                    disabled={isLoading}
+                    onChange={(e) => {
+                      setMemo(e.target.value);
+                    }}
+                    placeholder="Memo (Optional)"
+                    value={memo}
+                  />
+                </div>
+                <div className="mt-[48px] w-full">
+                  <Button disabled={isLoading} type="submit">
+                    Unstake Now
+                  </Button>
+                </div>
+              </form>
             </>
           );
         })()}

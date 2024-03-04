@@ -52,7 +52,13 @@ type ButtonPillProps = React.DetailedHTMLProps<
 >;
 
 export const ButtonPill = ({ className, ...props }: ButtonPillProps) => (
-  <button {...props} className={["button-pill", className].join(" ")} />
+  <button
+    {...props}
+    className={[
+      "cursor-pointer rounded-full bg-bg-550 px-[8px] py-[4px] text-white hover:bg-bg-600 disabled:cursor-not-allowed disabled:bg-bg-400 disabled:text-typo-150",
+      className,
+    ].join(" ")}
+  />
 );
 
 export const ClipboardCopy = ({ textToCopy }: { textToCopy: string }) => (
@@ -72,23 +78,27 @@ export const ClipboardCopy = ({ textToCopy }: { textToCopy: string }) => (
 type InputProps = React.DetailedHTMLProps<
   React.InputHTMLAttributes<HTMLInputElement>,
   HTMLInputElement
->;
+> & {
+  error?: boolean;
+};
 
-export const InputBox = (props: InputProps) => (
+export const InputBox = ({ error, ...props }: InputProps) => (
   <span className="relative block">
     <input
       {...props}
-      className="h-[96px] w-full bg-black p-[16px] pl-[52px] focus:outline-none"
-      style={{
-        border: "1px solid white",
-        borderRadius: "16px",
-        fontSize: "48px",
-      }}
+      className={[
+        "h-[96px] w-full rounded-[16px] border-[1px] bg-black p-[16px] pl-[52px] text-[48px] focus:outline-none",
+        error ? "border-danger" : "border-white",
+      ].join(" ")}
     />
     <span className="absolute bottom-0 left-[12px] top-0 flex h-full items-center text-[24px] text-[48px]">
       $
     </span>
   </span>
+);
+
+export const FormError = ({ children }: PropsWithChildren) => (
+  <div className="text-danger">{children}</div>
 );
 
 export const OpenInput = (props: InputProps) => (
