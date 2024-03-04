@@ -21,8 +21,8 @@ export type StakingAction =
       type: "SET_IS_INFO_LOADING";
     }
   | {
-      content: StakingState["modalOpened"];
-      type: "SET_MODAL_OPENED";
+      content: StakingState["modal"];
+      type: "SET_MODAL";
     }
   | {
       content: StakingState["pool"];
@@ -94,10 +94,10 @@ export const setPool = (content: Content<"SET_POOL">): StakingAction => ({
 });
 
 export const setModalOpened = (
-  content: Content<"SET_MODAL_OPENED">,
+  content: Content<"SET_MODAL">,
 ): StakingAction => ({
   content,
-  type: "SET_MODAL_OPENED",
+  type: "SET_MODAL",
 });
 
 // Used for pagination
@@ -237,10 +237,10 @@ export const reducer = (state: StakingState, action: StakingAction) => {
       };
     }
 
-    case "SET_MODAL_OPENED": {
+    case "SET_MODAL": {
       return {
         ...state,
-        modalOpened: action.content,
+        modal: action.content,
       };
     }
 

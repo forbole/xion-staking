@@ -69,4 +69,47 @@ export const ClipboardCopy = ({ textToCopy }: { textToCopy: string }) => (
   />
 );
 
-export const InputBox = () => <input />;
+type InputProps = React.DetailedHTMLProps<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
+>;
+
+export const InputBox = (props: InputProps) => (
+  <span className="relative block">
+    <input
+      {...props}
+      className="h-[96px] w-full bg-black p-[16px] pl-[52px] focus:outline-none"
+      style={{
+        border: "1px solid white",
+        borderRadius: "16px",
+        fontSize: "48px",
+      }}
+    />
+    <span className="absolute bottom-0 left-[12px] top-0 flex h-full items-center text-[24px] text-[48px]">
+      $
+    </span>
+  </span>
+);
+
+export const OpenInput = (props: InputProps) => (
+  <input
+    {...props}
+    className="h-[50px] w-full bg-black py-[8px] focus:outline-none"
+    style={{
+      border: "none",
+      borderBottom: "1px solid white",
+    }}
+  />
+);
+
+type ButtonProps = React.DetailedHTMLProps<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+>;
+
+export const Button = (props: ButtonProps) => (
+  <button
+    {...props}
+    className="w-full rounded-[8px] bg-white py-[16px] text-black"
+  />
+);

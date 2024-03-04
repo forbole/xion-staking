@@ -1,21 +1,17 @@
 "use client";
 
-import { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
 import BigNumber from "bignumber.js";
 import type { PropsWithChildren } from "react";
-import { useState } from "react";
-import { toast } from "react-toastify";
 
 import { ButtonPill, NavLink } from "@/features/core/components/base";
 
-import { stakeValidatorAction } from "../context/actions";
 import { useStaking } from "../context/hooks";
+import { setModalOpened } from "../context/reducer";
 import { getVotingPowerPerc, hasStakedInValidator } from "../context/selectors";
 import type { StakingContextType, StakingState } from "../context/state";
 import { useValidatorLogo } from "../hooks";
 import { getXionCoinFromUXion } from "../lib/core/coins";
 import { chevron } from "../lib/core/icons";
-import type { StakeAddresses } from "../lib/core/tx";
 import {
   formatCoin,
   formatCommission,
@@ -125,12 +121,9 @@ const HeaderTitle = ({ children }: Props) => (
 );
 
 const ValidatorsTable = () => {
-  const { account, staking } = useStaking();
-  const [isLoading, setIsLoading] = useState(false);
+  const { staking } = useStaking();
 
   const { validators } = staking.state;
-
-  const { client } = useAbstraxionSigningClient();
 
   if (!validators?.items.length) return null;
 
@@ -154,32 +147,14 @@ const ValidatorsTable = () => {
       </div>
       {validators.items.map((validator) => (
         <ValidatorRow
-          disabled={isLoading}
           key={validator.operatorAddress}
           onStake={() => {
-            if (!client) return;
-
-            setIsLoading(true);
-
-            const addresses: StakeAddresses = {
-              delegator: account.bech32Address,
-              validator: validator.operatorAddress,
-            };
-
-            stakeValidatorAction(addresses, client, staking)
-              .then(() => {
-                toast("Staking successful", {
-                  type: "success",
-                });
-              })
-              .catch(() => {
-                toast("Staking error", {
-                  type: "error",
-                });
-              })
-              .finally(() => {
-                setIsLoading(false);
-              });
+            staking.dispatch(
+              setModalOpened({
+                content: { validator },
+                type: "delegate",
+              }),
+            );
           }}
           staking={staking}
           validator={validator}

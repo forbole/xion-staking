@@ -124,7 +124,12 @@ export default function ValidatorPage() {
               <Button
                 disabled={!stakingRef.isConnected}
                 onClick={() => {
-                  stakingRef.staking.dispatch(setModalOpened("delegate"));
+                  stakingRef.staking.dispatch(
+                    setModalOpened({
+                      content: { validator: validatorDetails },
+                      type: "delegate",
+                    }),
+                  );
                 }}
               >
                 DELEGATE NOW

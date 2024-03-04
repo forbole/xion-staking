@@ -11,3 +11,9 @@ export const wallet = [
   '<line x1="3.5293" y1="7.14746" x2="15.8822" y2="7.14746" stroke="white"/>',
   "</svg>",
 ].join("");
+
+export const cross = [
+  '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">',
+  '<path fill-rule="evenodd" clip-rule="evenodd" d="M16.941 6L12 10.941L7.059 6L6 7.05975L10.941 12L6 16.941L7.059 18L12 13.059L16.941 18L18 16.941L13.059 12L18 7.05975L16.941 6Z" fill="#6C6A6A"/>',
+  "</svg>",
+].join("");
