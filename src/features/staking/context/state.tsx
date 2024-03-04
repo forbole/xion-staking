@@ -30,7 +30,7 @@ type Delegation = {
 
 type ModalContent = {
   content: { validator: Validator };
-  type: "delegate" | "undelegate";
+  type: "delegate" | "rewards" | "undelegate";
 } | null;
 
 export type StakingState = {
