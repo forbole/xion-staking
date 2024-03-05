@@ -22,9 +22,9 @@ import { getTokensAvailableBG } from "../../context/selectors";
 import { getXionCoin } from "../../lib/core/coins";
 import { xionToUSD } from "../../lib/core/constants";
 import type { StakeAddresses } from "../../lib/core/tx";
-import { formatCoin, formatToSmallDisplay } from "../../lib/formatters";
+import { formatToSmallDisplay } from "../../lib/formatters";
 
-type Step = "completed" | "input";
+type Step = "completed" | "input" | "review";
 
 // @TODO
 const initialStep: Step = "input";
@@ -35,7 +35,7 @@ const StakingModal = () => {
   const [step, setStep] = useState<Step>(initialStep);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [amountUSD, setAmount] = useState("");
+  const [amountXION, setAmount] = useState("");
   const [memo, setMemo] = useState("");
 
   const [formError, setFormError] = useState<
@@ -60,12 +60,12 @@ const StakingModal = () => {
 
   const { validator } = modal?.content;
 
-  const amountXion = (() => {
-    const amount = parseFloat(amountUSD);
+  const amountXIONParsed = new BigNumber(amountXION);
 
-    if (Number.isNaN(amount)) return "";
+  const amountUSD = (() => {
+    if (amountXIONParsed.isNaN()) return "";
 
-    return new BigNumber(amount / xionToUSD);
+    return amountXIONParsed.times(xionToUSD);
   })();
 
   const hasErrors = Object.values(formError).some((v) => !!v);
@@ -98,8 +98,8 @@ const StakingModal = () => {
                 </div>
                 <div className="mb-[32px] mt-[32px] flex w-full flex-col items-center justify-center gap-[12px]">
                   <Heading8>Staked Amount</Heading8>
-                  <Heading2>{amountUSD}</Heading2>
-                  <Heading8>24 XION</Heading8>
+                  <Heading2>{amountXION}</Heading2>
+                  <Heading8>$24N</Heading8>
                 </div>
                 {!!memo && (
                   <div className="mb-[32px] text-center italic">
@@ -119,15 +119,21 @@ const StakingModal = () => {
           }
 
           const getHasAmountError = () =>
-            !amountXion ||
+            !amountUSD ||
             !availableTokens ||
-            amountXion.isNaN() ||
-            amountXion.gt(availableTokens);
+            amountXIONParsed.isNaN() ||
+            amountXIONParsed.gt(availableTokens);
 
           const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
             e?.stopPropagation();
+            e?.preventDefault();
 
-            if (!client || !amountXion || hasErrors || getHasAmountError())
+            if (
+              !client ||
+              hasErrors ||
+              getHasAmountError() ||
+              amountXIONParsed.lt(0)
+            )
               return;
 
             setIsLoading(true);
@@ -139,7 +145,7 @@ const StakingModal = () => {
 
             stakeValidatorAction(
               addresses,
-              getXionCoin(amountXion),
+              getXionCoin(amountXIONParsed),
               memo,
               client,
               staking,
@@ -170,18 +176,18 @@ const StakingModal = () => {
 
                   return (
                     <div className="mt-[40px] flex w-full flex-col items-center justify-center gap-[12px] uppercase">
-                      <Heading8>Available for delegation</Heading8>
-                      <Heading2>${formatToSmallDisplay(availableUSD)}</Heading2>
-                      <Heading8>
-                        {formatCoin(getXionCoin(availableTokens), true)}
-                      </Heading8>
+                      <Heading8>Available for delegation (XION)</Heading8>
+                      <Heading2>
+                        {formatToSmallDisplay(availableTokens)}
+                      </Heading2>
+                      <Heading8>${formatToSmallDisplay(availableUSD)}</Heading8>
                     </div>
                   );
                 })()}
               <div className="mt-[40px] flex w-full flex-row justify-between">
                 <div>Amount</div>
-                {!!amountXion && (
-                  <Heading8>={formatToSmallDisplay(amountXion)} XION</Heading8>
+                {!!amountUSD && (
+                  <Heading8>= ${formatToSmallDisplay(amountUSD)}</Heading8>
                 )}
               </div>
               <form onSubmit={onSubmit}>
@@ -204,7 +210,7 @@ const StakingModal = () => {
 
                       setAmount(e.target.value);
                     }}
-                    value={amountUSD}
+                    value={amountXION}
                   />
                   {formError.amount && (
                     <div>

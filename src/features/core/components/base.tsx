@@ -87,12 +87,12 @@ export const InputBox = ({ error, ...props }: InputProps) => (
     <input
       {...props}
       className={[
-        "h-[96px] w-full rounded-[16px] border-[1px] bg-black p-[16px] pl-[52px] text-[48px] focus:outline-none",
+        "h-[96px] w-full rounded-[16px] border-[1px] bg-black p-[16px] pr-[140px] text-[48px] focus:outline-none",
         error ? "border-danger" : "border-white",
       ].join(" ")}
     />
-    <span className="absolute bottom-0 left-[12px] top-0 flex h-full items-center text-[24px] text-[48px]">
-      $
+    <span className="absolute bottom-0 right-[12px] top-0 flex h-full items-center text-[24px] text-[48px] text-typo-300">
+      XION
     </span>
   </span>
 );

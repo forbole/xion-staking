@@ -21,9 +21,9 @@ import { getTotalDelegation } from "../../context/selectors";
 import { getXionCoin } from "../../lib/core/coins";
 import { xionToUSD } from "../../lib/core/constants";
 import type { StakeAddresses } from "../../lib/core/tx";
-import { formatCoin, formatToSmallDisplay } from "../../lib/formatters";
+import { formatToSmallDisplay, formatXionToUSD } from "../../lib/formatters";
 
-type Step = "completed" | "input";
+type Step = "completed" | "input" | "review";
 
 // @TODO
 const initialStep: Step = "input";
@@ -34,7 +34,9 @@ const UnstakingModal = () => {
   const [step, setStep] = useState<Step>(initialStep);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [amountUSD, setAmount] = useState("");
+  const unbondingTimeDays = 21; // @TODO
+
+  const [amountXION, setAmount] = useState("");
   const [memo, setMemo] = useState("");
 
   const { account, staking } = stakingRef;
@@ -54,12 +56,12 @@ const UnstakingModal = () => {
 
   const { validator } = modal?.content;
 
-  const amountXion = (() => {
-    const amount = parseFloat(amountUSD);
+  const amountXIONParsed = new BigNumber(amountXION);
 
-    if (Number.isNaN(amount)) return "";
+  const amountUSD = (() => {
+    if (amountXIONParsed.isNaN()) return "";
 
-    return new BigNumber(amount / xionToUSD);
+    return amountXIONParsed.times(xionToUSD);
   })();
 
   const delegatedTokens = getTotalDelegation(
@@ -69,8 +71,9 @@ const UnstakingModal = () => {
 
   const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e?.stopPropagation();
+    e?.preventDefault();
 
-    if (!client || !amountXion) return;
+    if (!client || !amountXIONParsed.gt(0)) return;
 
     setIsLoading(true);
 
@@ -81,7 +84,7 @@ const UnstakingModal = () => {
 
     unstakeValidatorAction(
       addresses,
-      getXionCoin(amountXion),
+      getXionCoin(amountXIONParsed),
       memo,
       client,
       staking,
@@ -120,15 +123,17 @@ const UnstakingModal = () => {
                     <HeroText>SUCCESS!</HeroText>
                   </div>
                   <div>
-                    You have successfully staked on{" "}
-                    {validator.description.moniker}. Thank you for contributing
-                    in securing the XION network.
+                    You have successfully unstaked from{" "}
+                    {validator.description.moniker}. It takes{" "}
+                    {unbondingTimeDays} days to complete the unstaking process
                   </div>
                 </div>
                 <div className="mb-[32px] mt-[32px] flex w-full flex-col items-center justify-center gap-[12px]">
-                  <Heading8>Staked Amount</Heading8>
-                  <Heading2>{amountUSD}</Heading2>
-                  <Heading8>24 XION</Heading8>
+                  <Heading8>Unstaking Amount (XION)</Heading8>
+                  <Heading2>{formatToSmallDisplay(amountXIONParsed)}</Heading2>
+                  <Heading8>
+                    {formatXionToUSD(getXionCoin(amountXIONParsed))}
+                  </Heading8>
                 </div>
                 {!!memo && (
                   <div className="mb-[32px] text-center italic">
@@ -162,16 +167,20 @@ const UnstakingModal = () => {
 
                   return (
                     <div className="mt-[40px] flex w-full flex-col items-center justify-center gap-[12px] uppercase">
-                      <Heading8>Available for delegation</Heading8>
-                      <Heading2>${formatToSmallDisplay(availableUSD)}</Heading2>
-                      <Heading8>{formatCoin(delegatedTokens, true)}</Heading8>
+                      <Heading8>Available amount (XION)</Heading8>
+                      <Heading2>
+                        {formatToSmallDisplay(
+                          new BigNumber(delegatedTokens.amount),
+                        )}
+                      </Heading2>
+                      <Heading8>${formatToSmallDisplay(availableUSD)}</Heading8>
                     </div>
                   );
                 })()}
               <div className="mt-[40px] flex w-full flex-row justify-between">
                 <div>Amount</div>
-                {!!amountXion && (
-                  <Heading8>={formatToSmallDisplay(amountXion)} XION</Heading8>
+                {!!amountUSD && (
+                  <Heading8>=${formatToSmallDisplay(amountUSD)}</Heading8>
                 )}
               </div>
               <form onSubmit={onSubmit}>
@@ -181,7 +190,7 @@ const UnstakingModal = () => {
                     onChange={(e) => {
                       setAmount(e.target.value);
                     }}
-                    value={amountUSD}
+                    value={amountXION}
                   />
                 </div>
                 <div className="mt-[40px] w-full">

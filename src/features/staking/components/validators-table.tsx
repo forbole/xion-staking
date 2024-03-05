@@ -1,10 +1,10 @@
 "use client";
 
 import BigNumber from "bignumber.js";
-import type { PropsWithChildren } from "react";
 import { useState } from "react";
 
 import { ButtonPill, NavLink } from "@/features/core/components/base";
+import { HeaderTitleBase } from "@/features/core/components/table";
 
 import { useStaking } from "../context/hooks";
 import { setModalOpened } from "../context/reducer";
@@ -15,7 +15,6 @@ import {
 import type { StakingContextType, StakingState } from "../context/state";
 import { useValidatorLogo } from "../hooks";
 import { getXionCoinFromUXion } from "../lib/core/coins";
-import { chevron } from "../lib/core/icons";
 import {
   formatCoin,
   formatCommission,
@@ -113,50 +112,6 @@ const ValidatorRow = ({
   );
 };
 
-type Props = PropsWithChildren & {
-  onSort?: (method: SortMethod) => void;
-  sort: SortMethod;
-  sorting?: [string, string];
-};
-
-const HeaderTitle = ({ children, onSort, sort, sorting }: Props) => {
-  const sortingOrder = ((sorting || []) as string[]).concat(["none"]);
-  const sortingIndex = sortingOrder.indexOf(sort);
-
-  return (
-    <div className="text-[14px] font-normal leading-[14px] tracking-wider">
-      <span className="relative">
-        {children}{" "}
-        {!!onSort && (
-          <button
-            className="absolute right-[-16px] top-[6px] cursor-pointer"
-            dangerouslySetInnerHTML={{ __html: chevron }}
-            onClick={() => {
-              if (!onSort) return;
-
-              const nextIndex =
-                (1 + sortingOrder.indexOf(sort)) % sortingOrder.length;
-
-              const nextSorting = sortingOrder[nextIndex];
-
-              onSort?.(nextSorting as SortMethod);
-            }}
-            style={{
-              rotate: (() => {
-                if (sortingIndex === 0) {
-                  return "180deg";
-                }
-
-                return sortingIndex === 1 ? "0deg" : "90deg";
-              })(),
-            }}
-          />
-        )}
-      </span>
-    </div>
-  );
-};
-
 type SortMethod =
   | "commission-asc"
   | "commission-desc"
@@ -167,6 +122,8 @@ type SortMethod =
   | "staked-desc"
   | "voting-power-asc"
   | "voting-power-desc";
+
+const HeaderTitle = HeaderTitleBase<SortMethod>;
 
 const ValidatorsTable = () => {
   const { staking } = useStaking();

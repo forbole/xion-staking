@@ -20,16 +20,19 @@ export const getTotalDelegation = (
   return sumAllCoins(delegationCoins);
 };
 
-// @TODO: Should this be included in the delegation total or displayed sepparately?
-// eslint-disable-next-line
-const getTotalUnbonding = (state: StakingState) => {
+export const getTotalUnbonding = (
+  state: StakingState,
+  validatorAddress: null | string,
+) => {
   const { unbondings } = state;
 
   if (!unbondings?.items.length) {
     return null;
   }
 
-  const unbondingCoins = unbondings.items.map((d) => d.balance);
+  const unbondingCoins = unbondings.items
+    .filter((d) => !validatorAddress || d.validator === validatorAddress)
+    .map((d) => d.balance);
 
   return sumAllCoins(unbondingCoins);
 };

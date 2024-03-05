@@ -30,10 +30,19 @@ export const getEmptyXionCoin = () =>
 export const getXionCoin = (bn: BigNumber) =>
   ({ amount: bn.toString(), denom: "XION" }) satisfies Coin;
 
+export const coinIsPositive = (coin: Coin | null) =>
+  coin && new BigNumber(coin.amount).gt(0);
+
 export const getXionCoinFromUXion = (bn: BigNumber) =>
   ({
     amount: bn.div(new BigNumber(10).pow(6)).toString(),
     denom: "XION",
+  }) satisfies Coin;
+
+export const getUXionCoinFromXion = (bn: BigNumber) =>
+  ({
+    amount: bn.times(new BigNumber(10).pow(6)).toString(),
+    denom: "UXION",
   }) satisfies Coin;
 
 export const sumAllCoins = (coins: Coin[]) =>

@@ -19,14 +19,16 @@ import {
   getValidatorDetailsAction,
 } from "../context/actions";
 import { useStaking } from "../context/hooks";
-import { setIsLoadingBlocking, setModalOpened } from "../context/reducer";
+import { setIsLoadingBlocking } from "../context/reducer";
 import {
   getTokensAvailableBG,
   getTotalDelegation,
   getTotalRewards,
+  getTotalUnbonding,
 } from "../context/selectors";
 import { getXionCoin } from "../lib/core/coins";
 import { formatToSmallDisplay, formatXionToUSD } from "../lib/formatters";
+import DelegationDetails, { getCanShowDetails } from "./delegation-details";
 import { DivisorVertical } from "./divisor";
 
 export default function ValidatorDelegation() {
@@ -34,6 +36,7 @@ export default function ValidatorDelegation() {
   const address = searchParams.get("address");
   const stakingRef = useStaking();
   const [, setShowAbstraxion] = useModal();
+  const [isShowingDetails, setIsShowingDetails] = useState(false);
 
   const { isConnected, staking } = stakingRef;
 
@@ -69,15 +72,14 @@ export default function ValidatorDelegation() {
     null,
   );
 
-  const userDelegationToValidator = getTotalDelegation(
-    stakingRef.staking.state,
-    validatorDetails.operatorAddress,
-  );
+  const userTotalUnbondings = getTotalUnbonding(stakingRef.staking.state, null);
 
   const totalRewards = getTotalRewards(
     validatorDetails.operatorAddress,
     stakingRef.staking.state,
   );
+
+  const canShowDetail = getCanShowDetails(stakingRef.staking.state);
 
   const content = !isConnected ? (
     <div className="flex h-[220px] flex-col items-center justify-center gap-[32px] rounded-[24px] bg-bg-600 uppercase">
@@ -141,8 +143,8 @@ export default function ValidatorDelegation() {
           <DivisorVertical />
         </div>
       </div>
-      <div className="col-span-2 flex flex-row gap-[16px]">
-        <div>
+      <div className="flex flex-row gap-[16px]">
+        <div className="relative w-full">
           <Heading8>Available For Delegation (XION)</Heading8>
           <div className="mb-[8px] mt-[12px]">
             <Heading2>
@@ -156,43 +158,26 @@ export default function ValidatorDelegation() {
               ? formatXionToUSD(getXionCoin(availableToStakeBN))
               : "-"}
           </Heading8>
+          <div className="absolute bottom-0 right-[20px] top-0">
+            <DivisorVertical />
+          </div>
         </div>
-        <div className="flex h-full flex-1 flex-row items-end gap-[16px]">
-          <Button
-            className="flex-1"
-            disabled={!stakingRef.isConnected || isLoadingBlocking}
-            onClick={() => {
-              staking.dispatch(
-                setModalOpened({
-                  content: { validator: validatorDetails },
-                  type: "delegate",
-                }),
-              );
-            }}
-            variant="success"
-          >
-            Delegate
-          </Button>
-          <Button
-            className="flex-1"
-            disabled={
-              isLoadingBlocking ||
-              !stakingRef.isConnected ||
-              !userDelegationToValidator ||
-              userDelegationToValidator?.amount === "0"
-            }
-            onClick={() => {
-              staking.dispatch(
-                setModalOpened({
-                  content: { validator: validatorDetails },
-                  type: "undelegate",
-                }),
-              );
-            }}
-            variant="danger"
-          >
-            Unstake
-          </Button>
+      </div>
+      <div className="flex flex-row gap-[16px]">
+        <div>
+          <Heading8>Unstakings (XION)</Heading8>
+          <div className="mb-[8px] mt-[12px]">
+            <Heading2>
+              {userTotalUnbondings
+                ? formatToSmallDisplay(
+                    new BigNumber(userTotalUnbondings.amount),
+                  )
+                : "-"}
+            </Heading2>
+          </div>
+          <Heading8>
+            {userTotalUnbondings ? formatXionToUSD(userTotalUnbondings) : "-"}
+          </Heading8>
         </div>
       </div>
     </div>
@@ -200,10 +185,20 @@ export default function ValidatorDelegation() {
 
   return (
     <>
-      <div className="mb-[24px] mt-[32px]">
+      <div className="mb-[24px] mt-[32px] flex flex-row items-center justify-between">
         <Title>My Delegations</Title>
+        {canShowDetail && (
+          <button
+            onClick={() => {
+              setIsShowingDetails(!isShowingDetails);
+            }}
+          >
+            {isShowingDetails ? "Hide details" : "Show details"}
+          </button>
+        )}
       </div>
       {content}
+      {canShowDetail && isShowingDetails && <DelegationDetails />}
     </>
   );
 }

@@ -13,8 +13,27 @@ import {
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 
 import type { AbstraxionSigningClient } from "./client";
-import { normaliseCoin } from "./coins";
+import { getUXionCoinFromXion, normaliseCoin } from "./coins";
 import { getCosmosFee } from "./fee";
+
+const getTxCoin = (coin: Coin) => ({
+  amount: coin.amount,
+  denom: ["UXION", "XION"].includes(coin.denom.toUpperCase())
+    ? coin.denom.toLowerCase() // Transactions expect lower case
+    : coin.denom,
+});
+
+const getUxionAmount = (coin: Coin) => {
+  if (coin.denom.toUpperCase() === "UXION") {
+    return getTxCoin(coin);
+  }
+
+  if (coin.denom.toUpperCase() === "XION") {
+    return getTxCoin(getUXionCoinFromXion(new BigNumber(coin.amount)));
+  }
+
+  throw new Error("Invalid coin denom");
+};
 
 const getTxVerifier = (eventType: string) => (result: DeliverTxResponse) => {
   // @TODO
@@ -44,20 +63,13 @@ export type StakeAddresses = {
 export const stakeAmount = async (
   addresses: StakeAddresses,
   client: NonNullable<AbstraxionSigningClient>,
-  amount: Coin,
+  initialAmount: Coin,
   memo: string,
 ) => {
-  const uxionAmount = new BigNumber(normaliseCoin(amount).amount)
-    .times(new BigNumber(10).pow(6))
-    .toString();
-
-  const uxionCoin = {
-    amount: uxionAmount,
-    denom: "uxion",
-  };
+  const amount = getUxionAmount(initialAmount);
 
   const msg = MsgDelegate.fromPartial({
-    amount: uxionCoin,
+    amount,
     delegatorAddress: addresses.delegator,
     validatorAddress: addresses.validator,
   });
@@ -82,9 +94,11 @@ export const stakeAmount = async (
 export const unstakeAmount = async (
   addresses: StakeAddresses,
   client: NonNullable<AbstraxionSigningClient>,
-  amount: Coin,
+  initialAmount: Coin,
   memo: string,
 ) => {
+  const amount = getUxionAmount(initialAmount);
+
   const msg = MsgUndelegate.fromPartial({
     amount,
     delegatorAddress: addresses.delegator,
