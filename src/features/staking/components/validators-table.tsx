@@ -126,7 +126,7 @@ type SortMethod =
 const HeaderTitle = HeaderTitleBase<SortMethod>;
 
 const ValidatorsTable = () => {
-  const { staking } = useStaking();
+  const { isConnected, staking } = useStaking();
   const [sortMethod, setSortMethod] = useState<SortMethod>("none");
 
   const { validators } = staking.state;
@@ -219,6 +219,7 @@ const ValidatorsTable = () => {
       </div>
       {sortedItems.map((validator) => (
         <ValidatorRow
+          disabled={!isConnected}
           key={validator.operatorAddress}
           onStake={() => {
             staking.dispatch(

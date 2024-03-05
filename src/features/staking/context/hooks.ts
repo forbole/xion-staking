@@ -1,10 +1,15 @@
-import { useAbstraxionAccount } from "@burnt-labs/abstraxion";
+import {
+  useAbstraxionAccount,
+  useAbstraxionSigningClient,
+} from "@burnt-labs/abstraxion";
 import { useContext, useEffect, useRef } from "react";
 
 import { fetchStakingDataAction, fetchUserDataAction } from "./actions";
 import { logout } from "./reducer";
 import { StakingContext } from "./state";
 import type { StakingContextType } from "./state";
+
+let cachedClient: ReturnType<typeof useAbstraxionSigningClient>["client"];
 
 export const useStaking = () => {
   const stakingRef = useRef<StakingContextType>({} as StakingContextType);
@@ -23,13 +28,18 @@ export const useStaking = () => {
   return {
     account,
     address,
+    client: isConnected ? cachedClient : undefined,
     isConnected,
     staking: stakingRef.current,
   };
 };
 
 export const useStakingSync = () => {
+  const { client } = useAbstraxionSigningClient();
+
   const { address, isConnected, staking } = useStaking();
+
+  cachedClient = isConnected ? client : undefined;
 
   useEffect(() => {
     fetchStakingDataAction(staking);

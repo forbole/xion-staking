@@ -7,6 +7,9 @@ import { toast } from "react-toastify";
 
 import { clipboard } from "@/features/staking/lib/core/icons";
 
+import { useCore } from "../context/hooks";
+import { setPopupOpenId } from "../context/reducer";
+
 type TypographyProps = PropsWithChildren & {
   className?: string;
 };
@@ -41,10 +44,7 @@ type NavLinkProps = {
 };
 
 export const NavLink = ({ children, href }: NavLinkProps) => (
-  <Link
-    className="text-left font-[14px] font-normal leading-[24px] underline"
-    href={href}
-  >
+  <Link className="text-left font-normal leading-[24px] underline" href={href}>
     {children}
   </Link>
 );
@@ -58,7 +58,7 @@ export const ButtonPill = ({ className, ...props }: ButtonPillProps) => (
   <button
     {...props}
     className={[
-      "cursor-pointer rounded-full bg-bg-550 px-[8px] py-[4px] text-white hover:bg-bg-600 disabled:cursor-not-allowed disabled:bg-bg-400 disabled:text-typo-150",
+      "cursor-pointer rounded-full bg-bg-550 px-[8px] py-[4px] text-white hover:bg-bg-600 disabled:cursor-not-allowed disabled:bg-bg-600 disabled:text-typo-150",
       className,
     ].join(" ")}
   />
@@ -94,7 +94,7 @@ export const InputBox = ({ error, ...props }: InputProps) => (
         error ? "border-danger" : "border-white",
       ].join(" ")}
     />
-    <span className="absolute bottom-0 right-[12px] top-0 flex h-full items-center text-[24px] text-[48px] text-typo-300">
+    <span className="absolute bottom-0 right-[12px] top-0 flex h-full items-center  text-[48px] text-typo-300">
       XION
     </span>
   </span>
@@ -149,58 +149,56 @@ type FloatingDropdownProps = {
   children: ReactNode;
   className?: string;
   id: string;
-  isOpen: boolean;
   modalClass?: string;
   offset?: number;
   placement?: "bottom-end" | "bottom-start" | "bottom" | "right" | "top";
-  setIsOpen: (isOpen: boolean) => void;
   Trigger: FC<{ id?: string }>;
 };
 
-// @TODO: Implement for settings
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const FloatingDropdown = ({
+export const FloatingDropdown = ({
   children,
   className,
   id,
-  isOpen,
   modalClass,
   offset,
   placement,
-  setIsOpen,
   Trigger,
 }: FloatingDropdownProps) => {
   const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null);
+  const { core } = useCore();
+  const isOpen = core.state.popupOpenId === id;
 
   return (
     <div className={[className].join(" ")}>
       <button
         onClick={(e) => {
           e.stopPropagation();
-          setIsOpen?.(!isOpen);
+          core.dispatch(setPopupOpenId(id));
         }}
         ref={setAnchor}
       >
         <Trigger id={id} />
       </button>
-      <ClickAwayListener
-        onClickAway={() => {
-          if (isOpen) {
-            setIsOpen?.(false);
-          }
-        }}
-      >
-        <BasePopup
-          anchor={anchor}
-          className={[modalClass].join(" ")}
-          offset={offset}
-          open={isOpen}
-          placement={placement}
-          withTransition
+      {isOpen && (
+        <ClickAwayListener
+          onClickAway={() => {
+            if (isOpen) {
+              core.dispatch(setPopupOpenId(null));
+            }
+          }}
         >
-          {children}
-        </BasePopup>
-      </ClickAwayListener>
+          <BasePopup
+            anchor={anchor}
+            className={[modalClass].join(" ")}
+            offset={offset}
+            open={isOpen}
+            placement={placement}
+            withTransition
+          >
+            {children}
+          </BasePopup>
+        </ClickAwayListener>
+      )}
     </div>
   );
 };

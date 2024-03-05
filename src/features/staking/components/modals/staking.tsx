@@ -1,4 +1,3 @@
-import { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
 import BigNumber from "bignumber.js";
 import type { FormEventHandler } from "react";
 import { useEffect, useState } from "react";
@@ -31,7 +30,7 @@ const initialStep: Step = "input";
 
 const StakingModal = () => {
   const stakingRef = useStaking();
-  const { client } = useAbstraxionSigningClient();
+  const { client } = stakingRef;
   const [step, setStep] = useState<Step>(initialStep);
   const [isLoading, setIsLoading] = useState(false);
 

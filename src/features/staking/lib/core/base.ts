@@ -26,24 +26,24 @@ export const getValidatorsList = async () => {
   return validatorsRequest;
 };
 
-let validatorDetailsRequest: [string, Promise<Validator>] | null = null;
+const validatorDetailsRequests: {
+  [id: string]: Promise<Validator> | undefined;
+} = {};
 
 export const getValidatorDetails = async (address: string) => {
-  if (validatorDetailsRequest?.[0] === address) {
-    return validatorDetailsRequest[1];
-  }
+  const existingRequest = validatorDetailsRequests[address];
+
+  if (existingRequest) return existingRequest;
 
   const queryClient = await getStakingQueryClient();
 
   const promise = queryClient.staking.validator(address).then((resp) => {
-    if (validatorDetailsRequest?.[0] === address) {
-      validatorDetailsRequest = null;
-    }
+    validatorDetailsRequests[address] = undefined;
 
     return resp.validator;
   });
 
-  validatorDetailsRequest = [address, promise];
+  validatorDetailsRequests[address] = promise;
 
   return promise;
 };

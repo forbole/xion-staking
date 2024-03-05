@@ -7,6 +7,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import BaseWrapper from "@/features/core/components/base-wrapper";
+import { CoreProvider } from "@/features/core/context/provider";
 import { StakingProvider } from "@/features/staking/context/provider";
 import {
   dashboardUrl,
@@ -31,9 +32,11 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AbstraxionProvider config={abstraxionConfig}>
-          <StakingProvider>
-            <BaseWrapper>{children}</BaseWrapper>
-          </StakingProvider>
+          <CoreProvider>
+            <StakingProvider>
+              <BaseWrapper>{children}</BaseWrapper>
+            </StakingProvider>
+          </CoreProvider>
         </AbstraxionProvider>
         <ToastContainer closeOnClick />
       </body>

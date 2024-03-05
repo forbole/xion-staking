@@ -35,8 +35,8 @@ type ModalContent = {
 
 export type StakingState = {
   delegations: Paginated<Delegation>;
+  extraValidators: Record<string, undefined | Validator>;
   isInfoLoading: boolean;
-  isLoadingBlocking: boolean;
   modal: ModalContent | null;
   pool: null | Pool;
   tokens: Coin | null;
@@ -52,8 +52,8 @@ export type StakingContextType = {
 
 export const defaultState: StakingState = {
   delegations: null,
+  extraValidators: {},
   isInfoLoading: false,
-  isLoadingBlocking: false,
   modal: null,
   pool: null,
   tokens: null,

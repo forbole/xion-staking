@@ -21,12 +21,12 @@ export type StakingAction =
       type: "LOGOUT";
     }
   | {
-      content: StakingState["isInfoLoading"];
-      type: "SET_IS_INFO_LOADING";
+      content: StakingState["extraValidators"];
+      type: "SET_EXTRA_VALIDATORS";
     }
   | {
-      content: StakingState["isLoadingBlocking"];
-      type: "SET_IS_LOADING_BLOCKING";
+      content: StakingState["isInfoLoading"];
+      type: "SET_IS_INFO_LOADING";
     }
   | {
       content: StakingState["modal"];
@@ -113,6 +113,13 @@ export const setModalOpened = (
   type: "SET_MODAL",
 });
 
+export const setExtraValidators = (
+  content: Content<"SET_EXTRA_VALIDATORS">,
+): StakingAction => ({
+  content,
+  type: "SET_EXTRA_VALIDATORS",
+});
+
 // Used for pagination
 const getUniqueValidators = (
   validators: NonNullable<StakingState["validators"]>["items"],
@@ -163,13 +170,6 @@ const getUniqueUnbondings = (
     return true;
   });
 };
-
-export const setIsLoadingBlocking = (
-  content: Content<"SET_IS_LOADING_BLOCKING">,
-): StakingAction => ({
-  content,
-  type: "SET_IS_LOADING_BLOCKING",
-});
 
 export const reducer = (state: StakingState, action: StakingAction) => {
   switch (action.type) {
@@ -273,10 +273,10 @@ export const reducer = (state: StakingState, action: StakingAction) => {
       };
     }
 
-    case "SET_IS_LOADING_BLOCKING": {
+    case "SET_EXTRA_VALIDATORS": {
       return {
         ...state,
-        isLoadingBlocking: action.content,
+        extraValidators: action.content,
       };
     }
 

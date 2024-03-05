@@ -1,6 +1,6 @@
 "use client";
 
-import { useAbstraxionSigningClient, useModal } from "@burnt-labs/abstraxion";
+import { useModal } from "@burnt-labs/abstraxion";
 import BigNumber from "bignumber.js";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -13,13 +13,14 @@ import {
   HeroText,
   Title,
 } from "@/features/core/components/base";
+import { useCore } from "@/features/core/context/hooks";
+import { setIsLoadingBlocking } from "@/features/core/context/reducer";
 
 import {
   claimRewardsAction,
   getValidatorDetailsAction,
 } from "../context/actions";
 import { useStaking } from "../context/hooks";
-import { setIsLoadingBlocking } from "../context/reducer";
 import {
   getTokensAvailableBG,
   getTotalDelegation,
@@ -38,18 +39,19 @@ export default function ValidatorDelegation() {
   const searchParams = useSearchParams();
   const address = searchParams.get("address");
   const stakingRef = useStaking();
+  const { core } = useCore();
   const [, setShowAbstraxion] = useModal();
   const [isShowingDetails, setIsShowingDetails] = useState(false);
 
   const { isConnected, staking } = stakingRef;
 
-  const { isLoadingBlocking } = staking.state;
+  const { isLoadingBlocking } = core.state;
 
   const [validatorDetails, setValidatorDetails] = useState<Awaited<
     ReturnType<typeof getValidatorDetailsAction>
   > | null>(null);
 
-  const { client } = useAbstraxionSigningClient();
+  const { client } = stakingRef;
 
   useEffect(() => {
     (async () => {
@@ -113,14 +115,14 @@ export default function ValidatorDelegation() {
                   validator: validatorDetails.operatorAddress,
                 };
 
-                staking.dispatch(setIsLoadingBlocking(true));
+                core.dispatch(setIsLoadingBlocking(true));
 
                 claimRewardsAction(
                   addresses,
                   client,
                   stakingRef.staking,
                 ).finally(() => {
-                  staking.dispatch(setIsLoadingBlocking(false));
+                  core.dispatch(setIsLoadingBlocking(false));
                 });
               }}
             >

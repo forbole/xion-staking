@@ -1,8 +1,17 @@
-import { memo, useState } from "react";
+import type { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
+import type { Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
+import { memo, useEffect, useState } from "react";
 
-import { ButtonPill } from "@/features/core/components/base";
+import { ButtonPill, FloatingDropdown } from "@/features/core/components/base";
 import { HeaderTitleBase } from "@/features/core/components/table";
+import { useCore } from "@/features/core/context/hooks";
+import { setIsLoadingBlocking } from "@/features/core/context/reducer";
+import type { CoreContextType } from "@/features/core/context/state";
 
+import {
+  claimRewardsAction,
+  getAndSetValidatorAction,
+} from "../context/actions";
 import { useStaking } from "../context/hooks";
 import { setModalOpened } from "../context/reducer";
 import { getTotalDelegation, getTotalUnbonding } from "../context/selectors";
@@ -63,20 +72,42 @@ const rowStyle =
 const wrapperStyle =
   "w-full overflow-hidden rounded-[24px] bg-bg-600 pb-4 text-typo-100 px-[16px]";
 
+const Menu = () => <span>. . .</span>;
+
 type DelegationRowProps = {
+  accountAddress: string;
+  client: ReturnType<typeof useAbstraxionSigningClient>["client"];
+  core: CoreContextType;
   delegation: NonNullable<StakingState["delegations"]>["items"][number];
   disabled?: boolean;
+  index: number;
   staking: StakingContextType;
 };
 
-const DelegationRow = ({
+const DelegationRowBase = ({
+  accountAddress,
+  client,
+  core,
   delegation,
   disabled,
+  index,
   staking,
 }: DelegationRowProps) => {
-  const validator = (staking.state.validators?.items || []).find(
-    (v) => v.operatorAddress === delegation.validatorAddress,
-  );
+  const [validator, setValidator] = useState<null | Validator>(null);
+  const { validatorAddress } = delegation;
+
+  useEffect(() => {
+    (async () => {
+      if (validatorAddress) {
+        const newValidator = await getAndSetValidatorAction(
+          validatorAddress,
+          staking,
+        );
+
+        setValidator(newValidator);
+      }
+    })();
+  }, [validatorAddress, staking]);
 
   const logo = useValidatorLogo(validator?.description.identity);
 
@@ -109,7 +140,7 @@ const DelegationRow = ({
       <div className="text-right">
         <TokenColors text={formatCoin(delegation.rewards)} />
       </div>
-      <div>
+      <div className="flex flex-row items-center justify-start gap-[8px]">
         <ButtonPill
           disabled={disabled}
           onClick={() => {
@@ -125,25 +156,50 @@ const DelegationRow = ({
         >
           Delegate
         </ButtonPill>
-        <ButtonPill
-          disabled={disabled}
-          onClick={() => {
-            if (!validator) return;
+        <FloatingDropdown Trigger={Menu} id={`delegation-${index}`}>
+          <div className="flex flex-col gap-[12px] bg-black">
+            <ButtonPill
+              disabled={disabled}
+              onClick={() => {
+                if (!client) return;
 
-            staking.dispatch(
-              setModalOpened({
-                content: { validator },
-                type: "undelegate",
-              }),
-            );
-          }}
-        >
-          Undelegate
-        </ButtonPill>
+                const addresses = {
+                  delegator: accountAddress,
+                  validator: delegation.validatorAddress,
+                };
+
+                core.dispatch(setIsLoadingBlocking(true));
+
+                claimRewardsAction(addresses, client, staking).finally(() => {
+                  core.dispatch(setIsLoadingBlocking(false));
+                });
+              }}
+            >
+              Claim rewards
+            </ButtonPill>
+            <ButtonPill
+              disabled={disabled}
+              onClick={() => {
+                if (!validator) return;
+
+                staking.dispatch(
+                  setModalOpened({
+                    content: { validator },
+                    type: "undelegate",
+                  }),
+                );
+              }}
+            >
+              Undelegate
+            </ButtonPill>
+          </div>
+        </FloatingDropdown>
       </div>
     </div>
   );
 };
+
+const DelegationRow = memo(DelegationRowBase);
 
 type UnbondingRowProps = {
   disabled?: boolean;
@@ -206,8 +262,9 @@ const headerStyle =
 
 const DelegationDetails = () => {
   const stakingRef = useStaking();
+  const { core } = useCore();
 
-  const { staking } = stakingRef;
+  const { client, staking } = stakingRef;
 
   const [delegationsSortMethod, setDelegationsSortMethod] =
     useState<SortMethod>("none");
@@ -259,7 +316,11 @@ const DelegationDetails = () => {
               </div>
               {sortedDelegations.map((delegation, index) => (
                 <DelegationRow
+                  accountAddress={stakingRef.account.bech32Address}
+                  client={client}
+                  core={core}
                   delegation={delegation}
+                  index={index}
                   key={index}
                   staking={staking}
                 />

@@ -16,6 +16,7 @@ import { claimRewards, stakeAmount, unstakeAmount } from "../lib/core/tx";
 import {
   addDelegations,
   addUnbondings,
+  setExtraValidators,
   setIsInfoLoading,
   setPool,
   setTokens,
@@ -177,9 +178,38 @@ export const getValidatorDetailsAction = async (
     return staking.state.validatorDetails;
   }
 
-  const details = await getValidatorDetails(validatorAddress);
+  const details =
+    staking.state.validators?.items.find(
+      (v) => v.operatorAddress === validatorAddress,
+    ) || (await getValidatorDetails(validatorAddress));
 
   staking.dispatch(setValidatorDetails(details));
 
   return details;
+};
+
+export const getAndSetValidatorAction = async (
+  validatorAddress: string,
+  staking: StakingContextType,
+) => {
+  const details =
+    staking.state.extraValidators[validatorAddress] ||
+    staking.state.validators?.items.find(
+      (v) => v.operatorAddress === validatorAddress,
+    );
+
+  if (details) {
+    return details;
+  }
+
+  const newDetails = await getValidatorDetails(validatorAddress);
+
+  staking.dispatch(
+    setExtraValidators({
+      [validatorAddress]: newDetails,
+      ...staking.state.extraValidators,
+    }),
+  );
+
+  return newDetails;
 };
