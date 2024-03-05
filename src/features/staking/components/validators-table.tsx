@@ -1,7 +1,7 @@
 "use client";
 
 import BigNumber from "bignumber.js";
-import { useState } from "react";
+import { memo, useState } from "react";
 
 import { ButtonPill, NavLink } from "@/features/core/components/base";
 import { HeaderTitleBase } from "@/features/core/components/table";
@@ -236,4 +236,4 @@ const ValidatorsTable = () => {
   );
 };
 
-export default ValidatorsTable;
+export default memo(ValidatorsTable);

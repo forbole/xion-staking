@@ -1,5 +1,8 @@
+import { ClickAwayListener } from "@mui/base/ClickAwayListener";
+import { Unstable_Popup as BasePopup } from "@mui/base/Unstable_Popup";
 import Link from "next/link";
-import type { PropsWithChildren } from "react";
+import type { FC, PropsWithChildren, ReactNode } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 
 import { clipboard } from "@/features/staking/lib/core/icons";
@@ -139,5 +142,65 @@ export const Button = ({ className, variant, ...props }: ButtonProps) => {
         className || "",
       ].join(" ")}
     />
+  );
+};
+
+type FloatingDropdownProps = {
+  children: ReactNode;
+  className?: string;
+  id: string;
+  isOpen: boolean;
+  modalClass?: string;
+  offset?: number;
+  placement?: "bottom-end" | "bottom-start" | "bottom" | "right" | "top";
+  setIsOpen: (isOpen: boolean) => void;
+  Trigger: FC<{ id?: string }>;
+};
+
+// @TODO: Implement for settings
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const FloatingDropdown = ({
+  children,
+  className,
+  id,
+  isOpen,
+  modalClass,
+  offset,
+  placement,
+  setIsOpen,
+  Trigger,
+}: FloatingDropdownProps) => {
+  const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null);
+
+  return (
+    <div className={[className].join(" ")}>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsOpen?.(!isOpen);
+        }}
+        ref={setAnchor}
+      >
+        <Trigger id={id} />
+      </button>
+      <ClickAwayListener
+        onClickAway={() => {
+          if (isOpen) {
+            setIsOpen?.(false);
+          }
+        }}
+      >
+        <BasePopup
+          anchor={anchor}
+          className={[modalClass].join(" ")}
+          offset={offset}
+          open={isOpen}
+          placement={placement}
+          withTransition
+        >
+          {children}
+        </BasePopup>
+      </ClickAwayListener>
+    </div>
   );
 };

@@ -9,7 +9,12 @@ import { getTotalDelegation, getTotalUnbonding } from "../context/selectors";
 import type { StakingContextType, StakingState } from "../context/state";
 import { useValidatorLogo } from "../hooks";
 import { coinIsPositive } from "../lib/core/coins";
-import { formatCoin, formatCommission } from "../lib/formatters";
+import { pointer } from "../lib/core/icons";
+import {
+  formatCoin,
+  formatCommission,
+  formatUnbondingCompletionTime,
+} from "../lib/formatters";
 import AddressShort from "./address-short";
 import TokenColors from "./token-colors";
 
@@ -22,10 +27,41 @@ export const getCanShowDetails = (state: StakingState) => {
   );
 };
 
+type Props = {
+  isShowingDetails: boolean;
+  setIsShowingDetails: (isShowingDetails: boolean) => void;
+};
+
+export const DetailsTrigger = ({
+  isShowingDetails,
+  setIsShowingDetails,
+}: Props) => (
+  <button
+    className="text-primary-500 flex flex-row items-center gap-2"
+    onClick={() => {
+      setIsShowingDetails(!isShowingDetails);
+    }}
+  >
+    {isShowingDetails ? "Hide details" : "Show details"}
+    <div
+      dangerouslySetInnerHTML={{ __html: pointer }}
+      style={{
+        transform: `rotate(${isShowingDetails ? "0deg" : "180deg"})`,
+      }}
+    />
+  </button>
+);
+
 const gridStyle = {
   gap: "16px",
   gridTemplateColumns: "60px 1.5fr repeat(4, 1fr)",
 };
+
+const rowStyle =
+  "grid w-full items-center justify-between gap-2 p-2 mb-[24px] last:mb-[0px] bg-black rounded-[8px]";
+
+const wrapperStyle =
+  "w-full overflow-hidden rounded-[24px] bg-bg-600 pb-4 text-typo-100 px-[16px]";
 
 type DelegationRowProps = {
   delegation: NonNullable<StakingState["delegations"]>["items"][number];
@@ -45,75 +81,66 @@ const DelegationRow = ({
   const logo = useValidatorLogo(validator?.description.identity);
 
   return (
-    <div className="flex w-full flex-col items-center justify-between gap-2">
-      <div
-        className="grid w-full items-center justify-between gap-2 p-4"
-        style={gridStyle}
-      >
-        <div className="flex items-center justify-start">
-          <img
-            alt="Validator logo"
-            className="block w-[50px] rounded-full"
-            src={logo}
-            style={{ height: 50, width: 50 }}
-          />
-        </div>
-        <div className="flex flex-1 flex-row justify-start gap-4">
-          <div className="flex flex-col justify-start gap-2 text-left">
-            <div className="text-[14px] font-bold leading-[20px]">
-              {validator?.description.moniker || ""}
-            </div>
-            <AddressShort address={validator?.operatorAddress || ""} />
+    <div className={rowStyle} style={gridStyle}>
+      <div className="flex items-center justify-start">
+        <img
+          alt="Validator logo"
+          className="block w-[50px] rounded-full"
+          src={logo}
+          style={{ height: 50, width: 50 }}
+        />
+      </div>
+      <div className="flex flex-1 flex-row justify-start gap-4">
+        <div className="flex flex-col justify-start gap-2 text-left">
+          <div className="text-[14px] font-bold leading-[20px]">
+            {validator?.description.moniker || ""}
           </div>
-        </div>
-        <div className="text-right">
-          <TokenColors text={formatCoin(delegation.balance)} />
-        </div>
-        <div className="text-right">
-          {validator
-            ? formatCommission(validator.commission.commissionRates.rate, 0)
-            : ""}
-        </div>
-        <div className="text-right">
-          <TokenColors text={formatCoin(delegation.rewards)} />
-        </div>
-        <div>
-          <ButtonPill
-            disabled={disabled}
-            onClick={() => {
-              if (!validator) return;
-
-              staking.dispatch(
-                setModalOpened({
-                  content: { validator },
-                  type: "delegate",
-                }),
-              );
-            }}
-          >
-            Delegate
-          </ButtonPill>
-          <ButtonPill
-            disabled={disabled}
-            onClick={() => {
-              if (!validator) return;
-
-              staking.dispatch(
-                setModalOpened({
-                  content: { validator },
-                  type: "undelegate",
-                }),
-              );
-            }}
-          >
-            Undelegate (tmp)
-          </ButtonPill>
+          <AddressShort address={validator?.operatorAddress || ""} />
         </div>
       </div>
-      <div
-        className="box-content h-[1px] bg-bg-500"
-        style={{ width: "calc(100% - 48px)" }}
-      />
+      <div className="text-right">
+        <TokenColors text={formatCoin(delegation.balance)} />
+      </div>
+      <div className="text-right">
+        {validator
+          ? formatCommission(validator.commission.commissionRates.rate, 0)
+          : ""}
+      </div>
+      <div className="text-right">
+        <TokenColors text={formatCoin(delegation.rewards)} />
+      </div>
+      <div>
+        <ButtonPill
+          disabled={disabled}
+          onClick={() => {
+            if (!validator) return;
+
+            staking.dispatch(
+              setModalOpened({
+                content: { validator },
+                type: "delegate",
+              }),
+            );
+          }}
+        >
+          Delegate
+        </ButtonPill>
+        <ButtonPill
+          disabled={disabled}
+          onClick={() => {
+            if (!validator) return;
+
+            staking.dispatch(
+              setModalOpened({
+                content: { validator },
+                type: "undelegate",
+              }),
+            );
+          }}
+        >
+          Undelegate
+        </ButtonPill>
+      </div>
     </div>
   );
 };
@@ -132,49 +159,40 @@ const UnbondingRow = ({ disabled, staking, unbonding }: UnbondingRowProps) => {
   const logo = useValidatorLogo(validator?.description.identity);
 
   return (
-    <div className="flex w-full flex-col items-center justify-between gap-2">
-      <div
-        className="grid w-full items-center justify-between gap-2 p-4"
-        style={gridStyle}
-      >
-        <div className="flex items-center justify-start">
-          <img
-            alt="Validator logo"
-            className="block w-[50px] rounded-full"
-            src={logo}
-            style={{ height: 50, width: 50 }}
-          />
-        </div>
-        <div className="flex flex-1 flex-row justify-start gap-4">
-          <div className="flex flex-col justify-start gap-2 text-left">
-            <div className="text-[14px] font-bold leading-[20px]">
-              {validator?.description.moniker || ""}
-            </div>
-            <AddressShort address={validator?.operatorAddress || ""} />
+    <div className={rowStyle} style={gridStyle}>
+      <div className="flex items-center justify-start">
+        <img
+          alt="Validator logo"
+          className="block w-[50px] rounded-full"
+          src={logo}
+          style={{ height: 50, width: 50 }}
+        />
+      </div>
+      <div className="flex flex-1 flex-row justify-start gap-4">
+        <div className="flex flex-col justify-start gap-2 text-left">
+          <div className="text-[14px] font-bold leading-[20px]">
+            {validator?.description.moniker || ""}
           </div>
-        </div>
-        <div className="text-right">
-          <TokenColors text={formatCoin(unbonding.balance)} />
-        </div>
-        <div className="text-right">Unbonding</div>
-        <div className="text-right">
-          {new Date(unbonding.completionTime * 1000).toString()}
-        </div>
-        <div>
-          <ButtonPill
-            disabled={disabled}
-            onClick={() => {
-              // @TODO
-            }}
-          >
-            Cancel
-          </ButtonPill>
+          <AddressShort address={validator?.operatorAddress || ""} />
         </div>
       </div>
-      <div
-        className="box-content h-[1px] bg-bg-500"
-        style={{ width: "calc(100% - 48px)" }}
-      />
+      <div className="text-right">
+        <TokenColors text={formatCoin(unbonding.balance)} />
+      </div>
+      <div className="text-right">Unbonding</div>
+      <div className="text-right">
+        {formatUnbondingCompletionTime(unbonding.completionTime)}
+      </div>
+      <div>
+        <ButtonPill
+          disabled={disabled}
+          onClick={() => {
+            // @TODO
+          }}
+        >
+          Cancel
+        </ButtonPill>
+      </div>
     </div>
   );
 };
@@ -182,6 +200,9 @@ const UnbondingRow = ({ disabled, staking, unbonding }: UnbondingRowProps) => {
 type SortMethod = "bar" | "foo" | "none";
 
 const HeaderTitle = HeaderTitleBase<SortMethod>;
+
+const headerStyle =
+  "grid w-full items-center justify-between gap-2 p-4 uppercase";
 
 const DelegationDetails = () => {
   const stakingRef = useStaking();
@@ -210,11 +231,8 @@ const DelegationDetails = () => {
           const sortedDelegations = delegations.items.slice();
 
           return (
-            <div className="w-full overflow-hidden rounded-[24px] bg-bg-600 pb-4 text-typo-100">
-              <div
-                className="grid w-full items-center justify-between gap-2 bg-bg-500 p-4 uppercase"
-                style={gridStyle}
-              >
+            <div className={wrapperStyle}>
+              <div className={headerStyle} style={gridStyle}>
                 <div />
                 <HeaderTitle>Delegations</HeaderTitle>
                 <HeaderTitle
@@ -254,11 +272,8 @@ const DelegationDetails = () => {
           const sortedUnbondings = unbondings.items.slice();
 
           return (
-            <div className="w-full overflow-hidden rounded-[24px] bg-bg-600 pb-4 text-typo-100">
-              <div
-                className="grid w-full items-center justify-between gap-2 bg-bg-500 p-4 uppercase"
-                style={gridStyle}
-              >
+            <div className={wrapperStyle}>
+              <div className={headerStyle} style={gridStyle}>
                 <div />
                 <HeaderTitle>Delegations</HeaderTitle>
                 <HeaderTitle
@@ -268,19 +283,15 @@ const DelegationDetails = () => {
                 >
                   <div className="text-right">Staked Amount</div>
                 </HeaderTitle>
-                <HeaderTitle
-                  onSort={setDelegationsSortMethod}
-                  sort={unbondingsSortMethod}
-                  sorting={["commission-asc", "commission-desc"]}
-                >
-                  <div className="text-right">Commission</div>
+                <HeaderTitle>
+                  <div className="text-right">Status</div>
                 </HeaderTitle>
                 <HeaderTitle
                   onSort={setDelegationsSortMethod}
                   sort={unbondingsSortMethod}
-                  sorting={["rewards-asc", "rewards-desc"]}
+                  sorting={["date-asc", "date-desc"]}
                 >
-                  <div className="text-right">Rewards</div>
+                  <div className="text-right">Completion Time</div>
                 </HeaderTitle>
               </div>
               {sortedUnbondings.map((unbonding, index) => (

@@ -28,7 +28,10 @@ import {
 } from "../context/selectors";
 import { getXionCoin } from "../lib/core/coins";
 import { formatToSmallDisplay, formatXionToUSD } from "../lib/formatters";
-import DelegationDetails, { getCanShowDetails } from "./delegation-details";
+import DelegationDetails, {
+  DetailsTrigger,
+  getCanShowDetails,
+} from "./delegation-details";
 import { DivisorVertical } from "./divisor";
 
 export default function ValidatorDelegation() {
@@ -188,13 +191,10 @@ export default function ValidatorDelegation() {
       <div className="mb-[24px] mt-[32px] flex flex-row items-center justify-between">
         <Title>My Delegations</Title>
         {canShowDetail && (
-          <button
-            onClick={() => {
-              setIsShowingDetails(!isShowingDetails);
-            }}
-          >
-            {isShowingDetails ? "Hide details" : "Show details"}
-          </button>
+          <DetailsTrigger
+            isShowingDetails={isShowingDetails}
+            setIsShowingDetails={setIsShowingDetails}
+          />
         )}
       </div>
       {content}

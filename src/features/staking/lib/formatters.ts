@@ -61,3 +61,20 @@ export const formatXionToUSD = (coin: Coin | null, compact?: boolean) => {
 
   return `$${compact ? formatToSmallDisplay(usd) : usd.toFormat(2)}`;
 };
+
+export const formatUnbondingCompletionTime = (completionTime: number) => {
+  const completionTimestamp = completionTime * 1000;
+
+  const remainingDays = Math.floor(
+    (completionTimestamp - Date.now()) / (1000 * 60 * 60 * 24),
+  );
+
+  const month = new Date(completionTimestamp).toLocaleString("default", {
+    month: "short",
+  });
+
+  const day = new Date(completionTimestamp).getDate();
+  const year = new Date(completionTimestamp).getFullYear();
+
+  return `in ${remainingDays} day${remainingDays === 1 ? "" : "s"}, ${month} ${day} ${year}`;
+};

@@ -17,3 +17,9 @@ export const cross = [
   '<path fill-rule="evenodd" clip-rule="evenodd" d="M16.941 6L12 10.941L7.059 6L6 7.05975L10.941 12L6 16.941L7.059 18L12 13.059L16.941 18L18 16.941L13.059 12L18 7.05975L16.941 6Z" fill="#6C6A6A"/>',
   "</svg>",
 ].join("");
+
+export const pointer = [
+  '<svg width="11" height="7" viewBox="0 0 11 7" fill="none" xmlns="http://www.w3.org/2000/svg">',
+  '<path d="M1.00003 6.24271L5.24268 2.00007L9.48532 6.24271" stroke="#F2F2F2" stroke-width="1.5"/>',
+  "</svg>",
+].join("");
