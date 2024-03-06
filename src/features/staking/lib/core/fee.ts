@@ -52,7 +52,7 @@ export const getCosmosFee = async ({
   memo = "",
   msgs,
 }: FeeOpts): Promise<StdFee> => {
-  const gasEstimate = await simulateMsgsWithExec(msgs, memo);
+  const gasEstimate = await simulateMsgsWithExec(msgs, memo).catch(() => null);
 
   const fee: StdFee = {
     amount,

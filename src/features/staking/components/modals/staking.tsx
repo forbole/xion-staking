@@ -58,6 +58,8 @@ const StakingModal = () => {
 
   const { validator } = modal?.content;
 
+  if (!validator) return null;
+
   const amountXIONParsed = new BigNumber(amountXION);
 
   const amountUSD = (() => {
@@ -177,23 +179,29 @@ const StakingModal = () => {
             );
           }
 
-          const getHasAmountError = () =>
-            !amountUSD ||
-            !availableTokens ||
-            amountXIONParsed.isNaN() ||
-            amountXIONParsed.gt(availableTokens);
+          const validateAmount = () => {
+            if (
+              !amountUSD ||
+              !availableTokens ||
+              amountXIONParsed.isNaN() ||
+              amountXIONParsed.gt(availableTokens)
+            ) {
+              setFormError({
+                ...formError,
+                amount: "Invalid amount",
+              });
+
+              return true;
+            }
+          };
 
           const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
             e?.stopPropagation();
             e?.preventDefault();
 
-            if (
-              !client ||
-              hasErrors ||
-              getHasAmountError() ||
-              amountXIONParsed.lt(0)
-            )
-              return;
+            if (validateAmount()) return;
+
+            if (!client || hasErrors || amountXIONParsed.lt(0)) return;
 
             setStep("review");
           };
@@ -229,12 +237,7 @@ const StakingModal = () => {
                     disabled={isLoading}
                     error={!!formError.amount}
                     onBlur={() => {
-                      if (getHasAmountError()) {
-                        setFormError({
-                          ...formError,
-                          amount: "Invalid amount",
-                        });
-                      }
+                      validateAmount();
                     }}
                     onChange={(e) => {
                       if (formError.amount) {
@@ -263,7 +266,7 @@ const StakingModal = () => {
                 </div>
                 <div className="mt-[48px] w-full">
                   <Button disabled={isLoading || hasErrors} type="submit">
-                    Delegate Now
+                    DELEGATE NOW
                   </Button>
                 </div>
               </form>

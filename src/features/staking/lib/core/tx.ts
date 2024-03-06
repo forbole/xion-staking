@@ -1,9 +1,9 @@
-import type {
-  Coin,
-  DeliverTxResponse,
-  MsgDelegateEncodeObject,
-  MsgUndelegateEncodeObject,
-  MsgWithdrawDelegatorRewardEncodeObject,
+import {
+  type Coin,
+  type DeliverTxResponse,
+  type MsgDelegateEncodeObject,
+  type MsgUndelegateEncodeObject,
+  type MsgWithdrawDelegatorRewardEncodeObject,
 } from "@cosmjs/stargate";
 import BigNumber from "bignumber.js";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
@@ -15,6 +15,7 @@ import {
 
 import type { AbstraxionSigningClient } from "./client";
 import { getUXionCoinFromXion, normaliseCoin } from "./coins";
+import { minClaimableXion } from "./constants";
 import { getCosmosFee } from "./fee";
 
 const getTxCoin = (coin: Coin) => ({
@@ -129,7 +130,7 @@ export const claimRewards = async (
 ) => {
   const msg = MsgWithdrawDelegatorReward.fromPartial({
     delegatorAddress: addresses.delegator,
-    validatorAddress: addresses.validator,
+    // validatorAddress: addresses.validator,
   });
 
   const messageWrapper = [
@@ -151,7 +152,6 @@ export const claimRewards = async (
 };
 
 export const getIsMinimumClaimable = (amount: Coin) => {
-  const minClaimableXion = 0.0001;
   const normalised = normaliseCoin(amount);
 
   return new BigNumber(normalised.amount).gte(minClaimableXion);
@@ -167,9 +167,9 @@ export const cancelUnstake = async (
   });
 
   const messageWrapper = {
-    typeUrl: "/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation" as string,
+    typeUrl: "/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation",
     value: msg,
-  } as MsgUndelegateEncodeObject; // cosmjs doesn't have yet this encode object
+  };
 
   const fee = await getCosmosFee({
     address: addresses.delegator,
@@ -177,7 +177,7 @@ export const cancelUnstake = async (
   });
 
   return await client
-    .signAndBroadcast(addresses.delegator, [messageWrapper], fee)
+    .signAndBroadcast(addresses.delegator, [messageWrapper], fee, "")
     .then((result) => {
       // @TODO
       // eslint-disable-next-line no-console

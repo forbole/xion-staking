@@ -82,3 +82,11 @@ export const formatUnbondingCompletionTime = (completionTime: number) => {
 
   return `in ${remainingDays} day${remainingDays === 1 ? "" : "s"}, ${month} ${day} ${year}`;
 };
+
+export const formatAPR = (apr: BigNumber | null) => {
+  if (!apr) {
+    return "-";
+  }
+
+  return `${apr.times(100).toFixed(2)}%`;
+};

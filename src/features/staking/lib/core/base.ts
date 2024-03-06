@@ -47,9 +47,6 @@ export const getValidatorDetails = async (address: string) => {
   return promise;
 };
 
-// @TODO: This returns the unbonding time
-// const params = await queryClient.staking.params();
-
 let poolRequest: null | Promise<Pool> = null;
 
 export const getPool = async () => {
@@ -115,4 +112,12 @@ export const getRewards = async (address: string, validatorAddress: string) => {
       denom: reward.denom,
     }))
     .map((r) => normaliseCoin(r));
+};
+
+export const getInflation = async () => {
+  const queryClient = await getStakingQueryClient();
+
+  const params = await queryClient.mint.params().catch(() => null);
+
+  return params?.inflationMax || 0.2;
 };

@@ -26,6 +26,10 @@ export type StakingAction =
       type: "SET_EXTRA_VALIDATORS";
     }
   | {
+      content: StakingState["inflation"];
+      type: "SET_INFLATION";
+    }
+  | {
       content: StakingState["isInfoLoading"];
       type: "SET_IS_INFO_LOADING";
     }
@@ -114,6 +118,13 @@ export const setModalOpened = (
 ): StakingAction => ({
   content,
   type: "SET_MODAL",
+});
+
+export const setInflation = (
+  content: Content<"SET_INFLATION">,
+): StakingAction => ({
+  content,
+  type: "SET_INFLATION",
 });
 
 export const setExtraValidators = (
@@ -286,6 +297,13 @@ export const reducer = (
       return {
         ...state,
         extraValidators: action.content,
+      };
+    }
+
+    case "SET_INFLATION": {
+      return {
+        ...state,
+        inflation: action.content,
       };
     }
 

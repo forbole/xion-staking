@@ -29,7 +29,7 @@ type Delegation = {
 };
 
 type ModalContent = {
-  content: { validator: Validator };
+  content: { delegations?: Delegation[]; validator?: Validator };
   type: "delegate" | "rewards" | "undelegate";
 } | null;
 
@@ -38,6 +38,7 @@ export type ValidatorStatus = "bonded" | "unbonded" | "unbonding";
 export type StakingState = {
   delegations: Paginated<Delegation>;
   extraValidators: Record<string, undefined | Validator>;
+  inflation: null | string;
   isInfoLoading: boolean;
   modal: ModalContent | null;
   pool: null | Pool;
@@ -55,6 +56,7 @@ export type StakingContextType = {
 export const defaultState: StakingState = {
   delegations: null,
   extraValidators: {},
+  inflation: null,
   isInfoLoading: false,
   modal: null,
   pool: null,

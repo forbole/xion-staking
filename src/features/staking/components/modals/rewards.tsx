@@ -1,4 +1,5 @@
 import { memo, useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
 import { Button, HeroText } from "@/features/core/components/base";
 import CommonModal from "@/features/core/components/common-modal";
@@ -18,18 +19,32 @@ const claimRewards = async (
   const { client, staking } = stakingRef;
   const { modal } = staking.state;
 
-  const validatorAddress = modal?.content.validator.operatorAddress;
+  const { delegations } = modal?.content || {};
 
-  if (!client || !validatorAddress) return;
+  if (!client || !delegations?.length) return;
 
-  const addresses = {
-    delegator: stakingRef.account.bech32Address,
-    validator: validatorAddress,
-  };
+  delegations
+    .reduce(async (promise, delegation) => {
+      await promise;
 
-  claimRewardsAction(addresses, client, stakingRef.staking).finally(() => {
-    setStep("completed");
-  });
+      const addresses = {
+        delegator: stakingRef.account.bech32Address,
+        validator: delegation.validatorAddress,
+      };
+
+      return claimRewardsAction(addresses, client, stakingRef.staking);
+    }, Promise.resolve())
+    .then(() => {
+      setStep("completed");
+    })
+    .catch(() => {
+      toast(
+        "There was an unexpected error claiming your rewards. Please try again later.",
+        {
+          type: "error",
+        },
+      );
+    });
 };
 
 const RewardsModal = () => {

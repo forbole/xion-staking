@@ -3,6 +3,7 @@ import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import type {
   DistributionExtension,
   IbcExtension,
+  MintExtension,
   StakingExtension,
 } from "@cosmjs/stargate";
 import {
@@ -11,6 +12,7 @@ import {
   StargateClient,
   setupDistributionExtension,
   setupIbcExtension,
+  setupMintExtension,
   setupStakingExtension,
 } from "@cosmjs/stargate";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
@@ -23,7 +25,11 @@ export type AbstraxionSigningClient = NonNullable<
 
 let stakingQueryClientPromise:
   | Promise<
-      QueryClient & StakingExtension & DistributionExtension & IbcExtension
+      QueryClient &
+        StakingExtension &
+        DistributionExtension &
+        IbcExtension &
+        MintExtension
     >
   | undefined = undefined;
 
@@ -36,6 +42,7 @@ export const getStakingQueryClient = () => {
         cometClient,
         setupStakingExtension,
         setupDistributionExtension,
+        setupMintExtension,
         setupIbcExtension,
       );
     })();

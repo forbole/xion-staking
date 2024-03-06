@@ -104,3 +104,7 @@ export const getAllValidators = (
         [v.operatorAddress]: v,
       };
     }, state.extraValidators);
+
+// As discussed internally, in XION the APR is the same as the inflation
+export const getAPR = (state: StakingState) =>
+  state.inflation ? new BigNumber(state.inflation) : null;

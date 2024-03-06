@@ -157,7 +157,7 @@ const DelegationRowBase = ({
                 staking.dispatch(
                   setModalOpened({
                     content: {
-                      validator,
+                      delegations: [delegation],
                     },
                     type: "rewards",
                   }),
@@ -204,7 +204,7 @@ const UnbondingRow = ({
   unbonding,
   validator,
 }: UnbondingRowProps) => {
-  const { client, staking } = stakingRef;
+  const { account, client, staking } = stakingRef;
 
   const logo = useValidatorLogo(validator?.description.identity);
   const validatorAddress = unbonding.validator;
@@ -247,7 +247,7 @@ const UnbondingRow = ({
             if (!client) return;
 
             const addresses = {
-              delegator: staking.state.tokens?.denom || "",
+              delegator: account.bech32Address || "",
               validator: unbonding.validator,
             };
 

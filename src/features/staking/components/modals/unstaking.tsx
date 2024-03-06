@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 
 import {
   Button,
+  FormError,
   Heading2,
   Heading8,
   HeroText,
@@ -32,6 +33,10 @@ const UnstakingModal = () => {
   const [step, setStep] = useState<Step>(initialStep);
   const [isLoading, setIsLoading] = useState(false);
 
+  const [formError, setFormError] = useState<
+    Record<string, string | undefined>
+  >({ amount: undefined, memo: undefined });
+
   const [amountXION, setAmount] = useState("");
   const [memo, setMemo] = useState("");
 
@@ -43,6 +48,7 @@ const UnstakingModal = () => {
     () => () => {
       setStep(initialStep);
       setAmount("");
+      setFormError({});
       setMemo("");
     },
     [isOpen],
@@ -51,6 +57,8 @@ const UnstakingModal = () => {
   if (!isOpen) return null;
 
   const { validator } = modal?.content;
+
+  if (!validator) return null;
 
   const amountXIONParsed = new BigNumber(amountXION);
 
@@ -65,9 +73,27 @@ const UnstakingModal = () => {
     validator.operatorAddress,
   );
 
+  const validateAmount = () => {
+    if (
+      !amountUSD ||
+      !delegatedTokens ||
+      amountXIONParsed.lte(0) ||
+      amountXIONParsed.gt(new BigNumber(delegatedTokens.amount))
+    ) {
+      setFormError({
+        ...formError,
+        amount: "Invalid amount",
+      });
+
+      return true;
+    }
+  };
+
   const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e?.stopPropagation();
     e?.preventDefault();
+
+    if (validateAmount()) return;
 
     if (!client || !amountXIONParsed.gt(0)) return;
 
@@ -217,11 +243,23 @@ const UnstakingModal = () => {
                 <div className="mt-[8px]">
                   <InputBox
                     disabled={isLoading}
+                    onBlur={() => {
+                      validateAmount();
+                    }}
                     onChange={(e) => {
+                      if (formError.amount) {
+                        setFormError({ ...formError, amount: undefined });
+                      }
+
                       setAmount(e.target.value);
                     }}
                     value={amountXION}
                   />
+                  {formError.amount && (
+                    <div>
+                      <FormError>{formError.amount}</FormError>
+                    </div>
+                  )}
                 </div>
                 <div className="mt-[40px] w-full">
                   <OpenInput

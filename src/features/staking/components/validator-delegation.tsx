@@ -65,21 +65,18 @@ export default function ValidatorDelegation() {
     return <div>Loading ...</div>;
   }
 
-  const availableToStakeBN = getTokensAvailableBG(stakingRef.staking.state);
+  const availableToStakeBN = getTokensAvailableBG(staking.state);
 
-  const userTotalDelegation = getTotalDelegation(
-    stakingRef.staking.state,
-    null,
-  );
+  const userTotalDelegation = getTotalDelegation(staking.state, null);
 
-  const userTotalUnbondings = getTotalUnbonding(stakingRef.staking.state, null);
+  const userTotalUnbondings = getTotalUnbonding(staking.state, null);
 
   const totalRewards = getTotalRewards(
     validatorDetails.operatorAddress,
-    stakingRef.staking.state,
+    staking.state,
   );
 
-  const canShowDetail = getCanShowDetails(stakingRef.staking.state);
+  const canShowDetail = getCanShowDetails(staking.state);
 
   const content = !isConnected ? (
     <div className="flex h-[220px] flex-col items-center justify-center gap-[32px] rounded-[24px] bg-bg-600 uppercase">
@@ -106,10 +103,10 @@ export default function ValidatorDelegation() {
             <ButtonPill
               disabled={isLoadingBlocking}
               onClick={() => {
-                stakingRef.staking.dispatch(
+                staking.dispatch(
                   setModalOpened({
                     content: {
-                      validator: validatorDetails,
+                      delegations: staking.state.delegations?.items || [],
                     },
                     type: "rewards",
                   }),

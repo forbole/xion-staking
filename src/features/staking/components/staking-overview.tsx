@@ -11,11 +11,16 @@ import {
 } from "@/features/core/components/base";
 
 import { useStaking } from "../context/hooks";
-import { getTotalDelegation, getTotalRewards } from "../context/selectors";
+import { setModalOpened } from "../context/reducer";
+import {
+  getAPR,
+  getTotalDelegation,
+  getTotalRewards,
+} from "../context/selectors";
 import { getEmptyXionCoin } from "../lib/core/coins";
 import { basePath } from "../lib/core/constants";
 import { getIsMinimumClaimable } from "../lib/core/tx";
-import { formatCoin, formatXionToUSD } from "../lib/formatters";
+import { formatAPR, formatCoin, formatXionToUSD } from "../lib/formatters";
 import { DivisorVertical } from "./divisor";
 
 const divisorStyle = "absolute bottom-[24px] right-[10px] top-[24px]";
@@ -56,6 +61,8 @@ const StakingOverview = () => {
   const totalRewards =
     getTotalRewards(null, staking.state) || getEmptyXionCoin();
 
+  const apr = getAPR(staking.state);
+
   const availableDelegation = staking.state.tokens || getEmptyXionCoin();
 
   return (
@@ -71,8 +78,21 @@ const StakingOverview = () => {
         <Heading8>Claimable Rewards</Heading8>
         <div className="flex flex-row items-center gap-4">
           <Heading2>{formatXionToUSD(totalRewards)}</Heading2>
-          {getIsMinimumClaimable(totalRewards) /* @TODO */ && (
-            <ButtonPill>Claim</ButtonPill>
+          {getIsMinimumClaimable(totalRewards) && (
+            <ButtonPill
+              onClick={() => {
+                staking.dispatch(
+                  setModalOpened({
+                    content: {
+                      delegations: staking.state.delegations?.items || [],
+                    },
+                    type: "rewards",
+                  }),
+                );
+              }}
+            >
+              Claim
+            </ButtonPill>
           )}
         </div>
         <BodyMedium>{formatCoin(totalRewards)}</BodyMedium>
@@ -82,7 +102,7 @@ const StakingOverview = () => {
       </div>
       <div className={columnStyle}>
         <Heading8>APR</Heading8>
-        <Heading2>15.57%</Heading2>
+        <Heading2>{formatAPR(apr)}</Heading2>
         <div className={divisorStyle}>
           <DivisorVertical />
         </div>
