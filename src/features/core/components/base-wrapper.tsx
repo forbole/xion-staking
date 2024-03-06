@@ -1,7 +1,6 @@
 "use client";
 
 import { Abstraxion, useModal } from "@burnt-labs/abstraxion";
-import Head from "next/head";
 import Link from "next/link";
 
 import { basePath } from "@/features/staking/lib/core/constants";
@@ -17,9 +16,6 @@ export default function RootLayout({
 
   return (
     <main className="flex min-h-screen flex-col items-center">
-      <Head>
-        <title>XION Staking</title>
-      </Head>
       <nav
         className="flex w-full flex-row"
         style={{ borderBottom: "1px solid #333" }}
