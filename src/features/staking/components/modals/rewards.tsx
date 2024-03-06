@@ -60,7 +60,7 @@ const RewardsModal = () => {
           <div className="mb-[16px] uppercase">
             <HeroText>CLAIMING</HeroText>
           </div>
-          <div className="mb-[16px]">
+          <div className="mb-[16px] text-typo-100">
             Wait until your rewards are withdrawn.
           </div>
           <Button isLoading />
@@ -74,7 +74,7 @@ const RewardsModal = () => {
           <div className="mb-[16px] uppercase">
             <HeroText>Success!</HeroText>
           </div>
-          <div className="mb-[16px]">
+          <div className="mb-[16px] text-typo-100">
             You have claimed your staking rewards successfully.
           </div>
         </div>

@@ -109,7 +109,7 @@ const UnstakingModal = () => {
                   <div className="mb-[16px]">
                     <HeroText>SUCCESS!</HeroText>
                   </div>
-                  <div>
+                  <div className="text-typo-100">
                     You have successfully unstaked from{" "}
                     {validator.description.moniker}. It takes {unbondingDays}{" "}
                     days to complete the unstaking process
@@ -135,7 +135,7 @@ const UnstakingModal = () => {
                   <div className="mb-[16px]">
                     <HeroText>REVIEW</HeroText>
                   </div>
-                  <div>
+                  <div className="text-typo-100">
                     Unstaking your XION Token means you'll stop earning rewards.
                     Remember, it takes {unbondingDays} days to complete the
                     unstaking process.

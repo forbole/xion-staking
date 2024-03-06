@@ -105,7 +105,7 @@ const StakingModal = () => {
                   <div className="mb-[16px]">
                     <HeroText>SUCCESS!</HeroText>
                   </div>
-                  <div>
+                  <div className="text-typo-100">
                     You have successfully staked on{" "}
                     {validator.description.moniker}. Thank you for contributing
                     in securing the XION network.
@@ -131,7 +131,7 @@ const StakingModal = () => {
                   <div className="mb-[16px]">
                     <HeroText>REVIEW</HeroText>
                   </div>
-                  <div>
+                  <div className="text-typo-100">
                     Get ready to stake your XION token with{" "}
                     {validator.description.moniker}. Press 'Confirm' to proceed.
                   </div>
