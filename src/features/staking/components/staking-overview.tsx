@@ -38,6 +38,7 @@ const StakingOverview = () => {
         <HeroText>Please Log In To View</HeroText>
         <div>
           <Button
+            className="min-w-[150px]"
             onClick={() => {
               setShowAbstraxion(true);
             }}

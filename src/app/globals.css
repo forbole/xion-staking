@@ -54,18 +54,6 @@ body {
   }
 }
 
-@font-face {
-  font-family: Akkurat;
-  font-weight: 400;
-  src: url(../../public/font/AkkuratLL-Regular.otf);
-}
-
-@font-face {
-  font-family: Akkurat;
-  font-weight: 700;
-  src: url(../../public/font/AkkuratLL-Bold.otf);
-}
-
 * {
   font-family: Akkurat;
 }

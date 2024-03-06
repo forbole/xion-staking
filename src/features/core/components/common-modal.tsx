@@ -31,13 +31,12 @@ const CommonModal = ({ children, ...props }: Props) => {
       {...props}
       style={{
         content: {
-          background: "#000",
+          background: "rgba(0,0,0,0.8)",
           border: "none",
           borderRadius: "48px",
           bottom: "auto",
           boxShadow: "0px 0px 50px 0px #FFFFFF40",
           left: "50%",
-          opacity: 0.8,
           padding: "45px",
           right: "auto",
           top: "50%",

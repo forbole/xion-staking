@@ -14,13 +14,10 @@ import {
   Title,
 } from "@/features/core/components/base";
 import { useCore } from "@/features/core/context/hooks";
-import { setIsLoadingBlocking } from "@/features/core/context/reducer";
 
-import {
-  claimRewardsAction,
-  getValidatorDetailsAction,
-} from "../context/actions";
+import { getValidatorDetailsAction } from "../context/actions";
 import { useStaking } from "../context/hooks";
+import { setModalOpened } from "../context/reducer";
 import {
   getTokensAvailableBG,
   getTotalDelegation,
@@ -50,8 +47,6 @@ export default function ValidatorDelegation() {
   const [validatorDetails, setValidatorDetails] = useState<Awaited<
     ReturnType<typeof getValidatorDetailsAction>
   > | null>(null);
-
-  const { client } = stakingRef;
 
   useEffect(() => {
     (async () => {
@@ -89,14 +84,17 @@ export default function ValidatorDelegation() {
   const content = !isConnected ? (
     <div className="flex h-[220px] flex-col items-center justify-center gap-[32px] rounded-[24px] bg-bg-600 uppercase">
       <HeroText>Please log in to view</HeroText>
-      <Button
-        disabled={isLoadingBlocking}
-        onClick={() => {
-          setShowAbstraxion(true);
-        }}
-      >
-        Log in
-      </Button>
+      <div>
+        <Button
+          className="[&]:min-w-[150px]"
+          disabled={isLoadingBlocking}
+          onClick={() => {
+            setShowAbstraxion(true);
+          }}
+        >
+          Log in
+        </Button>
+      </div>
     </div>
   ) : (
     <div className="grid grid-cols-4 rounded-[24px] bg-bg-600 p-[24px]">
@@ -108,22 +106,14 @@ export default function ValidatorDelegation() {
             <ButtonPill
               disabled={isLoadingBlocking}
               onClick={() => {
-                if (!client) return;
-
-                const addresses = {
-                  delegator: stakingRef.account.bech32Address,
-                  validator: validatorDetails.operatorAddress,
-                };
-
-                core.dispatch(setIsLoadingBlocking(true));
-
-                claimRewardsAction(
-                  addresses,
-                  client,
-                  stakingRef.staking,
-                ).finally(() => {
-                  core.dispatch(setIsLoadingBlocking(false));
-                });
+                stakingRef.staking.dispatch(
+                  setModalOpened({
+                    content: {
+                      validator: validatorDetails,
+                    },
+                    type: "rewards",
+                  }),
+                );
               }}
             >
               Claim

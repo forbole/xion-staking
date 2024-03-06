@@ -239,7 +239,7 @@ const ValidatorsTable = () => {
           </button>
         </div>
       </div>
-      <div className="min-h-[40px] overflow-hidden rounded-[24px] bg-bg-600 pb-4 text-typo-100">
+      <div className="min-h-[100px] overflow-hidden rounded-[24px] bg-bg-600 pb-4 text-typo-100">
         <div
           className="grid w-full items-center justify-between gap-2 bg-bg-500 p-4 uppercase"
           style={gridStyle}

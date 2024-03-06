@@ -85,7 +85,7 @@ const UnstakingModal = () => {
     >
       <div className="min-w-[390px]">
         {(() => {
-          const getUnstakingInfo = () => (
+          const getUnstakingSummary = () => (
             <>
               <div className="mb-[32px] mt-[32px] flex w-full flex-col items-center justify-center gap-[12px]">
                 <Heading8>Unstaking Amount (XION)</Heading8>
@@ -115,7 +115,7 @@ const UnstakingModal = () => {
                     days to complete the unstaking process
                   </div>
                 </div>
-                {getUnstakingInfo()}
+                {getUnstakingSummary()}
                 <Button
                   disabled={isLoading}
                   onClick={() => {
@@ -141,7 +141,7 @@ const UnstakingModal = () => {
                     unstaking process.
                   </div>
                 </div>
-                {getUnstakingInfo()}
+                {getUnstakingSummary()}
                 <Button
                   isLoading={isLoading}
                   onClick={() => {

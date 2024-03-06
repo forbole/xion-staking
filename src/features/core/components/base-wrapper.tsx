@@ -13,7 +13,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [showAbstraction, setShowAbstraxion] = useModal();
+  const [, setShowAbstraxion] = useModal();
 
   return (
     <main className="flex min-h-screen flex-col items-center">
@@ -34,13 +34,11 @@ export default function RootLayout({
         </div>
       </nav>
       {children}
-      {showAbstraction && (
-        <Abstraxion
-          onClose={() => {
-            setShowAbstraxion(false);
-          }}
-        />
-      )}
+      <Abstraxion
+        onClose={() => {
+          setShowAbstraxion(false);
+        }}
+      />
     </main>
   );
 }

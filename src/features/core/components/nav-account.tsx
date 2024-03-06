@@ -1,30 +1,48 @@
 "use client";
 
-import { useAbstraxionAccount, useModal } from "@burnt-labs/abstraxion";
+import {
+  useAbstraxionAccount,
+  useAbstraxionSigningClient,
+  useModal,
+} from "@burnt-labs/abstraxion";
 import { Button } from "@burnt-labs/ui";
 
 import { isTestnet } from "@/features/staking/lib/core/constants";
 import { wallet } from "@/features/staking/lib/core/icons";
 
+import { ButtonPill, FloatingDropdown } from "./base";
+
+const Account = () => (
+  <span className="flex flex-row items-center gap-[8px] rounded-[8px] bg-bg-600 px-[16px] py-[18px]">
+    <span dangerouslySetInnerHTML={{ __html: wallet }} />
+    <span className="font-bold">Account</span>{" "}
+    <span className="rounded-[4px] bg-successBg p-[4px] text-[12px] uppercase text-success">
+      {isTestnet ? "Testnet" : "Mainnet"}
+    </span>
+  </span>
+);
+
 const NavAccount = () => {
   const [, setShowAbstraxion] = useModal();
   const { isConnected } = useAbstraxionAccount();
+  const { logout } = useAbstraxionSigningClient();
 
   return (
     <div className="cursor-pointer">
       {isConnected ? (
-        <button
-          className="flex flex-row items-center gap-[8px] rounded-[8px] bg-bg-600 px-[16px] py-[18px]"
-          onClick={() => {
-            setShowAbstraxion(true);
-          }}
-        >
-          <div dangerouslySetInnerHTML={{ __html: wallet }} />
-          <span className="font-bold">Account</span>{" "}
-          <span className="text-[10px] uppercase">
-            {isTestnet ? "Testnet" : "Mainnet"}
-          </span>
-        </button>
+        <FloatingDropdown Trigger={Account} id="nav-account">
+          <div className="flex items-center justify-center rounded-[16px] bg-bg-600 px-[24px] py-[12px]">
+            <ButtonPill
+              className="bg-transparent"
+              onClick={() => {
+                logout?.();
+              }}
+              variant="danger"
+            >
+              Log out
+            </ButtonPill>
+          </div>
+        </FloatingDropdown>
       ) : (
         <Button
           onClick={() => {

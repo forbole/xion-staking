@@ -25,7 +25,6 @@ import { formatToSmallDisplay } from "../../lib/formatters";
 
 type Step = "completed" | "input" | "review";
 
-// @TODO
 const initialStep: Step = "input";
 
 const StakingModal = () => {
@@ -86,7 +85,7 @@ const StakingModal = () => {
             <>
               <div className="mb-[32px] mt-[32px] flex w-full flex-col items-center justify-center gap-[12px]">
                 <Heading8>Staked Amount (XION)</Heading8>
-                <Heading2>{amountXION}</Heading2>
+                <Heading2>{amountXIONParsed.toString()}</Heading2>
                 {amountUSD && (
                   <Heading8>${formatToSmallDisplay(amountUSD)}</Heading8>
                 )}

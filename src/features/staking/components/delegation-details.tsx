@@ -1,4 +1,3 @@
-import type { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
 import type { Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import { memo, useEffect, useState } from "react";
 
@@ -8,15 +7,9 @@ import {
   FloatingDropdown,
 } from "@/features/core/components/base";
 import { HeaderTitleBase } from "@/features/core/components/table";
-import { useCore } from "@/features/core/context/hooks";
-import { setIsLoadingBlocking } from "@/features/core/context/reducer";
-import type { CoreContextType } from "@/features/core/context/state";
 import { sortUtil } from "@/features/core/utils";
 
-import {
-  claimRewardsAction,
-  getAndSetValidatorAction,
-} from "../context/actions";
+import { getAndSetValidatorAction } from "../context/actions";
 import { useStaking } from "../context/hooks";
 import { setModalOpened } from "../context/reducer";
 import {
@@ -85,9 +78,6 @@ const wrapperStyle =
 const Menu = () => <span dangerouslySetInnerHTML={{ __html: menu }} />;
 
 type DelegationRowProps = {
-  accountAddress: string;
-  client: ReturnType<typeof useAbstraxionSigningClient>["client"];
-  core: CoreContextType;
   delegation: NonNullable<StakingState["delegations"]>["items"][number];
   disabled?: boolean;
   index: number;
@@ -96,9 +86,6 @@ type DelegationRowProps = {
 };
 
 const DelegationRowBase = ({
-  accountAddress,
-  client,
-  core,
   delegation,
   disabled,
   index,
@@ -165,18 +152,16 @@ const DelegationRowBase = ({
             <ButtonLink
               disabled={disabled}
               onClick={() => {
-                if (!client) return;
+                if (!validator) return;
 
-                const addresses = {
-                  delegator: accountAddress,
-                  validator: delegation.validatorAddress,
-                };
-
-                core.dispatch(setIsLoadingBlocking(true));
-
-                claimRewardsAction(addresses, client, staking).finally(() => {
-                  core.dispatch(setIsLoadingBlocking(false));
-                });
+                staking.dispatch(
+                  setModalOpened({
+                    content: {
+                      validator,
+                    },
+                    type: "rewards",
+                  }),
+                );
               }}
             >
               Claim rewards
@@ -301,9 +286,8 @@ const headerStyle =
 
 const DelegationDetails = () => {
   const stakingRef = useStaking();
-  const { core } = useCore();
 
-  const { client, staking } = stakingRef;
+  const { staking } = stakingRef;
 
   const [delegationsSortMethod, setDelegationsSortMethod] =
     useState<DelegationSortMethod>("none");
@@ -393,9 +377,6 @@ const DelegationDetails = () => {
               </div>
               {sortedDelegations.map((delegation, index) => (
                 <DelegationRow
-                  accountAddress={stakingRef.account.bech32Address}
-                  client={client}
-                  core={core}
                   delegation={delegation}
                   index={index}
                   key={index}

@@ -22,7 +22,9 @@ export const setPopupOpenId = (
   type: "SET_POPUP_OPEN_ID",
 });
 
-export const setIsLoadingBlocking = (
+// @TODO: Confirm if needed
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const setIsLoadingBlocking = (
   content: Content<"SET_IS_LOADING_BLOCKING">,
 ): CoreAction => ({
   content,
