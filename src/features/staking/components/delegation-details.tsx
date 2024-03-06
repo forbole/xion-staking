@@ -7,6 +7,7 @@ import { HeaderTitleBase } from "@/features/core/components/table";
 import { useCore } from "@/features/core/context/hooks";
 import { setIsLoadingBlocking } from "@/features/core/context/reducer";
 import type { CoreContextType } from "@/features/core/context/state";
+import { sortUtil } from "@/features/core/utils";
 
 import {
   claimRewardsAction,
@@ -253,9 +254,24 @@ const UnbondingRow = ({ disabled, staking, unbonding }: UnbondingRowProps) => {
   );
 };
 
-type SortMethod = "bar" | "foo" | "none";
+type DelegationSortMethod =
+  | "commission-asc"
+  | "commission-desc"
+  | "none"
+  | "rewards-asc"
+  | "rewards-desc"
+  | "staked-asc"
+  | "staked-desc";
 
-const HeaderTitle = HeaderTitleBase<SortMethod>;
+type SortMethod =
+  | "amount-asc"
+  | "amount-desc"
+  | "completion-asc"
+  | "completion-desc"
+  | "none";
+
+const DelegationHeaderTitle = HeaderTitleBase<DelegationSortMethod>;
+const UnbondingHeaderTitle = HeaderTitleBase<SortMethod>;
 
 const headerStyle =
   "grid w-full items-center justify-between gap-2 p-4 uppercase";
@@ -267,7 +283,7 @@ const DelegationDetails = () => {
   const { client, staking } = stakingRef;
 
   const [delegationsSortMethod, setDelegationsSortMethod] =
-    useState<SortMethod>("none");
+    useState<DelegationSortMethod>("none");
 
   const [unbondingsSortMethod, setUnbondingsSortMethod] =
     useState<SortMethod>("none");
@@ -285,34 +301,80 @@ const DelegationDetails = () => {
     <div className="flex h-full flex-1 flex-col items-end gap-[16px]">
       {hasDelegations &&
         (() => {
-          const sortedDelegations = delegations.items.slice();
+          const validatorIdToValidator =
+            staking.state.validators?.items.reduce(
+              (acc, v) => {
+                acc[v.operatorAddress] = v;
+
+                return acc;
+              },
+              { ...staking.state.extraValidators },
+            ) || {};
+
+          const sortedDelegations = delegations.items.slice().sort((a, b) => {
+            switch (delegationsSortMethod) {
+              case "staked-asc":
+              case "staked-desc":
+                return sortUtil(
+                  a.balance.amount,
+                  b.balance.amount,
+                  delegationsSortMethod === "staked-asc" ? "asc" : "desc",
+                );
+
+              case "rewards-asc":
+              case "rewards-desc":
+                return sortUtil(
+                  a.rewards.amount,
+                  b.rewards.amount,
+                  delegationsSortMethod === "rewards-asc" ? "asc" : "desc",
+                );
+
+              case "commission-asc":
+
+              case "commission-desc": {
+                const validatorA = validatorIdToValidator[a.validatorAddress];
+                const validatorB = validatorIdToValidator[b.validatorAddress];
+
+                return sortUtil(
+                  Number(validatorA?.commission.commissionRates.rate),
+                  Number(validatorB?.commission.commissionRates.rate),
+                  delegationsSortMethod === "commission-asc" ? "asc" : "desc",
+                );
+              }
+
+              default:
+                delegationsSortMethod satisfies "none";
+
+                return 0;
+            }
+          });
 
           return (
             <div className={wrapperStyle}>
               <div className={headerStyle} style={gridStyle}>
                 <div />
-                <HeaderTitle>Delegations</HeaderTitle>
-                <HeaderTitle
-                  onSort={setUnbondingsSortMethod}
+                <DelegationHeaderTitle>Delegations</DelegationHeaderTitle>
+                <DelegationHeaderTitle
+                  onSort={setDelegationsSortMethod}
                   sort={delegationsSortMethod}
                   sorting={["staked-asc", "staked-desc"]}
                 >
                   <div className="text-right">Staked Amount</div>
-                </HeaderTitle>
-                <HeaderTitle
-                  onSort={setUnbondingsSortMethod}
+                </DelegationHeaderTitle>
+                <DelegationHeaderTitle
+                  onSort={setDelegationsSortMethod}
                   sort={delegationsSortMethod}
                   sorting={["commission-asc", "commission-desc"]}
                 >
                   <div className="text-right">Commission</div>
-                </HeaderTitle>
-                <HeaderTitle
-                  onSort={setUnbondingsSortMethod}
+                </DelegationHeaderTitle>
+                <DelegationHeaderTitle
+                  onSort={setDelegationsSortMethod}
                   sort={delegationsSortMethod}
                   sorting={["rewards-asc", "rewards-desc"]}
                 >
                   <div className="text-right">Rewards</div>
-                </HeaderTitle>
+                </DelegationHeaderTitle>
               </div>
               {sortedDelegations.map((delegation, index) => (
                 <DelegationRow
@@ -330,30 +392,53 @@ const DelegationDetails = () => {
         })()}
       {hasUnbondings &&
         (() => {
-          const sortedUnbondings = unbondings.items.slice();
+          const sortedUnbondings = unbondings.items.slice().sort((a, b) => {
+            switch (unbondingsSortMethod) {
+              case "amount-asc":
+              case "amount-desc":
+                return sortUtil(
+                  Number(a.balance.amount),
+                  Number(b.balance.amount),
+                  unbondingsSortMethod === "amount-asc" ? "asc" : "desc",
+                );
+
+              case "completion-asc":
+              case "completion-desc":
+                return sortUtil(
+                  a.completionTime,
+                  b.completionTime,
+                  unbondingsSortMethod === "completion-asc" ? "asc" : "desc",
+                );
+
+              default:
+                unbondingsSortMethod satisfies "none";
+
+                return 0;
+            }
+          });
 
           return (
             <div className={wrapperStyle}>
               <div className={headerStyle} style={gridStyle}>
                 <div />
-                <HeaderTitle>Delegations</HeaderTitle>
-                <HeaderTitle
-                  onSort={setDelegationsSortMethod}
+                <UnbondingHeaderTitle>Unstakings</UnbondingHeaderTitle>
+                <UnbondingHeaderTitle
+                  onSort={setUnbondingsSortMethod}
                   sort={unbondingsSortMethod}
                   sorting={["staked-asc", "staked-desc"]}
                 >
                   <div className="text-right">Staked Amount</div>
-                </HeaderTitle>
-                <HeaderTitle>
+                </UnbondingHeaderTitle>
+                <UnbondingHeaderTitle>
                   <div className="text-right">Status</div>
-                </HeaderTitle>
-                <HeaderTitle
-                  onSort={setDelegationsSortMethod}
+                </UnbondingHeaderTitle>
+                <UnbondingHeaderTitle
+                  onSort={setUnbondingsSortMethod}
                   sort={unbondingsSortMethod}
                   sorting={["date-asc", "date-desc"]}
                 >
                   <div className="text-right">Completion Time</div>
-                </HeaderTitle>
+                </UnbondingHeaderTitle>
               </div>
               {sortedUnbondings.map((unbonding, index) => (
                 <UnbondingRow
