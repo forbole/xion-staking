@@ -2,7 +2,11 @@ import type { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
 import type { Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import { memo, useEffect, useState } from "react";
 
-import { ButtonPill, FloatingDropdown } from "@/features/core/components/base";
+import {
+  ButtonLink,
+  ButtonPill,
+  FloatingDropdown,
+} from "@/features/core/components/base";
 import { HeaderTitleBase } from "@/features/core/components/table";
 import { useCore } from "@/features/core/context/hooks";
 import { setIsLoadingBlocking } from "@/features/core/context/reducer";
@@ -19,7 +23,7 @@ import { getTotalDelegation, getTotalUnbonding } from "../context/selectors";
 import type { StakingContextType, StakingState } from "../context/state";
 import { useValidatorLogo } from "../hooks";
 import { coinIsPositive } from "../lib/core/coins";
-import { pointer } from "../lib/core/icons";
+import { menu, pointer } from "../lib/core/icons";
 import {
   formatCoin,
   formatCommission,
@@ -73,7 +77,7 @@ const rowStyle =
 const wrapperStyle =
   "w-full overflow-hidden rounded-[24px] bg-bg-600 pb-4 text-typo-100 px-[16px]";
 
-const Menu = () => <span>. . .</span>;
+const Menu = () => <span dangerouslySetInnerHTML={{ __html: menu }} />;
 
 type DelegationRowProps = {
   accountAddress: string;
@@ -158,8 +162,8 @@ const DelegationRowBase = ({
           Delegate
         </ButtonPill>
         <FloatingDropdown Trigger={Menu} id={`delegation-${index}`}>
-          <div className="flex flex-col gap-[12px] bg-black">
-            <ButtonPill
+          <div className="flex flex-col gap-[12px] rounded-[8px] bg-bg-600 py-[4px]">
+            <ButtonLink
               disabled={disabled}
               onClick={() => {
                 if (!client) return;
@@ -177,8 +181,8 @@ const DelegationRowBase = ({
               }}
             >
               Claim rewards
-            </ButtonPill>
-            <ButtonPill
+            </ButtonLink>
+            <ButtonLink
               disabled={disabled}
               onClick={() => {
                 if (!validator) return;
@@ -190,9 +194,10 @@ const DelegationRowBase = ({
                   }),
                 );
               }}
+              variant="danger"
             >
               Undelegate
-            </ButtonPill>
+            </ButtonLink>
           </div>
         </FloatingDropdown>
       </div>

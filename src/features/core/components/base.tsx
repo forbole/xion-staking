@@ -64,6 +64,28 @@ export const ButtonPill = ({ className, ...props }: ButtonPillProps) => (
   />
 );
 
+type ButtonLinkProps = React.DetailedHTMLProps<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+> & {
+  variant?: "danger" | "default" | "success";
+};
+
+export const ButtonLink = ({
+  className,
+  variant,
+  ...props
+}: ButtonLinkProps) => (
+  <button
+    {...props}
+    className={[
+      "cursor-pointer rounded-full bg-transparent px-[8px] py-[4px] text-white disabled:cursor-not-allowed disabled:bg-bg-600 disabled:text-typo-150",
+      variant === "danger" ? "[&]:text-danger" : "",
+      className,
+    ].join(" ")}
+  />
+);
+
 export const ClipboardCopy = ({ textToCopy }: { textToCopy: string }) => (
   <button
     className="cursor-pointer"

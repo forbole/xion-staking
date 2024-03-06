@@ -23,3 +23,12 @@ export const pointer = [
   '<path d="M1.00003 6.24271L5.24268 2.00007L9.48532 6.24271" stroke="#F2F2F2" stroke-width="1.5"/>',
   "</svg>",
 ].join("");
+
+export const menu = [
+  '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">',
+  '<circle cx="16" cy="16" r="15.5" stroke="white" stroke-opacity="0.2"/>',
+  '<circle cx="16" cy="10" r="2" fill="#6C6A6A"/>',
+  '<circle cx="16" cy="16" r="2" fill="#6C6A6A"/>',
+  '<circle cx="16" cy="22" r="2" fill="#6C6A6A"/>',
+  "</svg>",
+].join(" ");
