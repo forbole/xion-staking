@@ -18,13 +18,12 @@ import { useStaking } from "../../context/hooks";
 import { setModalOpened } from "../../context/reducer";
 import { getTotalDelegation } from "../../context/selectors";
 import { getXionCoin } from "../../lib/core/coins";
-import { xionToUSD } from "../../lib/core/constants";
+import { unbondingDays, xionToUSD } from "../../lib/core/constants";
 import type { StakeAddresses } from "../../lib/core/tx";
 import { formatToSmallDisplay, formatXionToUSD } from "../../lib/formatters";
 
 type Step = "completed" | "input" | "review";
 
-// @TODO
 const initialStep: Step = "input";
 
 const UnstakingModal = () => {
@@ -32,8 +31,6 @@ const UnstakingModal = () => {
   const { client } = stakingRef;
   const [step, setStep] = useState<Step>(initialStep);
   const [isLoading, setIsLoading] = useState(false);
-
-  const unbondingTimeDays = 21; // @TODO
 
   const [amountXION, setAmount] = useState("");
   const [memo, setMemo] = useState("");
@@ -74,33 +71,7 @@ const UnstakingModal = () => {
 
     if (!client || !amountXIONParsed.gt(0)) return;
 
-    setIsLoading(true);
-
-    const addresses: StakeAddresses = {
-      delegator: account.bech32Address,
-      validator: validator.operatorAddress,
-    };
-
-    unstakeValidatorAction(
-      addresses,
-      getXionCoin(amountXIONParsed),
-      memo,
-      client,
-      staking,
-    )
-      .then((fetchDataFn) => {
-        setStep("completed");
-
-        return fetchDataFn();
-      })
-      .catch(() => {
-        toast("Staking error", {
-          type: "error",
-        });
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    setStep("review");
   };
 
   return (
@@ -114,6 +85,23 @@ const UnstakingModal = () => {
     >
       <div className="min-w-[390px]">
         {(() => {
+          const getUnstakingInfo = () => (
+            <>
+              <div className="mb-[32px] mt-[32px] flex w-full flex-col items-center justify-center gap-[12px]">
+                <Heading8>Unstaking Amount (XION)</Heading8>
+                <Heading2>{formatToSmallDisplay(amountXIONParsed)}</Heading2>
+                <Heading8>
+                  {formatXionToUSD(getXionCoin(amountXIONParsed))}
+                </Heading8>
+              </div>
+              {!!memo && (
+                <div className="mb-[32px] text-center italic">
+                  <div>{memo}</div>
+                </div>
+              )}
+            </>
+          );
+
           if (step === "completed") {
             return (
               <>
@@ -123,22 +111,11 @@ const UnstakingModal = () => {
                   </div>
                   <div>
                     You have successfully unstaked from{" "}
-                    {validator.description.moniker}. It takes{" "}
-                    {unbondingTimeDays} days to complete the unstaking process
+                    {validator.description.moniker}. It takes {unbondingDays}{" "}
+                    days to complete the unstaking process
                   </div>
                 </div>
-                <div className="mb-[32px] mt-[32px] flex w-full flex-col items-center justify-center gap-[12px]">
-                  <Heading8>Unstaking Amount (XION)</Heading8>
-                  <Heading2>{formatToSmallDisplay(amountXIONParsed)}</Heading2>
-                  <Heading8>
-                    {formatXionToUSD(getXionCoin(amountXIONParsed))}
-                  </Heading8>
-                </div>
-                {!!memo && (
-                  <div className="mb-[32px] text-center italic">
-                    <div>{memo}</div>
-                  </div>
-                )}
+                {getUnstakingInfo()}
                 <Button
                   disabled={isLoading}
                   onClick={() => {
@@ -146,6 +123,60 @@ const UnstakingModal = () => {
                   }}
                 >
                   CLOSE
+                </Button>
+              </>
+            );
+          }
+
+          if (step === "review") {
+            return (
+              <>
+                <div className="text-center">
+                  <div className="mb-[16px]">
+                    <HeroText>REVIEW</HeroText>
+                  </div>
+                  <div>
+                    Unstaking your XION Token means you'll stop earning rewards.
+                    Remember, it takes {unbondingDays} days to complete the
+                    unstaking process.
+                  </div>
+                </div>
+                {getUnstakingInfo()}
+                <Button
+                  isLoading={isLoading}
+                  onClick={() => {
+                    if (!client) return;
+
+                    setIsLoading(true);
+
+                    const addresses: StakeAddresses = {
+                      delegator: account.bech32Address,
+                      validator: validator.operatorAddress,
+                    };
+
+                    unstakeValidatorAction(
+                      addresses,
+                      getXionCoin(amountXIONParsed),
+                      memo,
+                      client,
+                      staking,
+                    )
+                      .then((fetchDataFn) => {
+                        setStep("completed");
+
+                        return fetchDataFn();
+                      })
+                      .catch(() => {
+                        toast("Staking error", {
+                          type: "error",
+                        });
+                      })
+                      .finally(() => {
+                        setIsLoading(false);
+                      });
+                  }}
+                >
+                  CONFIRM
                 </Button>
               </>
             );

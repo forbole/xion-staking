@@ -1,6 +1,7 @@
 "use client";
 
 import BigNumber from "bignumber.js";
+import { BondStatus } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import { memo, useState } from "react";
 
 import {
@@ -10,6 +11,7 @@ import {
   Title,
 } from "@/features/core/components/base";
 import { HeaderTitleBase } from "@/features/core/components/table";
+import { sortUtil } from "@/features/core/utils";
 
 import { useStaking } from "../context/hooks";
 import { setModalOpened } from "../context/reducer";
@@ -35,9 +37,9 @@ const gridStyle = {
 
 type ValidatorItemProps = {
   disabled?: boolean;
-  onStake: () => void;
+  onStake: (() => void) | null;
   staking: StakingContextType;
-  validator: NonNullable<StakingState["validators"]>["items"][number];
+  validator: NonNullable<StakingState["validators"]["bonded"]>["items"][number];
 };
 
 const ValidatorRow = ({
@@ -103,11 +105,13 @@ const ValidatorRow = ({
             Details
           </NavLink>
         </div>
-        <div>
-          <ButtonPill disabled={disabled} onClick={onStake}>
-            Delegate
-          </ButtonPill>
-        </div>
+        {onStake && (
+          <div>
+            <ButtonPill disabled={disabled} onClick={onStake}>
+              Delegate
+            </ButtonPill>
+          </div>
+        )}
       </div>
       <div
         className="box-content h-[1px] bg-bg-500"
@@ -133,13 +137,27 @@ const HeaderTitle = HeaderTitleBase<SortMethod>;
 const ValidatorsTable = () => {
   const { isConnected, staking } = useStaking();
   const [sortMethod, setSortMethod] = useState<SortMethod>("none");
+  const [currentTab, setCurrentTab] = useState<"active" | "inactive">("active");
   const [searchValue, setSearchValue] = useState<string>("");
 
-  const { validators } = staking.state;
+  const { validators: validatorsObj } = staking.state;
 
-  if (!validators?.items.length) return null;
+  const validators =
+    currentTab === "active"
+      ? validatorsObj.bonded?.items || []
+      : (validatorsObj.unbonded?.items || []).concat(
+          validatorsObj.unbonding?.items || [],
+        );
 
-  const sortedItems = validators.items
+  const sortedItems = validators
+    .filter(
+      currentTab === "active"
+        ? (v) => v.status === BondStatus.BOND_STATUS_BONDED
+        : (v) =>
+            v.status ===
+            (BondStatus.BOND_STATUS_UNBONDED ||
+              BondStatus.BOND_STATUS_UNBONDING),
+    )
     .slice()
     .sort((a, b) => {
       if (sortMethod === "none") return 0;
@@ -148,42 +166,36 @@ const ValidatorsTable = () => {
         const votingPowerA = getVotingPowerPerc(a.tokens, staking.state);
         const votingPowerB = getVotingPowerPerc(b.tokens, staking.state);
 
-        if (!votingPowerA || !votingPowerB) return 0;
-
-        return sortMethod === "voting-power-asc"
-          ? votingPowerA - votingPowerB
-          : votingPowerB - votingPowerA;
+        return sortUtil(
+          votingPowerA,
+          votingPowerB,
+          sortMethod === "voting-power-asc",
+        );
       }
 
       if (["commission-asc", "commission-desc"].includes(sortMethod)) {
         const commissionA = parseFloat(a.commission.commissionRates.rate);
         const commissionB = parseFloat(b.commission.commissionRates.rate);
 
-        if (!commissionA || !commissionB) return 0;
-
-        return sortMethod === "commission-asc"
-          ? commissionA - commissionB
-          : commissionB - commissionA;
+        return sortUtil(
+          commissionA,
+          commissionB,
+          sortMethod === "commission-asc",
+        );
       }
 
       if (["name-asc", "name-desc"].includes(sortMethod)) {
         const nameA = a.description.moniker.toLowerCase();
         const nameB = b.description.moniker.toLowerCase();
 
-        if (!nameA || !nameB) return 0;
-
-        return sortMethod === "name-asc"
-          ? nameA.localeCompare(nameB)
-          : nameB.localeCompare(nameA);
+        return sortUtil(nameA, nameB, sortMethod === "name-asc");
       }
 
       if (["staked-asc", "staked-desc"].includes(sortMethod)) {
         const aTokens = new BigNumber(a.tokens);
         const bTokens = new BigNumber(b.tokens);
 
-        return sortMethod === "staked-asc"
-          ? aTokens.minus(bTokens).toNumber()
-          : bTokens.minus(aTokens).toNumber();
+        return sortUtil(aTokens, bTokens, sortMethod === "staked-asc");
       }
 
       return 0;
@@ -202,14 +214,32 @@ const ValidatorsTable = () => {
 
   return (
     <>
-      <div className="flex w-full flex-row justify-start gap-[16px]">
-        <Title>Validators</Title>
-        <SearchInput
-          onChange={(e) => setSearchValue(e.target.value)}
-          value={searchValue}
-        />
+      <div className="grid grid-cols-3">
+        <div className="flex w-full flex-row justify-start gap-[16px]">
+          <Title>Validators</Title>
+          <SearchInput
+            onChange={(e) => setSearchValue(e.target.value)}
+            value={searchValue}
+          />
+        </div>
+        <div className="flex flex-row items-center justify-center gap-[40px]">
+          <button
+            onClick={() => {
+              setCurrentTab("active");
+            }}
+          >
+            Active
+          </button>
+          <button
+            onClick={() => {
+              setCurrentTab("inactive");
+            }}
+          >
+            Inactive
+          </button>
+        </div>
       </div>
-      <div className="overflow-hidden rounded-[24px] bg-bg-600 pb-4 text-typo-100">
+      <div className="min-h-[40px] overflow-hidden rounded-[24px] bg-bg-600 pb-4 text-typo-100">
         <div
           className="grid w-full items-center justify-between gap-2 bg-bg-500 p-4 uppercase"
           style={gridStyle}
@@ -248,14 +278,18 @@ const ValidatorsTable = () => {
           <ValidatorRow
             disabled={!isConnected}
             key={validator.operatorAddress}
-            onStake={() => {
-              staking.dispatch(
-                setModalOpened({
-                  content: { validator },
-                  type: "delegate",
-                }),
-              );
-            }}
+            onStake={
+              currentTab === "active"
+                ? () => {
+                    staking.dispatch(
+                      setModalOpened({
+                        content: { validator },
+                        type: "delegate",
+                      }),
+                    );
+                  }
+                : null
+            }
             staking={staking}
             validator={validator}
           />

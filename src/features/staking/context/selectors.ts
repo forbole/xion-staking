@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import type { Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 
 import { normaliseCoin, sumAllCoins } from "../lib/core/coins";
 import type { StakingState } from "./state";
@@ -86,3 +87,20 @@ export const getVotingPowerPerc = (
     .div(new BigNumber(pool.bondedTokens))
     .toNumber();
 };
+
+export const getAllValidators = (
+  state: StakingState,
+): Record<string, undefined | Validator> =>
+  Object.values(state.validators)
+    .map((v) => v?.items)
+    .flat()
+    .reduce((acc, v) => {
+      if (!v) {
+        return acc;
+      }
+
+      return {
+        ...acc,
+        [v.operatorAddress]: v,
+      };
+    }, state.extraValidators);

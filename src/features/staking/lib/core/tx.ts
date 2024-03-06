@@ -8,6 +8,7 @@ import type {
 import BigNumber from "bignumber.js";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import {
+  MsgCancelUnbondingDelegation,
   MsgDelegate,
   MsgUndelegate,
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
@@ -154,4 +155,35 @@ export const getIsMinimumClaimable = (amount: Coin) => {
   const normalised = normaliseCoin(amount);
 
   return new BigNumber(normalised.amount).gte(minClaimableXion);
+};
+
+export const cancelUnstake = async (
+  addresses: StakeAddresses,
+  client: NonNullable<AbstraxionSigningClient>,
+) => {
+  const msg = MsgCancelUnbondingDelegation.fromPartial({
+    delegatorAddress: addresses.delegator,
+    validatorAddress: addresses.validator,
+  });
+
+  const messageWrapper = {
+    typeUrl: "/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation" as string,
+    value: msg,
+  } as MsgUndelegateEncodeObject; // cosmjs doesn't have yet this encode object
+
+  const fee = await getCosmosFee({
+    address: addresses.delegator,
+    msgs: [messageWrapper],
+  });
+
+  return await client
+    .signAndBroadcast(addresses.delegator, [messageWrapper], fee)
+    .then((result) => {
+      // @TODO
+      // eslint-disable-next-line no-console
+      console.log("debug: tx.ts: cancelUnstake: result", result);
+
+      return result;
+    })
+    .catch(handleTxError);
 };

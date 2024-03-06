@@ -19,11 +19,16 @@ import {
 } from "../context/actions";
 import { useStaking } from "../context/hooks";
 import { setModalOpened } from "../context/reducer";
-import { getTotalDelegation, getTotalUnbonding } from "../context/selectors";
+import {
+  getAllValidators,
+  getTotalDelegation,
+  getTotalUnbonding,
+} from "../context/selectors";
 import type { StakingContextType, StakingState } from "../context/state";
 import { useValidatorLogo } from "../hooks";
 import { coinIsPositive } from "../lib/core/coins";
 import { menu, pointer } from "../lib/core/icons";
+import { cancelUnstake } from "../lib/core/tx";
 import {
   formatCoin,
   formatCommission,
@@ -87,6 +92,7 @@ type DelegationRowProps = {
   disabled?: boolean;
   index: number;
   staking: StakingContextType;
+  validator?: Validator;
 };
 
 const DelegationRowBase = ({
@@ -97,21 +103,14 @@ const DelegationRowBase = ({
   disabled,
   index,
   staking,
+  validator,
 }: DelegationRowProps) => {
-  const [validator, setValidator] = useState<null | Validator>(null);
   const { validatorAddress } = delegation;
 
   useEffect(() => {
-    (async () => {
-      if (validatorAddress) {
-        const newValidator = await getAndSetValidatorAction(
-          validatorAddress,
-          staking,
-        );
-
-        setValidator(newValidator);
-      }
-    })();
+    if (validatorAddress) {
+      getAndSetValidatorAction(validatorAddress, staking);
+    }
   }, [validatorAddress, staking]);
 
   const logo = useValidatorLogo(validator?.description.identity);
@@ -145,7 +144,7 @@ const DelegationRowBase = ({
       <div className="text-right">
         <TokenColors text={formatCoin(delegation.rewards)} />
       </div>
-      <div className="flex flex-row items-center justify-start gap-[8px]">
+      <div className="flex flex-row items-center justify-end gap-[8px]">
         <ButtonPill
           disabled={disabled}
           onClick={() => {
@@ -209,16 +208,27 @@ const DelegationRow = memo(DelegationRowBase);
 
 type UnbondingRowProps = {
   disabled?: boolean;
-  staking: StakingContextType;
+  stakingRef: ReturnType<typeof useStaking>;
   unbonding: NonNullable<StakingState["unbondings"]>["items"][number];
+  validator?: Validator;
 };
 
-const UnbondingRow = ({ disabled, staking, unbonding }: UnbondingRowProps) => {
-  const validator = (staking.state.validators?.items || []).find(
-    (v) => v.operatorAddress === unbonding.validator,
-  );
+const UnbondingRow = ({
+  disabled,
+  stakingRef,
+  unbonding,
+  validator,
+}: UnbondingRowProps) => {
+  const { client, staking } = stakingRef;
 
   const logo = useValidatorLogo(validator?.description.identity);
+  const validatorAddress = unbonding.validator;
+
+  useEffect(() => {
+    if (validatorAddress) {
+      getAndSetValidatorAction(validatorAddress, staking);
+    }
+  }, [validatorAddress, staking]);
 
   return (
     <div className={rowStyle} style={gridStyle}>
@@ -245,14 +255,22 @@ const UnbondingRow = ({ disabled, staking, unbonding }: UnbondingRowProps) => {
       <div className="text-right">
         {formatUnbondingCompletionTime(unbonding.completionTime)}
       </div>
-      <div>
+      <div className="text-right">
         <ButtonPill
           disabled={disabled}
           onClick={() => {
-            // @TODO
+            if (!client) return;
+
+            const addresses = {
+              delegator: staking.state.tokens?.denom || "",
+              validator: unbonding.validator,
+            };
+
+            cancelUnstake(addresses, client);
           }}
+          variant="danger"
         >
-          Cancel
+          Cancel Unstake
         </ButtonPill>
       </div>
     </div>
@@ -293,6 +311,8 @@ const DelegationDetails = () => {
   const [unbondingsSortMethod, setUnbondingsSortMethod] =
     useState<SortMethod>("none");
 
+  const validatorsMap = getAllValidators(staking.state);
+
   const { delegations, unbondings } = staking.state;
 
   const hasDelegations = !!delegations?.items.length;
@@ -306,16 +326,6 @@ const DelegationDetails = () => {
     <div className="flex h-full flex-1 flex-col items-end gap-[16px]">
       {hasDelegations &&
         (() => {
-          const validatorIdToValidator =
-            staking.state.validators?.items.reduce(
-              (acc, v) => {
-                acc[v.operatorAddress] = v;
-
-                return acc;
-              },
-              { ...staking.state.extraValidators },
-            ) || {};
-
           const sortedDelegations = delegations.items.slice().sort((a, b) => {
             switch (delegationsSortMethod) {
               case "staked-asc":
@@ -323,7 +333,7 @@ const DelegationDetails = () => {
                 return sortUtil(
                   a.balance.amount,
                   b.balance.amount,
-                  delegationsSortMethod === "staked-asc" ? "asc" : "desc",
+                  delegationsSortMethod === "staked-asc",
                 );
 
               case "rewards-asc":
@@ -331,19 +341,19 @@ const DelegationDetails = () => {
                 return sortUtil(
                   a.rewards.amount,
                   b.rewards.amount,
-                  delegationsSortMethod === "rewards-asc" ? "asc" : "desc",
+                  delegationsSortMethod === "rewards-asc",
                 );
 
               case "commission-asc":
 
               case "commission-desc": {
-                const validatorA = validatorIdToValidator[a.validatorAddress];
-                const validatorB = validatorIdToValidator[b.validatorAddress];
+                const validatorA = validatorsMap[a.validatorAddress];
+                const validatorB = validatorsMap[b.validatorAddress];
 
                 return sortUtil(
                   Number(validatorA?.commission.commissionRates.rate),
                   Number(validatorB?.commission.commissionRates.rate),
-                  delegationsSortMethod === "commission-asc" ? "asc" : "desc",
+                  delegationsSortMethod === "commission-asc",
                 );
               }
 
@@ -390,6 +400,7 @@ const DelegationDetails = () => {
                   index={index}
                   key={index}
                   staking={staking}
+                  validator={validatorsMap[delegation.validatorAddress]}
                 />
               ))}
             </div>
@@ -404,7 +415,7 @@ const DelegationDetails = () => {
                 return sortUtil(
                   Number(a.balance.amount),
                   Number(b.balance.amount),
-                  unbondingsSortMethod === "amount-asc" ? "asc" : "desc",
+                  unbondingsSortMethod === "amount-asc",
                 );
 
               case "completion-asc":
@@ -412,7 +423,7 @@ const DelegationDetails = () => {
                 return sortUtil(
                   a.completionTime,
                   b.completionTime,
-                  unbondingsSortMethod === "completion-asc" ? "asc" : "desc",
+                  unbondingsSortMethod === "completion-asc",
                 );
 
               default:
@@ -448,8 +459,9 @@ const DelegationDetails = () => {
               {sortedUnbondings.map((unbonding, index) => (
                 <UnbondingRow
                   key={index}
-                  staking={staking}
+                  stakingRef={stakingRef}
                   unbonding={unbonding}
+                  validator={validatorsMap[unbonding.validator]}
                 />
               ))}
             </div>

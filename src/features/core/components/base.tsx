@@ -5,7 +5,7 @@ import type { FC, PropsWithChildren, ReactNode } from "react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-import { clipboard } from "@/features/staking/lib/core/icons";
+import { clipboard, loader, search } from "@/features/staking/lib/core/icons";
 
 import { useCore } from "../context/hooks";
 import { setPopupOpenId } from "../context/reducer";
@@ -52,13 +52,20 @@ export const NavLink = ({ children, href }: NavLinkProps) => (
 type ButtonPillProps = React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
   HTMLButtonElement
->;
+> & {
+  variant?: "danger" | "default";
+};
 
-export const ButtonPill = ({ className, ...props }: ButtonPillProps) => (
+export const ButtonPill = ({
+  className,
+  variant,
+  ...props
+}: ButtonPillProps) => (
   <button
     {...props}
     className={[
       "cursor-pointer rounded-full bg-bg-550 px-[8px] py-[4px] text-white hover:bg-bg-600 disabled:cursor-not-allowed disabled:bg-bg-600 disabled:text-typo-150",
+      variant === "danger" ? "[&]:text-danger" : "",
       className,
     ].join(" ")}
   />
@@ -141,10 +148,16 @@ type ButtonProps = React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
   HTMLButtonElement
 > & {
+  isLoading?: boolean;
   variant?: "danger" | "default" | "success";
 };
 
-export const Button = ({ className, variant, ...props }: ButtonProps) => {
+export const Button = ({
+  className,
+  isLoading,
+  variant,
+  ...props
+}: ButtonProps) => {
   const colors = (() => {
     if (variant === "danger")
       return "text-danger disabled:text-typo-150 bg-[#D745061A]";
@@ -163,7 +176,19 @@ export const Button = ({ className, variant, ...props }: ButtonProps) => {
         colors,
         className || "",
       ].join(" ")}
-    />
+      disabled={isLoading || props.disabled}
+    >
+      {isLoading ? (
+        <span className="flex items-center justify-center">
+          <span
+            className="animate-spin"
+            dangerouslySetInnerHTML={{ __html: loader }}
+          />
+        </span>
+      ) : (
+        props.children
+      )}
+    </button>
   );
 };
 
@@ -231,9 +256,13 @@ type SearchInputProps = React.DetailedHTMLProps<
 >;
 
 export const SearchInput = (props: SearchInputProps) => (
-  <input
-    {...props}
-    className="border-none bg-transparent text-white outline-none"
-    style={{ borderBottom: "1px solid white" }}
-  />
+  <div className="relative">
+    <div className="z-5 absolute bottom-[5px] left-0">
+      <div dangerouslySetInnerHTML={{ __html: search }} />
+    </div>
+    <input
+      {...props}
+      className="border-b-[1px] border-b-transparent bg-transparent pl-[24px] text-white outline-none hover:border-b-white focus:border-b-white"
+    />
+  </div>
 );

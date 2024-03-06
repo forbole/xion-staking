@@ -55,6 +55,10 @@ export const formatXionToUSD = (coin: Coin | null, compact?: boolean) => {
   const value = coin ? new BigNumber(normalised.amount) : new BigNumber(0);
   const usd = value.times(xionToUSD);
 
+  if (usd.eq(0)) {
+    return "$0";
+  }
+
   if (!compact && usd.lt(0.01)) {
     return "<$0.01";
   }

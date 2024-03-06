@@ -2,6 +2,7 @@
 
 import { Button } from "@burnt-labs/ui";
 import BigNumber from "bignumber.js";
+import { BondStatus } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -117,21 +118,23 @@ export default function ValidatorPage() {
                 </div>
               )}
             </div>
-            <div>
-              <Button
-                disabled={!stakingRef.isConnected || isLoadingBlocking}
-                onClick={() => {
-                  stakingRef.staking.dispatch(
-                    setModalOpened({
-                      content: { validator: validatorDetails },
-                      type: "delegate",
-                    }),
-                  );
-                }}
-              >
-                DELEGATE NOW
-              </Button>
-            </div>
+            {validatorDetails.status === BondStatus.BOND_STATUS_BONDED && (
+              <div>
+                <Button
+                  disabled={!stakingRef.isConnected || isLoadingBlocking}
+                  onClick={() => {
+                    stakingRef.staking.dispatch(
+                      setModalOpened({
+                        content: { validator: validatorDetails },
+                        type: "delegate",
+                      }),
+                    );
+                  }}
+                >
+                  DELEGATE NOW
+                </Button>
+              </div>
+            )}
           </div>
           <DivisorHorizontal />
           <div className="grid grid-cols-4">

@@ -33,6 +33,8 @@ type ModalContent = {
   type: "delegate" | "rewards" | "undelegate";
 } | null;
 
+export type ValidatorStatus = "bonded" | "unbonded" | "unbonding";
+
 export type StakingState = {
   delegations: Paginated<Delegation>;
   extraValidators: Record<string, undefined | Validator>;
@@ -42,7 +44,7 @@ export type StakingState = {
   tokens: Coin | null;
   unbondings: Paginated<Unbonding>;
   validatorDetails: null | Validator;
-  validators: Paginated<Validator>;
+  validators: Record<ValidatorStatus, null | Paginated<Validator>>;
 };
 
 export type StakingContextType = {
@@ -59,7 +61,11 @@ export const defaultState: StakingState = {
   tokens: null,
   unbondings: null,
   validatorDetails: null,
-  validators: null,
+  validators: {
+    bonded: null,
+    unbonded: null,
+    unbonding: null,
+  },
 };
 
 export const StakingContext = createContext<StakingContextType>({

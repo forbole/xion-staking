@@ -23,27 +23,40 @@ import {
   setValidatorDetails,
   setValidators,
 } from "./reducer";
+import { getAllValidators } from "./selectors";
 import type { StakingContextType, Unbonding } from "./state";
 
 export const fetchStakingDataAction = async (staking: StakingContextType) => {
   try {
     staking.dispatch(setIsInfoLoading(true));
 
-    const [validators, pool] = await Promise.all([
-      getValidatorsList(),
-      getPool(),
-    ]);
+    const [validatorsBonded, validatorsUnbonded, validatorsUnbonding, pool] =
+      await Promise.all([
+        getValidatorsList("BOND_STATUS_BONDED"),
+        getValidatorsList("BOND_STATUS_UNBONDED"),
+        getValidatorsList("BOND_STATUS_UNBONDING"),
+        getPool(),
+      ]);
 
-    staking.dispatch(
-      setValidators(
-        {
-          items: validators.validators,
-          nextKey: validators.pagination?.nextKey || null,
-          total: validators.pagination?.total || null,
-        },
-        true,
-      ),
-    );
+    (
+      [
+        [validatorsBonded, "bonded"],
+        [validatorsUnbonded, "unbonded"],
+        [validatorsUnbonding, "unbonding"],
+      ] as const
+    ).forEach(([validators, status]) => {
+      staking.dispatch(
+        setValidators(
+          {
+            items: validators.validators,
+            nextKey: validators.pagination?.nextKey || null,
+            total: validators.pagination?.total || null,
+          },
+          true,
+          status,
+        ),
+      );
+    });
 
     staking.dispatch(setPool(pool));
 
@@ -179,9 +192,8 @@ export const getValidatorDetailsAction = async (
   }
 
   const details =
-    staking.state.validators?.items.find(
-      (v) => v.operatorAddress === validatorAddress,
-    ) || (await getValidatorDetails(validatorAddress));
+    getAllValidators(staking.state)[validatorAddress] ||
+    (await getValidatorDetails(validatorAddress));
 
   staking.dispatch(setValidatorDetails(details));
 
@@ -192,11 +204,7 @@ export const getAndSetValidatorAction = async (
   validatorAddress: string,
   staking: StakingContextType,
 ) => {
-  const details =
-    staking.state.extraValidators[validatorAddress] ||
-    staking.state.validators?.items.find(
-      (v) => v.operatorAddress === validatorAddress,
-    );
+  const details = getAllValidators(staking.state)[validatorAddress];
 
   if (details) {
     return details;

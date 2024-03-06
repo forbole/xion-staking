@@ -18,3 +18,7 @@ export const basePath =
 export const xionToUSD = 10;
 
 export const defaultAvatar = `${basePath}/default-avatar.svg`;
+
+// Even if this can be retrieved from the params, hardcode it to avoid and
+// extra request
+export const unbondingDays = isTestnet ? 3 : 21;

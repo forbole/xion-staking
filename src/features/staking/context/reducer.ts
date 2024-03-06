@@ -1,4 +1,4 @@
-import type { StakingState } from "./state";
+import type { StakingState, ValidatorStatus } from "./state";
 
 export type StakingAction =
   | {
@@ -12,8 +12,9 @@ export type StakingAction =
       type: "ADD_UNBONDINGS";
     }
   | {
-      content: NonNullable<StakingState["validators"]>;
+      content: NonNullable<StakingState["validators"]["bonded"]>;
       reset: boolean;
+      status: ValidatorStatus;
       type: "ADD_VALIDATORS";
     }
   | {
@@ -65,9 +66,11 @@ export const setIsInfoLoading = (
 export const setValidators = (
   validators: Content<"ADD_VALIDATORS">,
   reset: boolean,
+  status: ValidatorStatus,
 ): StakingAction => ({
   content: validators,
   reset,
+  status,
   type: "ADD_VALIDATORS",
 });
 
@@ -122,7 +125,7 @@ export const setExtraValidators = (
 
 // Used for pagination
 const getUniqueValidators = (
-  validators: NonNullable<StakingState["validators"]>["items"],
+  validators: NonNullable<StakingState["validators"]["bonded"]>["items"],
 ) => {
   const validatorIds = new Set<string>();
 
@@ -171,13 +174,17 @@ const getUniqueUnbondings = (
   });
 };
 
-export const reducer = (state: StakingState, action: StakingAction) => {
+export const reducer = (
+  state: StakingState,
+  action: StakingAction,
+): StakingState => {
   switch (action.type) {
     case "SET_TOKENS":
       return { ...state, tokens: action.content };
 
     case "ADD_VALIDATORS": {
-      const currentValidators = (!action.reset && state.validators) || {
+      const currentValidators = (!action.reset &&
+        state.validators[action.status]) || {
         items: [],
         nextKey: null,
         total: null,
@@ -192,7 +199,10 @@ export const reducer = (state: StakingState, action: StakingAction) => {
 
       return {
         ...state,
-        validators: currentValidators,
+        validators: {
+          ...state.validators,
+          [action.status]: currentValidators,
+        },
       };
     }
 
@@ -269,7 +279,6 @@ export const reducer = (state: StakingState, action: StakingAction) => {
         ...state,
         delegations: null,
         unbondings: null,
-        validators: null,
       };
     }
 

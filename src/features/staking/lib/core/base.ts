@@ -1,3 +1,4 @@
+import type { BondStatusString } from "@cosmjs/stargate/build/modules/staking/queries";
 import BigNumber from "bignumber.js";
 import type { QueryValidatorsResponse } from "cosmjs-types/cosmos/staking/v1beta1/query";
 import type {
@@ -10,18 +11,16 @@ import { normaliseCoin } from "./coins";
 
 let validatorsRequest: null | Promise<QueryValidatorsResponse> = null;
 
-export const getValidatorsList = async () => {
+export const getValidatorsList = async (bondStatus: BondStatusString) => {
   if (validatorsRequest) return validatorsRequest;
 
   const queryClient = await getStakingQueryClient();
 
-  validatorsRequest = queryClient.staking
-    .validators("BOND_STATUS_BONDED")
-    .then((res) => {
-      validatorsRequest = null;
+  validatorsRequest = queryClient.staking.validators(bondStatus).then((res) => {
+    validatorsRequest = null;
 
-      return res;
-    });
+    return res;
+  });
 
   return validatorsRequest;
 };

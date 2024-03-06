@@ -1,10 +1,12 @@
-export const sortUtil = (a: unknown, b: unknown, sorting: "asc" | "desc") => {
+import BigNumber from "bignumber.js";
+
+export const sortUtil = (a: unknown, b: unknown, isAsc: boolean) => {
   if (typeof a !== typeof b) {
     return 0;
   }
 
   if (typeof a === "string") {
-    return sorting === "asc"
+    return isAsc
       ? a.localeCompare(b as string)
       : (b as string).localeCompare(a);
   }
@@ -14,7 +16,11 @@ export const sortUtil = (a: unknown, b: unknown, sorting: "asc" | "desc") => {
       return 0;
     }
 
-    return sorting === "asc" ? a - (b as number) : (b as number) - a;
+    return isAsc ? a - (b as number) : (b as number) - a;
+  }
+
+  if (a instanceof BigNumber && b instanceof BigNumber) {
+    return isAsc ? a.minus(b).toNumber() : b.minus(a).toNumber();
   }
 
   return 0;

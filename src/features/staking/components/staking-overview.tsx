@@ -1,8 +1,9 @@
-import { useAbstraxionAccount } from "@burnt-labs/abstraxion";
+import { useAbstraxionAccount, useModal } from "@burnt-labs/abstraxion";
 import { memo } from "react";
 
 import {
   BodyMedium,
+  Button,
   ButtonPill,
   Heading2,
   Heading8,
@@ -15,10 +16,15 @@ import { getEmptyXionCoin } from "../lib/core/coins";
 import { basePath } from "../lib/core/constants";
 import { getIsMinimumClaimable } from "../lib/core/tx";
 import { formatCoin, formatXionToUSD } from "../lib/formatters";
+import { DivisorVertical } from "./divisor";
+
+const divisorStyle = "absolute bottom-[24px] right-[10px] top-[24px]";
+const columnStyle = "relative flex h-full flex-col items-start gap-3 p-[24px]";
 
 const StakingOverview = () => {
   const { isConnected } = useAbstraxionAccount();
   const { staking } = useStaking();
+  const [, setShowAbstraxion] = useModal();
 
   if (!isConnected) {
     return (
@@ -30,7 +36,15 @@ const StakingOverview = () => {
         }}
       >
         <HeroText>Please Log In To View</HeroText>
-        <div>Log In</div>
+        <div>
+          <Button
+            onClick={() => {
+              setShowAbstraxion(true);
+            }}
+          >
+            Log In
+          </Button>
+        </div>
       </div>
     );
   }
@@ -52,26 +66,35 @@ const StakingOverview = () => {
         gridTemplateColumns: "1fr 1fr 1fr 1fr",
       }}
     >
-      <div className="flex h-full flex-col items-start gap-3 p-[24px]">
+      <div className={columnStyle}>
         <Heading8>Claimable Rewards</Heading8>
         <div className="flex flex-row items-center gap-4">
           <Heading2>{formatXionToUSD(totalRewards)}</Heading2>
-          {getIsMinimumClaimable(totalRewards) && (
+          {getIsMinimumClaimable(totalRewards) /* @TODO */ && (
             <ButtonPill>Claim</ButtonPill>
           )}
         </div>
         <BodyMedium>{formatCoin(totalRewards)}</BodyMedium>
+        <div className={divisorStyle}>
+          <DivisorVertical />
+        </div>
       </div>
-      <div className="flex h-full flex-col items-start gap-3 p-[24px]">
+      <div className={columnStyle}>
         <Heading8>APR</Heading8>
         <Heading2>15.57%</Heading2>
+        <div className={divisorStyle}>
+          <DivisorVertical />
+        </div>
       </div>
-      <div className="flex h-full flex-col items-start gap-3 p-[24px]">
+      <div className={columnStyle}>
         <Heading8>Delegated Amount</Heading8>
         <Heading2>{formatXionToUSD(totalDelegation)}</Heading2>
         <BodyMedium>{formatCoin(totalDelegation)}</BodyMedium>
+        <div className={divisorStyle}>
+          <DivisorVertical />
+        </div>
       </div>
-      <div className="flex h-full flex-col items-start gap-3 p-[24px]">
+      <div className={columnStyle}>
         <Heading8>Available For Delegation</Heading8>
         <Heading2>{formatXionToUSD(availableDelegation)}</Heading2>
         <BodyMedium>{formatCoin(availableDelegation)}</BodyMedium>

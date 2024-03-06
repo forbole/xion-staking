@@ -82,6 +82,23 @@ const StakingModal = () => {
     >
       <div className="min-w-[390px]">
         {(() => {
+          const getStakingSummary = () => (
+            <>
+              <div className="mb-[32px] mt-[32px] flex w-full flex-col items-center justify-center gap-[12px]">
+                <Heading8>Staked Amount (XION)</Heading8>
+                <Heading2>{amountXION}</Heading2>
+                {amountUSD && (
+                  <Heading8>${formatToSmallDisplay(amountUSD)}</Heading8>
+                )}
+              </div>
+              {!!memo && (
+                <div className="mb-[32px] text-center italic">
+                  <div>{memo}</div>
+                </div>
+              )}
+            </>
+          );
+
           if (step === "completed") {
             return (
               <>
@@ -95,16 +112,7 @@ const StakingModal = () => {
                     in securing the XION network.
                   </div>
                 </div>
-                <div className="mb-[32px] mt-[32px] flex w-full flex-col items-center justify-center gap-[12px]">
-                  <Heading8>Staked Amount</Heading8>
-                  <Heading2>{amountXION}</Heading2>
-                  <Heading8>$24N</Heading8>
-                </div>
-                {!!memo && (
-                  <div className="mb-[32px] text-center italic">
-                    <div>{memo}</div>
-                  </div>
-                )}
+                {getStakingSummary()}
                 <Button
                   disabled={isLoading}
                   onClick={() => {
@@ -129,18 +137,9 @@ const StakingModal = () => {
                     {validator.description.moniker}. Press 'Confirm' to proceed.
                   </div>
                 </div>
-                <div className="mb-[32px] mt-[32px] flex w-full flex-col items-center justify-center gap-[12px]">
-                  <Heading8>Staked Amount</Heading8>
-                  <Heading2>{amountXION}</Heading2>
-                  <Heading8>$24N</Heading8>
-                </div>
-                {!!memo && (
-                  <div className="mb-[32px] text-center italic">
-                    <div>{memo}</div>
-                  </div>
-                )}
+                {getStakingSummary()}
                 <Button
-                  disabled={isLoading}
+                  isLoading={isLoading}
                   onClick={() => {
                     if (!client) return;
 
