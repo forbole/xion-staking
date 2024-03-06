@@ -130,7 +130,7 @@ export const claimRewards = async (
 ) => {
   const msg = MsgWithdrawDelegatorReward.fromPartial({
     delegatorAddress: addresses.delegator,
-    // validatorAddress: addresses.validator,
+    validatorAddress: addresses.validator,
   });
 
   const messageWrapper = [

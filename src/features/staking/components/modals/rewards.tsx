@@ -4,15 +4,16 @@ import { toast } from "react-toastify";
 import { Button, HeroText } from "@/features/core/components/base";
 import CommonModal from "@/features/core/components/common-modal";
 
-import { claimRewardsAction } from "../../context/actions";
+import { fetchUserDataAction } from "../../context/actions";
 import { useStaking } from "../../context/hooks";
 import { setModalOpened } from "../../context/reducer";
+import { claimRewards } from "../../lib/core/tx";
 
 type Step = "completed" | "loading";
 
 const initialStep: Step = "loading";
 
-const claimRewards = async (
+const claimRewardsLoop = async (
   stakingRef: ReturnType<typeof useStaking>,
   setStep: (step: Step) => void,
 ) => {
@@ -23,17 +24,20 @@ const claimRewards = async (
 
   if (!client || !delegations?.length) return;
 
+  const delegatorAddress = stakingRef.account.bech32Address;
+
   delegations
     .reduce(async (promise, delegation) => {
       await promise;
 
       const addresses = {
-        delegator: stakingRef.account.bech32Address,
+        delegator: delegatorAddress,
         validator: delegation.validatorAddress,
       };
 
-      return claimRewardsAction(addresses, client, stakingRef.staking);
+      await claimRewards(addresses, client);
     }, Promise.resolve())
+    .then(() => fetchUserDataAction(delegatorAddress, staking))
     .then(() => {
       setStep("completed");
     })
@@ -62,7 +66,7 @@ const RewardsModal = () => {
       if (requested.current) return;
 
       requested.current = true;
-      claimRewards(stakingRef, setStep);
+      claimRewardsLoop(stakingRef, setStep);
     }
   }, [isOpen, stakingRef]);
 

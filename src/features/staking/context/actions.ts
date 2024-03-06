@@ -13,7 +13,7 @@ import {
 import type { AbstraxionSigningClient } from "../lib/core/client";
 import { sumAllCoins } from "../lib/core/coins";
 import type { StakeAddresses } from "../lib/core/tx";
-import { claimRewards, stakeAmount, unstakeAmount } from "../lib/core/tx";
+import { stakeAmount, unstakeAmount } from "../lib/core/tx";
 import {
   addDelegations,
   addUnbondings,
@@ -180,16 +180,6 @@ export const unstakeValidatorAction = async (
   return async () => {
     await fetchUserDataAction(addresses.delegator, staking);
   };
-};
-
-export const claimRewardsAction = async (
-  addresses: StakeAddresses,
-  client: AbstraxionSigningClient,
-  staking: StakingContextType,
-) => {
-  await claimRewards(addresses, client);
-
-  await fetchUserDataAction(addresses.delegator, staking);
 };
 
 export const getValidatorDetailsAction = async (
