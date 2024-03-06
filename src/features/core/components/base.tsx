@@ -224,3 +224,16 @@ export const FloatingDropdown = ({
     </div>
   );
 };
+
+type SearchInputProps = React.DetailedHTMLProps<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
+>;
+
+export const SearchInput = (props: SearchInputProps) => (
+  <input
+    {...props}
+    className="border-none bg-transparent text-white outline-none"
+    style={{ borderBottom: "1px solid white" }}
+  />
+);

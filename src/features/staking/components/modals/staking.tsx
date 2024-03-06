@@ -117,6 +117,68 @@ const StakingModal = () => {
             );
           }
 
+          if (step === "review") {
+            return (
+              <>
+                <div className="text-center">
+                  <div className="mb-[16px]">
+                    <HeroText>REVIEW</HeroText>
+                  </div>
+                  <div>
+                    Get ready to stake your XION token with{" "}
+                    {validator.description.moniker}. Press 'Confirm' to proceed.
+                  </div>
+                </div>
+                <div className="mb-[32px] mt-[32px] flex w-full flex-col items-center justify-center gap-[12px]">
+                  <Heading8>Staked Amount</Heading8>
+                  <Heading2>{amountXION}</Heading2>
+                  <Heading8>$24N</Heading8>
+                </div>
+                {!!memo && (
+                  <div className="mb-[32px] text-center italic">
+                    <div>{memo}</div>
+                  </div>
+                )}
+                <Button
+                  disabled={isLoading}
+                  onClick={() => {
+                    if (!client) return;
+
+                    setIsLoading(true);
+
+                    const addresses: StakeAddresses = {
+                      delegator: account.bech32Address,
+                      validator: validator.operatorAddress,
+                    };
+
+                    stakeValidatorAction(
+                      addresses,
+                      getXionCoin(amountXIONParsed),
+                      memo,
+                      client,
+                      staking,
+                    )
+                      .then((fetchDataFn) => {
+                        setStep("completed");
+
+                        return fetchDataFn();
+                      })
+                      .catch(() => {
+                        toast("Staking error", {
+                          type: "error",
+                        });
+                      })
+                      .finally(() => {
+                        setIsLoading(false);
+                      });
+                  }}
+                >
+                  CONFIRM
+                </Button>
+              </>
+            );
+          }
+
           const getHasAmountError = () =>
             !amountUSD ||
             !availableTokens ||
@@ -135,33 +197,7 @@ const StakingModal = () => {
             )
               return;
 
-            setIsLoading(true);
-
-            const addresses: StakeAddresses = {
-              delegator: account.bech32Address,
-              validator: validator.operatorAddress,
-            };
-
-            stakeValidatorAction(
-              addresses,
-              getXionCoin(amountXIONParsed),
-              memo,
-              client,
-              staking,
-            )
-              .then((fetchDataFn) => {
-                setStep("completed");
-
-                return fetchDataFn();
-              })
-              .catch(() => {
-                toast("Staking error", {
-                  type: "error",
-                });
-              })
-              .finally(() => {
-                setIsLoading(false);
-              });
+            setStep("review");
           };
 
           return (

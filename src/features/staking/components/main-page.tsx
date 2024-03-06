@@ -33,7 +33,6 @@ function StakingPage() {
         </div>
         <StakingOverview />
         {isShowingDetails && canShowDetail && <DelegationDetails />}
-        <Title>Validators</Title>
         <ValidatorsTable />
       </div>
       <StakingModals />

@@ -3,7 +3,12 @@
 import BigNumber from "bignumber.js";
 import { memo, useState } from "react";
 
-import { ButtonPill, NavLink } from "@/features/core/components/base";
+import {
+  ButtonPill,
+  NavLink,
+  SearchInput,
+  Title,
+} from "@/features/core/components/base";
 import { HeaderTitleBase } from "@/features/core/components/table";
 
 import { useStaking } from "../context/hooks";
@@ -128,112 +133,135 @@ const HeaderTitle = HeaderTitleBase<SortMethod>;
 const ValidatorsTable = () => {
   const { isConnected, staking } = useStaking();
   const [sortMethod, setSortMethod] = useState<SortMethod>("none");
+  const [searchValue, setSearchValue] = useState<string>("");
 
   const { validators } = staking.state;
 
   if (!validators?.items.length) return null;
 
-  const sortedItems = validators.items.slice().sort((a, b) => {
-    if (sortMethod === "none") return 0;
+  const sortedItems = validators.items
+    .slice()
+    .sort((a, b) => {
+      if (sortMethod === "none") return 0;
 
-    if (["voting-power-asc", "voting-power-desc"].includes(sortMethod)) {
-      const votingPowerA = getVotingPowerPerc(a.tokens, staking.state);
-      const votingPowerB = getVotingPowerPerc(b.tokens, staking.state);
+      if (["voting-power-asc", "voting-power-desc"].includes(sortMethod)) {
+        const votingPowerA = getVotingPowerPerc(a.tokens, staking.state);
+        const votingPowerB = getVotingPowerPerc(b.tokens, staking.state);
 
-      if (!votingPowerA || !votingPowerB) return 0;
+        if (!votingPowerA || !votingPowerB) return 0;
 
-      return sortMethod === "voting-power-asc"
-        ? votingPowerA - votingPowerB
-        : votingPowerB - votingPowerA;
-    }
+        return sortMethod === "voting-power-asc"
+          ? votingPowerA - votingPowerB
+          : votingPowerB - votingPowerA;
+      }
 
-    if (["commission-asc", "commission-desc"].includes(sortMethod)) {
-      const commissionA = parseFloat(a.commission.commissionRates.rate);
-      const commissionB = parseFloat(b.commission.commissionRates.rate);
+      if (["commission-asc", "commission-desc"].includes(sortMethod)) {
+        const commissionA = parseFloat(a.commission.commissionRates.rate);
+        const commissionB = parseFloat(b.commission.commissionRates.rate);
 
-      if (!commissionA || !commissionB) return 0;
+        if (!commissionA || !commissionB) return 0;
 
-      return sortMethod === "commission-asc"
-        ? commissionA - commissionB
-        : commissionB - commissionA;
-    }
+        return sortMethod === "commission-asc"
+          ? commissionA - commissionB
+          : commissionB - commissionA;
+      }
 
-    if (["name-asc", "name-desc"].includes(sortMethod)) {
-      const nameA = a.description.moniker.toLowerCase();
-      const nameB = b.description.moniker.toLowerCase();
+      if (["name-asc", "name-desc"].includes(sortMethod)) {
+        const nameA = a.description.moniker.toLowerCase();
+        const nameB = b.description.moniker.toLowerCase();
 
-      if (!nameA || !nameB) return 0;
+        if (!nameA || !nameB) return 0;
 
-      return sortMethod === "name-asc"
-        ? nameA.localeCompare(nameB)
-        : nameB.localeCompare(nameA);
-    }
+        return sortMethod === "name-asc"
+          ? nameA.localeCompare(nameB)
+          : nameB.localeCompare(nameA);
+      }
 
-    if (["staked-asc", "staked-desc"].includes(sortMethod)) {
-      const aTokens = new BigNumber(a.tokens);
-      const bTokens = new BigNumber(b.tokens);
+      if (["staked-asc", "staked-desc"].includes(sortMethod)) {
+        const aTokens = new BigNumber(a.tokens);
+        const bTokens = new BigNumber(b.tokens);
 
-      return sortMethod === "staked-asc"
-        ? aTokens.minus(bTokens).toNumber()
-        : bTokens.minus(aTokens).toNumber();
-    }
+        return sortMethod === "staked-asc"
+          ? aTokens.minus(bTokens).toNumber()
+          : bTokens.minus(aTokens).toNumber();
+      }
 
-    return 0;
-  });
+      return 0;
+    })
+    .filter((validator) => {
+      if (!searchValue) return true;
+
+      const moniker = validator.description.moniker.toLowerCase();
+      const operatorAddress = validator.operatorAddress.toLowerCase();
+
+      return (
+        moniker.includes(searchValue.toLowerCase()) ||
+        operatorAddress.includes(searchValue.toLowerCase())
+      );
+    });
 
   return (
-    <div className="overflow-hidden rounded-[24px] bg-bg-600 pb-4 text-typo-100">
-      <div
-        className="grid w-full items-center justify-between gap-2 bg-bg-500 p-4 uppercase"
-        style={gridStyle}
-      >
-        <div />
-        <HeaderTitle
-          onSort={setSortMethod}
-          sort={sortMethod}
-          sorting={["name-asc", "name-desc"]}
-        >
-          Validator
-        </HeaderTitle>
-        <HeaderTitle
-          onSort={setSortMethod}
-          sort={sortMethod}
-          sorting={["staked-asc", "staked-desc"]}
-        >
-          <div className="text-right">Staked Amount</div>
-        </HeaderTitle>
-        <HeaderTitle
-          onSort={setSortMethod}
-          sort={sortMethod}
-          sorting={["commission-asc", "commission-desc"]}
-        >
-          <div className="text-right">Commission</div>
-        </HeaderTitle>
-        <HeaderTitle
-          onSort={setSortMethod}
-          sort={sortMethod}
-          sorting={["voting-power-asc", "voting-power-desc"]}
-        >
-          <div className="text-right">Voting Power</div>
-        </HeaderTitle>
-      </div>
-      {sortedItems.map((validator) => (
-        <ValidatorRow
-          disabled={!isConnected}
-          key={validator.operatorAddress}
-          onStake={() => {
-            staking.dispatch(
-              setModalOpened({
-                content: { validator },
-                type: "delegate",
-              }),
-            );
-          }}
-          staking={staking}
-          validator={validator}
+    <>
+      <div className="flex w-full flex-row justify-start gap-[16px]">
+        <Title>Validators</Title>
+        <SearchInput
+          onChange={(e) => setSearchValue(e.target.value)}
+          value={searchValue}
         />
-      ))}
-    </div>
+      </div>
+      <div className="overflow-hidden rounded-[24px] bg-bg-600 pb-4 text-typo-100">
+        <div
+          className="grid w-full items-center justify-between gap-2 bg-bg-500 p-4 uppercase"
+          style={gridStyle}
+        >
+          <div />
+          <HeaderTitle
+            onSort={setSortMethod}
+            sort={sortMethod}
+            sorting={["name-asc", "name-desc"]}
+          >
+            Validator
+          </HeaderTitle>
+          <HeaderTitle
+            onSort={setSortMethod}
+            sort={sortMethod}
+            sorting={["staked-asc", "staked-desc"]}
+          >
+            <div className="text-right">Staked Amount</div>
+          </HeaderTitle>
+          <HeaderTitle
+            onSort={setSortMethod}
+            sort={sortMethod}
+            sorting={["commission-asc", "commission-desc"]}
+          >
+            <div className="text-right">Commission</div>
+          </HeaderTitle>
+          <HeaderTitle
+            onSort={setSortMethod}
+            sort={sortMethod}
+            sorting={["voting-power-asc", "voting-power-desc"]}
+          >
+            <div className="text-right">Voting Power</div>
+          </HeaderTitle>
+        </div>
+        {sortedItems.map((validator) => (
+          <ValidatorRow
+            disabled={!isConnected}
+            key={validator.operatorAddress}
+            onStake={() => {
+              staking.dispatch(
+                setModalOpened({
+                  content: { validator },
+                  type: "delegate",
+                }),
+              );
+            }}
+            staking={staking}
+            validator={validator}
+          />
+        ))}
+      </div>
+    </>
   );
 };
 
