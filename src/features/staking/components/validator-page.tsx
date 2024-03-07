@@ -92,14 +92,14 @@ export default function ValidatorPage() {
           <span>{validatorDetails.description.moniker}</span>
         </div>
         <div
-          className="flex flex-col gap-[24px] p-[24px]"
+          className="flex flex-col gap-[24px] overflow-auto p-[24px]"
           style={{
             backgroundImage: `url(${basePath}/overview-bg.png)`,
             backgroundSize: "cover",
             borderRadius: 16,
           }}
         >
-          <div className="flex flex-row items-center gap-[16px]">
+          <div className="flex w-full flex-row items-center gap-[16px]">
             <img
               alt="Validator logo"
               className="block w-[80px] rounded-full"
@@ -133,8 +133,8 @@ export default function ValidatorPage() {
               </div>
             )}
           </div>
-          <DivisorHorizontal />
-          <div className="grid grid-cols-4">
+          <DivisorHorizontal className="min-w-[1000px]" />
+          <div className="grid min-w-[1000px] grid-cols-4">
             <div className="relative">
               <Heading8>Total Stake (XION)</Heading8>
               <div className="mb-[8px] mt-[12px]">
@@ -184,8 +184,8 @@ export default function ValidatorPage() {
               <Heading8>{formatXionToUSD(myDelegationToValidator)}</Heading8>
             </div>
           </div>
-          <DivisorHorizontal />
-          <div className="grid grid-cols-4">
+          <DivisorHorizontal className="min-w-[1000px]" />
+          <div className="grid min-w-[1000px] grid-cols-4">
             <div className="col-span-2">
               <Heading8 color="text-white">XION Address</Heading8>
               <div className="inline-flex flex-row gap-2 break-all">

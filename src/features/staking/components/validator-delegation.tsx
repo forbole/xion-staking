@@ -75,7 +75,7 @@ export default function ValidatorDelegation() {
   const canShowDetail = getCanShowDetails(staking.state);
 
   const content = !isConnected ? (
-    <div className="flex h-[220px] flex-col items-center justify-center gap-[32px] rounded-[24px] bg-bg-600 uppercase">
+    <div className="flex h-[220px] min-w-[1000px] flex-col items-center justify-center gap-[32px] rounded-[24px] bg-bg-600 uppercase">
       <HeroText>Please log in to view</HeroText>
       <div>
         <Button
@@ -89,7 +89,7 @@ export default function ValidatorDelegation() {
       </div>
     </div>
   ) : (
-    <div className="grid grid-cols-4 rounded-[24px] bg-bg-600 p-[24px]">
+    <div className="grid min-w-[1000px] grid-cols-4 rounded-[24px] bg-bg-600 p-[24px]">
       <div className="relative">
         <Heading8>Claimable Rewards</Heading8>
         <div className="mb-[8px] mt-[12px] flex flex-row items-center gap-[8px]">
@@ -180,7 +180,7 @@ export default function ValidatorDelegation() {
           />
         )}
       </div>
-      {content}
+      <div className="w-full overflow-auto">{content}</div>
       {canShowDetail && isShowingDetails && <DelegationDetails />}
     </>
   );

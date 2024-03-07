@@ -66,13 +66,15 @@ export const DetailsTrigger = ({
 const gridStyle = {
   gap: "16px",
   gridTemplateColumns: "60px 1.5fr repeat(4, 1fr)",
+  minWidth: 800,
+  overflow: "auto",
 };
 
 const rowStyle =
   "grid w-full items-center justify-between gap-2 p-2 mb-[24px] last:mb-[0px] bg-black rounded-[8px]";
 
 const wrapperStyle =
-  "w-full overflow-hidden rounded-[24px] bg-bg-600 pb-4 text-typo-100 px-[16px]";
+  "w-full overflow-auto rounded-[24px] bg-bg-600 pb-4 text-typo-100 px-[16px]";
 
 const Menu = () => (
   <span
