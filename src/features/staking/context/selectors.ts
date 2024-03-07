@@ -105,16 +105,16 @@ export const getAllValidators = (
   Object.values(state.validators)
     .map((v) => v?.items)
     .flat()
-    .reduce((acc, v) => {
-      if (!v) {
-        return acc;
-      }
+    .reduce(
+      (acc, v) => {
+        if (v) {
+          acc[v.operatorAddress] = v;
+        }
 
-      return {
-        ...acc,
-        [v.operatorAddress]: v,
-      };
-    }, state.extraValidators);
+        return acc;
+      },
+      { ...state.extraValidators },
+    );
 
 // As discussed internally, in XION the APR is the same as the inflation
 export const getAPR = (state: StakingState) =>

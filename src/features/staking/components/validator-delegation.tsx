@@ -71,6 +71,7 @@ export default function ValidatorDelegation() {
   const totalRewards = getTotalRewards(null, staking.state);
 
   const canShowDetail = getCanShowDetails(staking.state);
+  const unbondings = staking.state.unbondings?.items || [];
 
   const content = !isConnected ? (
     <div className="flex h-[220px] min-w-[1000px] flex-col items-center justify-center gap-[32px] rounded-[24px] bg-bg-600 uppercase">
@@ -163,6 +164,28 @@ export default function ValidatorDelegation() {
             {userTotalUnbondings ? formatXionToUSD(userTotalUnbondings) : "-"}
           </Heading8>
         </div>
+        {!!unbondings?.length && (
+          <div className="flex h-full flex-row items-end justify-end text-right">
+            <span>
+              <ButtonPill
+                className="text-[14px]"
+                onClick={() => {
+                  staking.dispatch(
+                    setModalOpened({
+                      content: {
+                        unbondings,
+                      },
+                      type: "cancel-unstaking",
+                    }),
+                  );
+                }}
+                variant="danger"
+              >
+                Cancel Unstake
+              </ButtonPill>
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

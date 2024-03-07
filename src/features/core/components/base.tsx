@@ -95,7 +95,7 @@ export const ButtonPill = ({
     {...props}
     className={[
       "cursor-pointer rounded-full bg-bg-550 px-[8px] py-[4px] text-white hover:bg-bg-600 disabled:cursor-not-allowed disabled:bg-bg-600 disabled:text-typo-150",
-      variant === "danger" ? "[&]:text-danger" : "",
+      variant === "danger" ? "[&]:bg-dangerBg [&]:text-danger" : "",
       className,
     ].join(" ")}
   />

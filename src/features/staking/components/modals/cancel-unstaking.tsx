@@ -6,10 +6,10 @@ import CommonModal, {
   ModalDescription,
 } from "@/features/core/components/common-modal";
 
-import { cancelUnstakingAction } from "../../context/actions";
+import { fetchUserDataAction } from "../../context/actions";
 import { useStaking } from "../../context/hooks";
 import { setModalOpened } from "../../context/reducer";
-import type { StakeAddresses } from "../../lib/core/tx";
+import { type StakeAddresses, cancelUnbonding } from "../../lib/core/tx";
 
 type Step = "completed" | "confirm";
 
@@ -24,13 +24,13 @@ const CancelUnstakingModal = () => {
 
   const { modal } = staking.state;
 
-  const isOpen = modal?.type === "cancel-staking";
+  const isOpen = modal?.type === "cancel-unstaking";
 
   if (!isOpen) return null;
 
-  const { unbonding } = modal?.content || {};
+  const { unbondings } = modal?.content || {};
 
-  if (!unbonding) return null;
+  if (!unbondings?.length) return null;
 
   const content = (() => {
     if (currentStep === "confirm") {
@@ -52,14 +52,21 @@ const CancelUnstakingModal = () => {
 
               setIsLoading(true);
 
-              const addresses: StakeAddresses = {
-                delegator: account.bech32Address,
-                validator: unbonding.validator,
-              };
+              unbondings
+                .reduce(async (promise, unbonding) => {
+                  await promise;
 
-              cancelUnstakingAction(addresses, unbonding, client, staking)
-                .then((fetchFn) => {
-                  fetchFn();
+                  const addresses: StakeAddresses = {
+                    delegator: account.bech32Address,
+                    validator: unbonding.validator,
+                  };
+
+                  await cancelUnbonding(addresses, unbonding, client);
+                }, Promise.resolve())
+                .then(() => {
+                  // Don't await for this so the button can be enabled earlier
+                  fetchUserDataAction(account.bech32Address, staking);
+
                   setStep("completed");
                 })
                 .catch(() => {

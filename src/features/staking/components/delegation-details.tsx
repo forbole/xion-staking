@@ -254,8 +254,8 @@ const UnbondingRow = ({
           onClick={() => {
             staking.dispatch(
               setModalOpened({
-                content: { unbonding },
-                type: "cancel-staking",
+                content: { unbondings: [unbonding] },
+                type: "cancel-unstaking",
               }),
             );
           }}

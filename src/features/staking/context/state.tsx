@@ -35,8 +35,8 @@ type ModalContent =
       type: "rewards";
     }
   | {
-      content: { unbonding: Unbonding };
-      type: "cancel-staking";
+      content: { unbondings: Unbonding[] };
+      type: "cancel-unstaking";
     }
   | {
       content: { validator: Validator };

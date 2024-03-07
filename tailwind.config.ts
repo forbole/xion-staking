@@ -19,6 +19,7 @@ const config: Config = {
           600: "#1A1A1A",
         },
         danger: "#D74506",
+        dangerBg: "#402217",
         success: "#04C700",
         successBg: "#04C7001A",
         typo: {
