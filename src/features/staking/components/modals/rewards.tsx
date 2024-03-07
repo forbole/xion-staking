@@ -2,7 +2,9 @@ import { memo, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
 import { Button, HeroText } from "@/features/core/components/base";
-import CommonModal from "@/features/core/components/common-modal";
+import CommonModal, {
+  ModalDescription,
+} from "@/features/core/components/common-modal";
 
 import { fetchUserDataAction } from "../../context/actions";
 import { useStaking } from "../../context/hooks";
@@ -19,6 +21,8 @@ const claimRewardsLoop = async (
 ) => {
   const { client, staking } = stakingRef;
   const { modal } = staking.state;
+
+  if (modal?.type !== "rewards") return;
 
   const { delegations } = modal?.content || {};
 
@@ -76,13 +80,13 @@ const RewardsModal = () => {
     if (currentStep === "loading") {
       return (
         <div className="w-full text-center">
-          <div className="mb-[16px] uppercase">
+          <div className="mb-[35px] text-center uppercase">
             <HeroText>CLAIMING</HeroText>
           </div>
-          <div className="mb-[16px] text-typo-100">
+          <ModalDescription>
             Wait until your rewards are withdrawn.
-          </div>
-          <Button isLoading />
+          </ModalDescription>
+          <Button className="mt-[25px]" isLoading />
         </div>
       );
     }
@@ -90,14 +94,15 @@ const RewardsModal = () => {
     return (
       <>
         <div className="text-center">
-          <div className="mb-[16px] uppercase">
+          <div className="mb-[35px] text-center uppercase">
             <HeroText>Success!</HeroText>
           </div>
-          <div className="mb-[16px] text-typo-100">
+          <ModalDescription>
             You have claimed your staking rewards successfully.
-          </div>
+          </ModalDescription>
         </div>
         <Button
+          className="mt-[25px]"
           onClick={() => {
             stakingRef.staking.dispatch(setModalOpened(null));
           }}

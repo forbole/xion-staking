@@ -21,7 +21,6 @@ import type { StakingContextType, StakingState } from "../context/state";
 import { useValidatorLogo } from "../hooks";
 import { coinIsPositive } from "../lib/core/coins";
 import { menu, pointer } from "../lib/core/icons";
-import { cancelUnbonding } from "../lib/core/tx";
 import {
   formatCoin,
   formatCommission,
@@ -204,7 +203,7 @@ const UnbondingRow = ({
   unbonding,
   validator,
 }: UnbondingRowProps) => {
-  const { account, client, staking } = stakingRef;
+  const { staking } = stakingRef;
 
   const logo = useValidatorLogo(validator?.description.identity);
   const validatorAddress = unbonding.validator;
@@ -244,14 +243,12 @@ const UnbondingRow = ({
         <ButtonPill
           disabled={disabled}
           onClick={() => {
-            if (!client) return;
-
-            const addresses = {
-              delegator: account.bech32Address || "",
-              validator: unbonding.validator,
-            };
-
-            cancelUnbonding(addresses, unbonding, client);
+            staking.dispatch(
+              setModalOpened({
+                content: { unbonding },
+                type: "cancel-staking",
+              }),
+            );
           }}
           variant="danger"
         >

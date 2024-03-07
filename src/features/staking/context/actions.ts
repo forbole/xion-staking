@@ -13,7 +13,7 @@ import {
 import type { AbstraxionSigningClient } from "../lib/core/client";
 import { sumAllCoins } from "../lib/core/coins";
 import type { StakeAddresses } from "../lib/core/tx";
-import { stakeAmount, unstakeAmount } from "../lib/core/tx";
+import { cancelUnbonding, stakeAmount, unstakeAmount } from "../lib/core/tx";
 import {
   addDelegations,
   addUnbondings,
@@ -166,6 +166,19 @@ export const stakeValidatorAction = async (
   staking: StakingContextType,
 ) => {
   await stakeAmount(addresses, client, amount, memo);
+
+  return async () => {
+    await fetchUserDataAction(addresses.delegator, staking);
+  };
+};
+
+export const cancelUnstakingAction = async (
+  addresses: StakeAddresses,
+  unbonding: Unbonding,
+  client: AbstraxionSigningClient,
+  staking: StakingContextType,
+) => {
+  await cancelUnbonding(addresses, unbonding, client);
 
   return async () => {
     await fetchUserDataAction(addresses.delegator, staking);

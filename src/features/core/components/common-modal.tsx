@@ -1,3 +1,4 @@
+import type { PropsWithChildren } from "react";
 import { useEffect } from "react";
 import Modal from "react-modal";
 
@@ -37,7 +38,7 @@ const CommonModal = ({ children, ...props }: Props) => {
           bottom: "auto",
           boxShadow: "0px 0px 50px 0px #FFFFFF40",
           left: "50%",
-          padding: "45px",
+          padding: "48px",
           right: "auto",
           top: "50%",
           transform: "translate(-50%, -50%)",
@@ -49,7 +50,7 @@ const CommonModal = ({ children, ...props }: Props) => {
     >
       <div className="relative w-full">
         <button
-          className="absolute right-[-16px] top-[-16px] w-[36px] cursor-pointer"
+          className="absolute right-[-30px] top-[-30px] w-[36px] cursor-pointer"
           dangerouslySetInnerHTML={{ __html: cross }}
           onClick={props.onRequestClose}
         />
@@ -58,5 +59,11 @@ const CommonModal = ({ children, ...props }: Props) => {
     </Modal>
   );
 };
+
+export const ModalDescription = ({ children }: PropsWithChildren) => (
+  <div className="mb-[16px] text-[16px] leading-[24px] text-typo-100 opacity-50">
+    {children}
+  </div>
+);
 
 export default CommonModal;

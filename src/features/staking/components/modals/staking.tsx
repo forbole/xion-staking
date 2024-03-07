@@ -12,7 +12,9 @@ import {
   InputBox,
   OpenInput,
 } from "@/features/core/components/base";
-import CommonModal from "@/features/core/components/common-modal";
+import CommonModal, {
+  ModalDescription,
+} from "@/features/core/components/common-modal";
 
 import { stakeValidatorAction } from "../../context/actions";
 import { useStaking } from "../../context/hooks";
@@ -104,14 +106,14 @@ const StakingModal = () => {
             return (
               <>
                 <div className="text-center">
-                  <div className="mb-[16px]">
+                  <div className="mb-[35px] text-center uppercase">
                     <HeroText>SUCCESS!</HeroText>
                   </div>
-                  <div className="text-typo-100">
+                  <ModalDescription>
                     You have successfully staked on{" "}
                     {validator.description.moniker}. Thank you for contributing
                     in securing the XION network.
-                  </div>
+                  </ModalDescription>
                 </div>
                 {getStakingSummary()}
                 <Button
@@ -130,13 +132,13 @@ const StakingModal = () => {
             return (
               <>
                 <div className="text-center">
-                  <div className="mb-[16px]">
+                  <div className="mb-[35px] text-center uppercase">
                     <HeroText>REVIEW</HeroText>
                   </div>
-                  <div className="text-typo-100">
+                  <ModalDescription>
                     Get ready to stake your XION token with{" "}
                     {validator.description.moniker}. Press 'Confirm' to proceed.
-                  </div>
+                  </ModalDescription>
                 </div>
                 {getStakingSummary()}
                 <Button
@@ -208,7 +210,7 @@ const StakingModal = () => {
 
           return (
             <>
-              <div className="text-center uppercase">
+              <div className="mb-[35px] text-center uppercase">
                 <HeroText>Delegate To {validator.description.moniker}</HeroText>
               </div>
               {availableTokens &&

@@ -12,7 +12,9 @@ import {
   InputBox,
   OpenInput,
 } from "@/features/core/components/base";
-import CommonModal from "@/features/core/components/common-modal";
+import CommonModal, {
+  ModalDescription,
+} from "@/features/core/components/common-modal";
 
 import { unstakeValidatorAction } from "../../context/actions";
 import { useStaking } from "../../context/hooks";
@@ -132,14 +134,14 @@ const UnstakingModal = () => {
             return (
               <>
                 <div className="text-center">
-                  <div className="mb-[16px]">
+                  <div className="mb-[35px] text-center uppercase">
                     <HeroText>SUCCESS!</HeroText>
                   </div>
-                  <div className="text-typo-100">
+                  <ModalDescription>
                     You have successfully unstaked from{" "}
                     {validator.description.moniker}. It takes {unbondingDays}{" "}
                     days to complete the unstaking process
-                  </div>
+                  </ModalDescription>
                 </div>
                 {getUnstakingSummary()}
                 <Button
@@ -158,14 +160,14 @@ const UnstakingModal = () => {
             return (
               <>
                 <div className="text-center">
-                  <div className="mb-[16px]">
+                  <div className="mb-[35px] text-center uppercase">
                     <HeroText>REVIEW</HeroText>
                   </div>
-                  <div className="text-typo-100">
+                  <ModalDescription>
                     Unstaking your XION Token means you'll stop earning rewards.
                     Remember, it takes {unbondingDays} days to complete the
                     unstaking process.
-                  </div>
+                  </ModalDescription>
                 </div>
                 {getUnstakingSummary()}
                 <Button
@@ -210,7 +212,7 @@ const UnstakingModal = () => {
 
           return (
             <>
-              <div className="text-center uppercase">
+              <div className="mb-[35px] text-center uppercase">
                 <HeroText>
                   Unstake From {validator.description.moniker}
                 </HeroText>

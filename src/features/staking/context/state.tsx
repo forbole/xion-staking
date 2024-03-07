@@ -29,10 +29,24 @@ type Delegation = {
   validatorAddress: string;
 };
 
-type ModalContent = {
-  content: { delegations?: Delegation[]; validator?: Validator };
-  type: "delegate" | "rewards" | "undelegate";
-} | null;
+type ModalContent =
+  | {
+      content: { delegations: Delegation[] };
+      type: "rewards";
+    }
+  | {
+      content: { unbonding: Unbonding };
+      type: "cancel-staking";
+    }
+  | {
+      content: { validator: Validator };
+      type: "delegate";
+    }
+  | {
+      content: { validator: Validator };
+      type: "undelegate";
+    }
+  | null;
 
 export type ValidatorStatus = "bonded" | "unbonded" | "unbonding";
 

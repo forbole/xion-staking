@@ -142,12 +142,14 @@ const ValidatorsTable = () => {
 
   const { validators: validatorsObj } = staking.state;
 
+  const activeValidators = validatorsObj.bonded?.items || [];
+
+  const inactiveValidators = (validatorsObj.unbonded?.items || []).concat(
+    validatorsObj.unbonding?.items || [],
+  );
+
   const validators =
-    currentTab === "active"
-      ? validatorsObj.bonded?.items || []
-      : (validatorsObj.unbonded?.items || []).concat(
-          validatorsObj.unbonding?.items || [],
-        );
+    currentTab === "active" ? activeValidators : inactiveValidators;
 
   const sortedItems = validators
     .filter(
@@ -228,14 +230,14 @@ const ValidatorsTable = () => {
               setCurrentTab("active");
             }}
           >
-            Active
+            Active ({activeValidators.length})
           </button>
           <button
             onClick={() => {
               setCurrentTab("inactive");
             }}
           >
-            Inactive
+            Inactive ({inactiveValidators.length})
           </button>
         </div>
       </div>
