@@ -7,10 +7,12 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { basePath, defaultAvatar } from "@/constants";
 import {
   ClipboardCopy,
   Heading2,
   Heading8,
+  LoadingBanner,
   NavLink,
 } from "@/features/core/components/base";
 
@@ -24,7 +26,6 @@ import {
 } from "../context/selectors";
 import { useValidatorLogo } from "../hooks";
 import { getXionCoin, normaliseCoin } from "../lib/core/coins";
-import { basePath, defaultAvatar } from "../lib/core/constants";
 import {
   formatCommission,
   formatToSmallDisplay,
@@ -60,7 +61,11 @@ export default function ValidatorPage() {
   }, [address, stakingRef]);
 
   if (!validatorDetails) {
-    return <div>Loading the data...</div>;
+    return (
+      <div className="mb-[36px] w-full">
+        <LoadingBanner />
+      </div>
+    );
   }
 
   const votingPowerPerc = getVotingPowerPerc(

@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from "react";
 
-import { chevron } from "@/features/staking/lib/core/icons";
+import { chevron } from "../lib/icons";
 
 type Props<SortMethod> = PropsWithChildren & {
   onSort?: (method: SortMethod) => void;

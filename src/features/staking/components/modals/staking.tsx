@@ -3,6 +3,7 @@ import type { FormEventHandler } from "react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
+import { xionToUSD } from "@/constants";
 import {
   Button,
   FormError,
@@ -21,7 +22,6 @@ import { useStaking } from "../../context/hooks";
 import { setModalOpened } from "../../context/reducer";
 import { getTokensAvailableBG } from "../../context/selectors";
 import { getXionCoin } from "../../lib/core/coins";
-import { xionToUSD } from "../../lib/core/constants";
 import type { StakeAddresses } from "../../lib/core/tx";
 import { formatToSmallDisplay } from "../../lib/formatters";
 

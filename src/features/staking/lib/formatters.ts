@@ -1,8 +1,9 @@
 import type { Coin } from "@cosmjs/stargate";
 import BigNumber from "bignumber.js";
 
+import { xionToUSD } from "@/constants";
+
 import { getEmptyXionCoin, normaliseCoin } from "./core/coins";
-import { xionToUSD } from "./core/constants";
 
 export const formatCoin = (coin: Coin, compact?: boolean) => {
   const resolved = normaliseCoin(coin);

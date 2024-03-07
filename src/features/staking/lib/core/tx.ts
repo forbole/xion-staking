@@ -13,10 +13,11 @@ import {
   MsgUndelegate,
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 
+import { minClaimableXion } from "@/constants";
+
 import type { Unbonding } from "../../context/state";
 import { type AbstraxionSigningClient } from "./client";
 import { getUXionCoinFromXion, normaliseCoin } from "./coins";
-import { minClaimableXion } from "./constants";
 import { getCosmosFee } from "./fee";
 
 const getTxCoin = (coin: Coin) => ({

@@ -7,6 +7,7 @@ import {
   FloatingDropdown,
 } from "@/features/core/components/base";
 import { HeaderTitleBase } from "@/features/core/components/table";
+import { menu, pointer } from "@/features/core/lib/icons";
 import { sortUtil } from "@/features/core/utils";
 
 import { getAndSetValidatorAction } from "../context/actions";
@@ -20,7 +21,6 @@ import {
 import type { StakingContextType, StakingState } from "../context/state";
 import { useValidatorLogo } from "../hooks";
 import { coinIsPositive } from "../lib/core/coins";
-import { menu, pointer } from "../lib/core/icons";
 import {
   formatCoin,
   formatCommission,

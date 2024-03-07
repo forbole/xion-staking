@@ -5,10 +5,9 @@ import type { FC, PropsWithChildren, ReactNode } from "react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-import { clipboard, loader, search } from "@/features/staking/lib/core/icons";
-
 import { useCore } from "../context/hooks";
 import { setPopupOpenId } from "../context/reducer";
+import { clipboard, loader, loader2, search } from "../lib/icons";
 
 type TypographyProps = PropsWithChildren & {
   className?: string;
@@ -309,4 +308,18 @@ export const TabButton = ({ active, ...props }: TabButtonProps) => (
       active ? "border-b-[1px]" : "",
     ].join(" ")}
   />
+);
+
+export const LoadingBanner = () => (
+  <div className="flex flex-col items-center justify-center gap-[28px]">
+    <div className="mt-[80px] text-typo-100 opacity-50">
+      Loading the data...{" "}
+    </div>
+    <div className="mb-[80px] flex w-[80px] items-center justify-center">
+      <span
+        className="animate-spin"
+        dangerouslySetInnerHTML={{ __html: loader2 }}
+      />
+    </div>
+  </div>
 );

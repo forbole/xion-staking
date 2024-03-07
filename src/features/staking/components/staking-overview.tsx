@@ -1,6 +1,7 @@
 import { useAbstraxionAccount, useModal } from "@burnt-labs/abstraxion";
 import { memo } from "react";
 
+import { basePath } from "@/constants";
 import {
   BodyMedium,
   Button,
@@ -18,7 +19,6 @@ import {
   getTotalRewards,
 } from "../context/selectors";
 import { getEmptyXionCoin } from "../lib/core/coins";
-import { basePath } from "../lib/core/constants";
 import { getIsMinimumClaimable } from "../lib/core/tx";
 import { formatAPR, formatCoin, formatXionToUSD } from "../lib/formatters";
 import { DivisorVertical } from "./divisor";

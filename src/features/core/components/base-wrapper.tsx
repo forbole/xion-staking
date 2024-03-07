@@ -3,7 +3,7 @@
 import { Abstraxion, useModal } from "@burnt-labs/abstraxion";
 import Link from "next/link";
 
-import { basePath } from "@/features/staking/lib/core/constants";
+import { basePath } from "@/constants";
 
 import NavAccount from "./nav-account";
 

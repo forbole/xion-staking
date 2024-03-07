@@ -2,7 +2,7 @@ import type { PropsWithChildren } from "react";
 import { useEffect } from "react";
 import Modal from "react-modal";
 
-import { cross } from "@/features/staking/lib/core/icons";
+import { cross } from "../lib/icons";
 
 type Props = {
   children: React.ReactNode;

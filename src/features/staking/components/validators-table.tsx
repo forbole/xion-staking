@@ -6,6 +6,7 @@ import { memo, useState } from "react";
 
 import {
   ButtonPill,
+  LoadingBanner,
   NavLink,
   SearchInput,
   TabButton,
@@ -23,7 +24,6 @@ import {
 import type { StakingContextType, StakingState } from "../context/state";
 import { useValidatorLogo } from "../hooks";
 import { getXionCoinFromUXion } from "../lib/core/coins";
-import { loader2 } from "../lib/core/icons";
 import {
   formatCoin,
   formatCommission,
@@ -293,19 +293,7 @@ const ValidatorsTable = () => {
             <div className="text-right">Voting Power</div>
           </HeaderTitle>
         </div>
-        {isInitialLoading && (
-          <div className="flex flex-col items-center justify-center gap-[28px]">
-            <div className="mt-[80px] text-typo-100 opacity-50">
-              Loading the data...{" "}
-            </div>
-            <div className="mb-[80px] flex w-[80px] items-center justify-center">
-              <span
-                className="animate-spin"
-                dangerouslySetInnerHTML={{ __html: loader2 }}
-              />
-            </div>
-          </div>
-        )}
+        {isInitialLoading && <LoadingBanner />}
         {sortedItems.map((validator) => (
           <ValidatorRow
             disabled={!isConnected}

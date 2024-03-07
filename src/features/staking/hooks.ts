@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { defaultAvatar } from "./lib/core/constants";
+import { defaultAvatar } from "@/constants";
+
 import { keybaseClient } from "./lib/utils/keybase-client";
 
 export const useValidatorLogo = (identity?: string) => {

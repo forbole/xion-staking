@@ -7,9 +7,9 @@ import {
 } from "@burnt-labs/abstraxion";
 import { Button } from "@burnt-labs/ui";
 
-import { isTestnet } from "@/features/staking/lib/core/constants";
-import { wallet } from "@/features/staking/lib/core/icons";
+import { isTestnet } from "@/constants";
 
+import { wallet } from "../lib/icons";
 import { ButtonPill, FloatingDropdown } from "./base";
 
 const Account = () => (
