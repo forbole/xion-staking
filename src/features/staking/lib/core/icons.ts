@@ -45,6 +45,18 @@ export const loader = [
   "</svg>",
 ].join("");
 
+export const loader2 = [
+  '<svg width="70" height="68" viewBox="0 0 70 68" fill="none" xmlns="http://www.w3.org/2000/svg">',
+  '<path d="M26.1291 65.3291C12.9402 61.3769 3.3291 49.1465 3.3291 34.6713C3.3291 16.9982 17.656 2.67132 35.3291 2.67132C53.0022 2.67132 67.3291 16.9982 67.3291 34.6713C67.3291 48.4042 58.6784 60.1166 46.5291 64.6566" stroke="url(#paint0_angular_59_446)" stroke-width="5"/>',
+  "<defs>",
+  '<radialGradient id="paint0_angular_59_446" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(35.3291 33.8713) rotate(75.8157) scale(37.5446 36.7572)">',
+  '<stop stop-color="white"/>',
+  '<stop offset="1" stop-color="white" stop-opacity="0"/>',
+  "</radialGradient>",
+  "</defs>",
+  "</svg>",
+].join("");
+
 export const search = [
   '<svg width="18" height="16" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">',
   '<path d="M13.4351 10.0629H12.7124L12.4563 9.81589C13.3528 8.77301 13.8925 7.4191 13.8925 5.94625C13.8925 2.66209 11.2304 0 7.94625 0C4.66209 0 2 2.66209 2 5.94625C2 9.23042 4.66209 11.8925 7.94625 11.8925C9.4191 11.8925 10.773 11.3528 11.8159 10.4563L12.0629 10.7124V11.4351L16.6369 16L18 14.6369L13.4351 10.0629ZM7.94625 10.0629C5.66838 10.0629 3.82962 8.22413 3.82962 5.94625C3.82962 3.66838 5.66838 1.82962 7.94625 1.82962C10.2241 1.82962 12.0629 3.66838 12.0629 5.94625C12.0629 8.22413 10.2241 10.0629 7.94625 10.0629Z" fill="white"/>',

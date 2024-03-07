@@ -245,6 +245,7 @@ const UnstakingModal = () => {
                 <div className="mt-[8px]">
                   <InputBox
                     disabled={isLoading}
+                    error={!!formError.amount}
                     onBlur={() => {
                       validateAmount();
                     }}
@@ -258,9 +259,7 @@ const UnstakingModal = () => {
                     value={amountXION}
                   />
                   {formError.amount && (
-                    <div>
-                      <FormError>{formError.amount}</FormError>
-                    </div>
+                    <FormError>{formError.amount}</FormError>
                   )}
                 </div>
                 <div className="mt-[40px] w-full">

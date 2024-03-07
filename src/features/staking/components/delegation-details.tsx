@@ -74,7 +74,12 @@ const rowStyle =
 const wrapperStyle =
   "w-full overflow-hidden rounded-[24px] bg-bg-600 pb-4 text-typo-100 px-[16px]";
 
-const Menu = () => <span dangerouslySetInnerHTML={{ __html: menu }} />;
+const Menu = () => (
+  <span
+    className="hover:bg-bg-500"
+    dangerouslySetInnerHTML={{ __html: menu }}
+  />
+);
 
 type DelegationRowProps = {
   delegation: NonNullable<StakingState["delegations"]>["items"][number];

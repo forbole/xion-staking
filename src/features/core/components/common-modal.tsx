@@ -32,25 +32,50 @@ const CommonModal = ({ children, ...props }: Props) => {
       {...props}
       style={{
         content: {
-          background: "rgba(0,0,0,0.8)",
+          background: "transparent",
           border: "none",
-          borderRadius: "48px",
           bottom: "auto",
           boxShadow: "0px 0px 50px 0px #FFFFFF40",
-          left: "50%",
-          padding: "48px",
+          boxSizing: "border-box",
+          display: "grid",
+          gridTemplateColumns: "1fr",
+          inset: 0,
+          maxHeight: "100%",
+          minWidth: "100vw",
+          outline: "none",
+          overflow: "auto",
+          pointerEvents: "none",
+          position: "fixed",
           right: "auto",
-          top: "50%",
-          transform: "translate(-50%, -50%)",
+          width: "100vw",
+          zIndex: 10,
         },
         overlay: {
           backgroundColor: "rgba(0, 0, 0, 0.5)",
         },
       }}
     >
-      <div className="relative w-full">
+      <div
+        className="relative w-full"
+        style={{
+          backgroundColor: "#000",
+          borderRadius: "48px",
+          boxShadow: "0px 0px 50px 0px #FFFFFF40",
+          boxSizing: "border-box",
+          display: "flex",
+          flexDirection: "column",
+          height: "max-content",
+          margin: "auto",
+          maxWidth: "100vw",
+          outline: "none",
+          padding: "50px",
+          pointerEvents: "auto",
+          position: "relative",
+          width: "min-content",
+        }}
+      >
         <button
-          className="absolute right-[-30px] top-[-30px] w-[36px] cursor-pointer"
+          className="absolute right-[12px] top-[12px] w-[36px] cursor-pointer"
           dangerouslySetInnerHTML={{ __html: cross }}
           onClick={props.onRequestClose}
         />

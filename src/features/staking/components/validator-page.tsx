@@ -60,7 +60,7 @@ export default function ValidatorPage() {
   }, [address, stakingRef]);
 
   if (!validatorDetails) {
-    return <div>Loading ...</div>;
+    return <div>Loading the data...</div>;
   }
 
   const votingPowerPerc = getVotingPowerPerc(

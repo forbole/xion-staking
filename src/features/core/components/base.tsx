@@ -120,7 +120,7 @@ export const InputBox = ({ error, ...props }: InputProps) => (
       {...props}
       className={[
         "h-[96px] w-full rounded-[16px] border-[1px] bg-black p-[16px] pr-[140px] text-[48px] focus:outline-none",
-        error ? "border-danger" : "border-white",
+        error ? "border-danger" : "border-[rgba(255,255,255,0.2)]",
       ].join(" ")}
     />
     <span className="absolute bottom-0 right-[12px] top-0 flex h-full items-center  text-[48px] text-typo-300">
@@ -130,17 +130,13 @@ export const InputBox = ({ error, ...props }: InputProps) => (
 );
 
 export const FormError = ({ children }: PropsWithChildren) => (
-  <div className="text-danger">{children}</div>
+  <div className="mt-[8px] text-danger">{children}</div>
 );
 
 export const OpenInput = (props: InputProps) => (
   <input
     {...props}
-    className="h-[50px] w-full bg-black py-[8px] focus:outline-none"
-    style={{
-      border: "none",
-      borderBottom: "1px solid white",
-    }}
+    className="h-[50px] w-full border-b-[1px] border-b-bg-400 bg-black py-[8px] focus:outline-none"
   />
 );
 
@@ -257,12 +253,12 @@ type SearchInputProps = React.DetailedHTMLProps<
 
 export const SearchInput = (props: SearchInputProps) => (
   <div className="relative">
-    <div className="z-5 absolute bottom-[5px] left-0">
+    <div className="z-5 absolute bottom-[10px] left-0">
       <div dangerouslySetInnerHTML={{ __html: search }} />
     </div>
     <input
       {...props}
-      className="border-b-[1px] border-b-transparent bg-transparent pl-[24px] text-white outline-none hover:border-b-white focus:border-b-white"
+      className="border-b-[1px] border-b-transparent bg-transparent pb-[8px] pl-[24px] text-white outline-none hover:border-b-bg-400 focus:border-b-bg-400"
     />
   </div>
 );

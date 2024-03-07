@@ -251,9 +251,7 @@ const StakingModal = () => {
                     value={amountXION}
                   />
                   {formError.amount && (
-                    <div>
-                      <FormError>{formError.amount}</FormError>
-                    </div>
+                    <FormError>{formError.amount}</FormError>
                   )}
                 </div>
                 <div className="mt-[40px] w-full">

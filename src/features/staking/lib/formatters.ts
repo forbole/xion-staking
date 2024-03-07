@@ -73,7 +73,7 @@ export const formatUnbondingCompletionTime = (completionTime: number) => {
     (completionTimestamp - Date.now()) / (1000 * 60 * 60 * 24),
   );
 
-  const month = new Date(completionTimestamp).toLocaleString("default", {
+  const month = new Date(completionTimestamp).toLocaleString("en-US", {
     month: "short",
   });
 
