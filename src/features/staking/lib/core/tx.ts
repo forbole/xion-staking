@@ -13,7 +13,8 @@ import {
   MsgUndelegate,
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 
-import type { AbstraxionSigningClient } from "./client";
+import type { Unbonding } from "../../context/state";
+import { type AbstraxionSigningClient } from "./client";
 import { getUXionCoinFromXion, normaliseCoin } from "./coins";
 import { minClaimableXion } from "./constants";
 import { getCosmosFee } from "./fee";
@@ -157,33 +158,37 @@ export const getIsMinimumClaimable = (amount: Coin) => {
   return new BigNumber(normalised.amount).gte(minClaimableXion);
 };
 
-export const cancelUnstake = async (
+export const cancelUnbonding = async (
   addresses: StakeAddresses,
-  client: NonNullable<AbstraxionSigningClient>,
+  unbonding: Unbonding,
+  abstraxionClient: NonNullable<AbstraxionSigningClient>,
 ) => {
+  abstraxionClient.registry.register(
+    MsgCancelUnbondingDelegation.typeUrl,
+    MsgCancelUnbondingDelegation,
+  );
+
   const msg = MsgCancelUnbondingDelegation.fromPartial({
+    amount: unbonding.balance,
+    creationHeight: unbonding.creationHeight,
     delegatorAddress: addresses.delegator,
     validatorAddress: addresses.validator,
   });
 
-  const messageWrapper = {
-    typeUrl: "/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation",
-    value: msg,
-  };
+  const messageWrapper = [
+    {
+      typeUrl: "/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation",
+      value: msg,
+    },
+  ];
 
   const fee = await getCosmosFee({
     address: addresses.delegator,
-    msgs: [messageWrapper],
+    msgs: messageWrapper,
   });
 
-  return await client
-    .signAndBroadcast(addresses.delegator, [messageWrapper], fee, "")
-    .then((result) => {
-      // @TODO
-      // eslint-disable-next-line no-console
-      console.log("debug: tx.ts: cancelUnstake: result", result);
-
-      return result;
-    })
+  return await abstraxionClient
+    .signAndBroadcast(addresses.delegator, messageWrapper, fee, "")
+    .then(getTxVerifier("cancel_unbonding_delegation"))
     .catch(handleTxError);
 };

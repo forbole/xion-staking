@@ -1,4 +1,5 @@
 import type { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
+import type { Registry } from "@cosmjs/proto-signing";
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import type {
   DistributionExtension,
@@ -66,7 +67,7 @@ export const getStargateClient = () => {
 };
 
 // @TODO: Discuss
-export const createLocalSigningClient = async () => {
+export const createLocalSigningClient = async (registry?: Registry) => {
   const tempKeypair = localStorage.getItem("xion-authz-temp-account");
 
   if (!tempKeypair) return;
@@ -83,6 +84,9 @@ export const createLocalSigningClient = async () => {
   const client = await SigningStargateClient.connectWithSigner(
     rpcEndpoint,
     wallet,
+    {
+      registry,
+    },
   );
 
   return { client, granteeAddress };

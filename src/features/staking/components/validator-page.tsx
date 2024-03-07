@@ -13,7 +13,6 @@ import {
   Heading8,
   NavLink,
 } from "@/features/core/components/base";
-import { useCore } from "@/features/core/context/hooks";
 
 import { getValidatorDetailsAction } from "../context/actions";
 import { useStaking } from "../context/hooks";
@@ -40,8 +39,6 @@ export default function ValidatorPage() {
   const searchParams = useSearchParams();
   const address = searchParams.get("address");
   const stakingRef = useStaking();
-  const { core } = useCore();
-  const { isLoadingBlocking } = core.state;
 
   const [validatorDetails, setValidatorDetails] = useState<Awaited<
     ReturnType<typeof getValidatorDetailsAction>
@@ -121,7 +118,7 @@ export default function ValidatorPage() {
             {validatorDetails.status === BondStatus.BOND_STATUS_BONDED && (
               <div>
                 <Button
-                  disabled={!stakingRef.isConnected || isLoadingBlocking}
+                  disabled={!stakingRef.isConnected}
                   onClick={() => {
                     stakingRef.staking.dispatch(
                       setModalOpened({

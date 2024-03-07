@@ -21,7 +21,7 @@ import type { StakingContextType, StakingState } from "../context/state";
 import { useValidatorLogo } from "../hooks";
 import { coinIsPositive } from "../lib/core/coins";
 import { menu, pointer } from "../lib/core/icons";
-import { cancelUnstake } from "../lib/core/tx";
+import { cancelUnbonding } from "../lib/core/tx";
 import {
   formatCoin,
   formatCommission,
@@ -251,7 +251,7 @@ const UnbondingRow = ({
               validator: unbonding.validator,
             };
 
-            cancelUnstake(addresses, client);
+            cancelUnbonding(addresses, unbonding, client);
           }}
           variant="danger"
         >

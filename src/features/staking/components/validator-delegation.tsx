@@ -13,7 +13,6 @@ import {
   HeroText,
   Title,
 } from "@/features/core/components/base";
-import { useCore } from "@/features/core/context/hooks";
 
 import { getValidatorDetailsAction } from "../context/actions";
 import { useStaking } from "../context/hooks";
@@ -36,13 +35,10 @@ export default function ValidatorDelegation() {
   const searchParams = useSearchParams();
   const address = searchParams.get("address");
   const stakingRef = useStaking();
-  const { core } = useCore();
   const [, setShowAbstraxion] = useModal();
   const [isShowingDetails, setIsShowingDetails] = useState(false);
 
   const { isConnected, staking } = stakingRef;
-
-  const { isLoadingBlocking } = core.state;
 
   const [validatorDetails, setValidatorDetails] = useState<Awaited<
     ReturnType<typeof getValidatorDetailsAction>
@@ -84,7 +80,6 @@ export default function ValidatorDelegation() {
       <div>
         <Button
           className="[&]:min-w-[150px]"
-          disabled={isLoadingBlocking}
           onClick={() => {
             setShowAbstraxion(true);
           }}
@@ -101,7 +96,6 @@ export default function ValidatorDelegation() {
           <Heading2>{formatXionToUSD(totalRewards)}</Heading2>
           {totalRewards && totalRewards?.amount !== "0" && (
             <ButtonPill
-              disabled={isLoadingBlocking}
               onClick={() => {
                 staking.dispatch(
                   setModalOpened({

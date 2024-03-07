@@ -18,6 +18,7 @@ export type Unbonding = {
   balance: Coin;
   completionTime: number;
   completionTimeNanos: number;
+  creationHeight: bigint;
   id: string;
   validator: string;
 };

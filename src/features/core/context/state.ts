@@ -4,7 +4,6 @@ import { createContext } from "react";
 import type { CoreAction } from "./reducer";
 
 export type CoreState = {
-  isLoadingBlocking: boolean;
   popupOpenId: null | string;
 };
 
@@ -14,7 +13,6 @@ export type CoreContextType = {
 };
 
 export const defaultState: CoreState = {
-  isLoadingBlocking: false,
   popupOpenId: null,
 };
 

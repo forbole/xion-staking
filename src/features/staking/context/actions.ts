@@ -101,13 +101,17 @@ export const fetchUserDataAction = async (
         .then((unbondingResponse) => ({
           items: unbondingResponse.unbondingResponses.reduce((acc, res) => {
             acc.push(
-              ...res.entries.map((entry) => ({
-                balance: { amount: entry.balance, denom: "uxion" },
-                completionTime: Number(entry.completionTime.seconds),
-                completionTimeNanos: entry.completionTime.nanos,
-                id: entry.unbondingId.toString(),
-                validator: res.validatorAddress,
-              })),
+              ...res.entries.map(
+                (entry) =>
+                  ({
+                    balance: { amount: entry.balance, denom: "uxion" },
+                    completionTime: Number(entry.completionTime.seconds),
+                    completionTimeNanos: entry.completionTime.nanos,
+                    creationHeight: entry.creationHeight,
+                    id: entry.unbondingId.toString(),
+                    validator: res.validatorAddress,
+                  }) satisfies Unbonding,
+              ),
             );
 
             return acc;
