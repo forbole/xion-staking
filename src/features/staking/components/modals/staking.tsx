@@ -83,7 +83,7 @@ const StakingModal = () => {
         stakingRef.staking.dispatch(setModalOpened(null));
       }}
     >
-      <div className="min-w-[390px]">
+      <div className="min-w-[90vw] md:min-w-[390px]">
         {(() => {
           const getStakingSummary = () => (
             <>

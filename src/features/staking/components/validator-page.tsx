@@ -99,7 +99,7 @@ export default function ValidatorPage() {
             borderRadius: 16,
           }}
         >
-          <div className="flex w-full flex-row items-center gap-[16px]">
+          <div className="flex w-full min-w-[1000px] flex-row items-center gap-[16px]">
             <img
               alt="Validator logo"
               className="block w-[80px] rounded-full"

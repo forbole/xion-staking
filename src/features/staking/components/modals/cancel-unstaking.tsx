@@ -113,7 +113,7 @@ const CancelUnstakingModal = () => {
         stakingRef.staking.dispatch(setModalOpened(null));
       }}
     >
-      <div className="min-w-[390px]">{content}</div>
+      <div className="min-w-[90vw] md:min-w-[390px]">{content}</div>
     </CommonModal>
   );
 };

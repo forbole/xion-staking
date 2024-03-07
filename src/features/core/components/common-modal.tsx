@@ -44,6 +44,7 @@ const CommonModal = ({ children, ...props }: Props) => {
           minWidth: "100vw",
           outline: "none",
           overflow: "auto",
+          padding: "0",
           pointerEvents: "none",
           position: "fixed",
           right: "auto",
@@ -56,7 +57,7 @@ const CommonModal = ({ children, ...props }: Props) => {
       }}
     >
       <div
-        className="relative w-full"
+        className="relative w-full overflow-auto px-[16px] py-[40px] md:p-[50px]"
         style={{
           backgroundColor: "#000",
           borderRadius: "48px",
@@ -68,7 +69,6 @@ const CommonModal = ({ children, ...props }: Props) => {
           margin: "auto",
           maxWidth: "100vw",
           outline: "none",
-          padding: "50px",
           pointerEvents: "auto",
           position: "relative",
           width: "min-content",
