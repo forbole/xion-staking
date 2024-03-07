@@ -15,11 +15,11 @@ import { useStaking } from "../context/hooks";
 import { setModalOpened } from "../context/reducer";
 import {
   getAPR,
+  getCanClaimAnyRewards,
   getTotalDelegation,
   getTotalRewards,
 } from "../context/selectors";
 import { getEmptyXionCoin } from "../lib/core/coins";
-import { getIsMinimumClaimable } from "../lib/core/tx";
 import { formatAPR, formatCoin, formatXionToUSD } from "../lib/formatters";
 import { DivisorVertical } from "./divisor";
 
@@ -78,7 +78,7 @@ const StakingOverview = () => {
         <Heading8>Claimable Rewards</Heading8>
         <div className="flex flex-row items-center gap-4">
           <Heading2>{formatXionToUSD(totalRewards)}</Heading2>
-          {getIsMinimumClaimable(totalRewards) && (
+          {getCanClaimAnyRewards(staking.state) && (
             <ButtonPill
               onClick={() => {
                 staking.dispatch(

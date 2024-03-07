@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import type { Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 
 import { normaliseCoin, sumAllCoins } from "../lib/core/coins";
+import { getCanClaimRewards } from "../lib/core/tx";
 import type { StakingState } from "./state";
 
 export const getTotalDelegation = (
@@ -86,6 +87,16 @@ export const getVotingPowerPerc = (
   return new BigNumber(validatorTokens)
     .div(new BigNumber(pool.bondedTokens))
     .toNumber();
+};
+
+export const getCanClaimAnyRewards = (state: StakingState) => {
+  const { delegations } = state;
+
+  if (!delegations?.items.length) {
+    return false;
+  }
+
+  return delegations.items.some((d) => getCanClaimRewards(d?.rewards));
 };
 
 export const getAllValidators = (

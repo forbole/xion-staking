@@ -25,4 +25,4 @@ export const defaultAvatar = `${basePath}/default-avatar.svg`;
 export const unbondingDays = isTestnet ? 3 : 21;
 
 // Arbitrary value to avoid using a bigger fee than the actual reward
-export const minClaimableXion = 0.0001;
+export const minClaimableXion = 0.00001;

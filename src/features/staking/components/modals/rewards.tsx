@@ -1,6 +1,8 @@
+import BigNumber from "bignumber.js";
 import { memo, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
+import { minClaimableXion } from "@/constants";
 import { Button, HeroText } from "@/features/core/components/base";
 import CommonModal, {
   ModalDescription,
@@ -9,6 +11,7 @@ import CommonModal, {
 import { fetchUserDataAction } from "../../context/actions";
 import { useStaking } from "../../context/hooks";
 import { setModalOpened } from "../../context/reducer";
+import { normaliseCoin } from "../../lib/core/coins";
 import { claimRewards } from "../../lib/core/tx";
 
 type Step = "completed" | "loading";
@@ -33,6 +36,12 @@ const claimRewardsLoop = async (
   delegations
     .reduce(async (promise, delegation) => {
       await promise;
+
+      const normalised = normaliseCoin(delegation.rewards);
+
+      if (new BigNumber(normalised.amount).lt(minClaimableXion)) {
+        return;
+      }
 
       const addresses = {
         delegator: delegatorAddress,

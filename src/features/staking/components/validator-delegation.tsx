@@ -18,6 +18,7 @@ import { getValidatorDetailsAction } from "../context/actions";
 import { useStaking } from "../context/hooks";
 import { setModalOpened } from "../context/reducer";
 import {
+  getCanClaimAnyRewards,
   getTokensAvailableBG,
   getTotalDelegation,
   getTotalRewards,
@@ -67,10 +68,7 @@ export default function ValidatorDelegation() {
 
   const userTotalUnbondings = getTotalUnbonding(staking.state, null);
 
-  const totalRewards = getTotalRewards(
-    validatorDetails.operatorAddress,
-    staking.state,
-  );
+  const totalRewards = getTotalRewards(null, staking.state);
 
   const canShowDetail = getCanShowDetails(staking.state);
 
@@ -94,7 +92,7 @@ export default function ValidatorDelegation() {
         <Heading8>Claimable Rewards</Heading8>
         <div className="mb-[8px] mt-[12px] flex flex-row items-center gap-[8px]">
           <Heading2>{formatXionToUSD(totalRewards)}</Heading2>
-          {totalRewards && totalRewards?.amount !== "0" && (
+          {getCanClaimAnyRewards(staking.state) && (
             <ButtonPill
               onClick={() => {
                 staking.dispatch(

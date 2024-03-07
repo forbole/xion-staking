@@ -153,8 +153,12 @@ export const claimRewards = async (
     .catch(handleTxError);
 };
 
-export const getIsMinimumClaimable = (amount: Coin) => {
-  const normalised = normaliseCoin(amount);
+export const getCanClaimRewards = (rewards?: Coin) => {
+  if (!rewards) {
+    return false;
+  }
+
+  const normalised = normaliseCoin(rewards);
 
   return new BigNumber(normalised.amount).gte(minClaimableXion);
 };

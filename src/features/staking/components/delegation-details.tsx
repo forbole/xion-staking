@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import type { Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import { memo, useEffect, useState } from "react";
 
@@ -21,6 +22,7 @@ import {
 import type { StakingContextType, StakingState } from "../context/state";
 import { useValidatorLogo } from "../hooks";
 import { coinIsPositive } from "../lib/core/coins";
+import { getCanClaimRewards } from "../lib/core/tx";
 import {
   formatCoin,
   formatCommission,
@@ -156,7 +158,7 @@ const DelegationRowBase = ({
         <FloatingDropdown Trigger={Menu} id={`delegation-${index}`}>
           <div className="flex flex-col gap-[12px] rounded-[8px] bg-bg-600 py-[4px]">
             <ButtonLink
-              disabled={disabled}
+              disabled={!getCanClaimRewards(delegation?.rewards) || disabled}
               onClick={() => {
                 if (!validator) return;
 
@@ -319,16 +321,16 @@ const DelegationDetails = () => {
               case "staked-asc":
               case "staked-desc":
                 return sortUtil(
-                  a.balance.amount,
-                  b.balance.amount,
+                  new BigNumber(a.balance.amount),
+                  new BigNumber(b.balance.amount),
                   delegationsSortMethod === "staked-asc",
                 );
 
               case "rewards-asc":
               case "rewards-desc":
                 return sortUtil(
-                  a.rewards.amount,
-                  b.rewards.amount,
+                  new BigNumber(a.rewards.amount),
+                  new BigNumber(b.rewards.amount),
                   delegationsSortMethod === "rewards-asc",
                 );
 
