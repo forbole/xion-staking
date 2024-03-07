@@ -106,7 +106,7 @@ export default function ValidatorPage() {
               src={logo || defaultAvatar}
             />
             <div className="flex flex-1 items-center gap-[16px]">
-              <div className="typo-validator-name">
+              <div className="text-[32px] font-bold leading-[36px] text-white">
                 {validatorDetails.description.moniker || ""}
               </div>
               {hasStakedInValidator && (

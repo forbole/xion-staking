@@ -21,7 +21,7 @@ function StakingPage() {
 
   return (
     <>
-      <div className="page-container flex flex-col gap-6 px-[24px] pb-[24px]">
+      <div className="page-container flex flex-col gap-6 px-[12px] pb-[24px] md:px-[24px]">
         <div className="mt-[40px] flex flex-row justify-between text-left">
           <Title>Your Staking Overview</Title>
           {canShowDetail && (

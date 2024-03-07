@@ -34,13 +34,13 @@ const StakingOverview = () => {
   if (!isConnected) {
     return (
       <div
-        className="flex min-h-[212px] flex-col items-center justify-center gap-[32px] uppercase"
+        className="flex min-h-[212px] flex-col items-center justify-center gap-[32px] px-[12px] uppercase"
         style={{
           backgroundImage: `url(${basePath}/overview-bg.png)`,
           borderRadius: 24,
         }}
       >
-        <HeroText>Please Log In To View</HeroText>
+        <HeroText className="text-center">Please Log In To View</HeroText>
         <div>
           <Button
             className="min-w-[150px]"
@@ -67,7 +67,7 @@ const StakingOverview = () => {
 
   return (
     <div
-      className="grid min-h-[144px] flex-col items-center justify-center gap-[32px]"
+      className="grid min-h-[144px] flex-col items-center justify-center gap-[32px] overflow-auto"
       style={{
         backgroundImage: `url(${basePath}/overview-bg.png)`,
         borderRadius: 24,

@@ -8,6 +8,7 @@ import {
   ButtonPill,
   NavLink,
   SearchInput,
+  TabButton,
   Title,
 } from "@/features/core/components/base";
 import { HeaderTitleBase } from "@/features/core/components/table";
@@ -31,9 +32,12 @@ import {
 import AddressShort from "./address-short";
 import TokenColors from "./token-colors";
 
+const minGridWidth = 800;
+
 const gridStyle = {
   gap: "16px",
   gridTemplateColumns: "60px 1.5fr repeat(3, 1fr) 80px 80px",
+  minWidth: minGridWidth,
 };
 
 type ValidatorItemProps = {
@@ -56,7 +60,12 @@ const ValidatorRow = ({
   const votingPowerPercStr = formatVotingPowerPerc(votingPowerPerc);
 
   return (
-    <div className="flex w-full flex-col items-center justify-between gap-2">
+    <div
+      className="flex w-full flex-col items-center justify-between gap-2"
+      style={{
+        minWidth: minGridWidth,
+      }}
+    >
       <div
         className="grid w-full items-center justify-between gap-2 p-4"
         style={gridStyle}
@@ -222,32 +231,34 @@ const ValidatorsTable = () => {
 
   return (
     <>
-      <div className="grid grid-cols-3">
-        <div className="flex w-full flex-row justify-start gap-[16px]">
+      <div className="flex flex-col  md:grid md:grid-cols-3">
+        <div className="flex w-full flex-col justify-start gap-[32px] md:flex-row md:gap-[16px]">
           <Title>Validators</Title>
           <SearchInput
             onChange={(e) => setSearchValue(e.target.value)}
             value={searchValue}
           />
         </div>
-        <div className="flex flex-row items-center justify-center gap-[40px]">
-          <button
+        <div className="mt-[12px] flex flex-row items-center justify-center gap-[40px] uppercase md:mt-0">
+          <TabButton
+            active={currentTab === "active"}
             onClick={() => {
               setCurrentTab("active");
             }}
           >
             Active ({activeValidators.length})
-          </button>
-          <button
+          </TabButton>
+          <TabButton
+            active={currentTab === "inactive"}
             onClick={() => {
               setCurrentTab("inactive");
             }}
           >
             Inactive ({inactiveValidators.length})
-          </button>
+          </TabButton>
         </div>
       </div>
-      <div className="min-h-[100px] overflow-hidden rounded-[24px] bg-bg-600 pb-4 text-typo-100">
+      <div className="min-h-[100px] overflow-auto rounded-[24px] bg-bg-600 pb-4 text-typo-100">
         <div
           className="grid w-full items-center justify-between gap-2 bg-bg-500 p-4 uppercase"
           style={gridStyle}

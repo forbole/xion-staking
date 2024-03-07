@@ -15,15 +15,33 @@ type TypographyProps = PropsWithChildren & {
 };
 
 export const Title = ({ children, className = "" }: TypographyProps) => (
-  <div className={["typo-title", className].join(" ")}>{children}</div>
+  <div
+    className={[
+      "text-[24px] font-bold leading-[28px] text-white",
+      className,
+    ].join(" ")}
+  >
+    {children}
+  </div>
 );
 
 export const HeroText = ({ children, className = "" }: TypographyProps) => (
-  <div className={["typo-hero", className].join(" ")}>{children}</div>
+  <div
+    className={["text-[32px] font-light leading-[38px]", className].join(" ")}
+  >
+    {children}
+  </div>
 );
 
 export const Heading2 = ({ children, className = "" }: TypographyProps) => (
-  <div className={["heading2", className].join(" ")}>{children}</div>
+  <div
+    className={[
+      "text-white; text-[40px] font-bold leading-[36px]",
+      className,
+    ].join(" ")}
+  >
+    {children}
+  </div>
 );
 
 export const Heading8 = ({
@@ -31,11 +49,24 @@ export const Heading8 = ({
   className = "",
   color = "text-typo-150",
 }: TypographyProps & { color?: string }) => (
-  <div className={["heading8", color, className].join(" ")}>{children}</div>
+  <div
+    className={["text-[14px] font-bold leading-[16px]", color, className].join(
+      " ",
+    )}
+  >
+    {children}
+  </div>
 );
 
 export const BodyMedium = ({ children, className = "" }: TypographyProps) => (
-  <div className={["typo-body-medium", className].join(" ")}>{children}</div>
+  <div
+    className={[
+      "text-[16px] font-normal leading-[24px] text-typo-125",
+      className,
+    ].join(" ")}
+  >
+    {children}
+  </div>
 );
 
 type NavLinkProps = {
@@ -261,4 +292,21 @@ export const SearchInput = (props: SearchInputProps) => (
       className="border-b-[1px] border-b-transparent bg-transparent pb-[8px] pl-[24px] text-white outline-none hover:border-b-bg-400 focus:border-b-bg-400"
     />
   </div>
+);
+
+type TabButtonProps = React.DetailedHTMLProps<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+> & {
+  active?: boolean;
+};
+
+export const TabButton = ({ active, ...props }: TabButtonProps) => (
+  <button
+    {...props}
+    className={[
+      "pb-[4px] text-[12px] uppercase leading-[12px] tracking-[1.5px]",
+      active ? "border-b-[1px]" : "",
+    ].join(" ")}
+  />
 );

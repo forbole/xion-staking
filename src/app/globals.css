@@ -25,30 +25,6 @@ body {
 }
 
 @layer components {
-  .heading2 {
-    @apply text-[40px] font-bold leading-[36px] text-white;
-  }
-
-  .heading8 {
-    @apply text-[14px] font-bold leading-[16px];
-  }
-
-  .typo-hero {
-    @apply text-[32px] font-light leading-[38px];
-  }
-
-  .typo-title {
-    @apply text-[24px] font-bold leading-[28px] text-white;
-  }
-
-  .typo-body-medium {
-    @apply text-[16px] font-normal leading-[24px] text-typo-125;
-  }
-
-  .typo-validator-name {
-    @apply text-[32px] font-bold leading-[36px] text-white;
-  }
-
   .page-container {
     @apply w-full max-w-[1136px];
   }
