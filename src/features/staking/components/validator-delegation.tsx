@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 import { minDisplayedXion } from "@/constants";
 import {
+  BodyMedium,
   Button,
   ButtonPill,
   Heading2,
@@ -102,7 +103,7 @@ export default function ValidatorDelegation() {
                 )}
               </Heading2>
             )}
-            <Heading8>{formatXionToUSD(totalRewards)}</Heading8>
+            <BodyMedium>{formatXionToUSD(totalRewards)}</BodyMedium>
           </div>
           {getCanClaimAnyRewards(staking.state) && (
             <ButtonPill
@@ -134,7 +135,7 @@ export default function ValidatorDelegation() {
             </Heading2>
           )}
         </div>
-        <Heading8>{formatXionToUSD(userTotalDelegation)}</Heading8>
+        <BodyMedium>{formatXionToUSD(userTotalDelegation)}</BodyMedium>
         <div className="absolute bottom-0 right-[20px] top-0">
           <DivisorVertical />
         </div>
@@ -149,11 +150,11 @@ export default function ValidatorDelegation() {
                 : "-"}
             </Heading2>
           </div>
-          <Heading8>
+          <BodyMedium>
             {availableToStakeBN
               ? formatXionToUSD(getXionCoin(availableToStakeBN))
               : "-"}
-          </Heading8>
+          </BodyMedium>
           <div className="absolute bottom-0 right-[20px] top-0">
             <DivisorVertical />
           </div>
@@ -171,9 +172,9 @@ export default function ValidatorDelegation() {
                 : "-"}
             </Heading2>
           </div>
-          <Heading8>
+          <BodyMedium>
             {userTotalUnbondings ? formatXionToUSD(userTotalUnbondings) : "-"}
-          </Heading8>
+          </BodyMedium>
         </div>
         {!!unbondings?.length && (
           <div className="flex h-full flex-row items-end justify-end text-right">

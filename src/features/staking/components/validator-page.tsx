@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 
 import { basePath, defaultAvatar } from "@/constants";
 import {
+  BodyMedium,
   ClipboardCopy,
   Heading2,
   Heading8,
@@ -147,7 +148,9 @@ export default function ValidatorPage() {
               <div className="mb-[8px] mt-[12px]">
                 <Heading2>{formatToSmallDisplay(totalStakeBN)}</Heading2>
               </div>
-              <Heading8>{formatXionToUSD(getXionCoin(totalStakeBN))}</Heading8>
+              <BodyMedium>
+                {formatXionToUSD(getXionCoin(totalStakeBN))}
+              </BodyMedium>
               <div className="absolute bottom-0 right-[20px] top-0">
                 <DivisorVertical />
               </div>
@@ -188,7 +191,9 @@ export default function ValidatorPage() {
                     : "-"}
                 </Heading2>
               </div>
-              <Heading8>{formatXionToUSD(myDelegationToValidator)}</Heading8>
+              <BodyMedium>
+                {formatXionToUSD(myDelegationToValidator)}
+              </BodyMedium>
             </div>
           </div>
           <DivisorHorizontal className="min-w-[1000px]" />

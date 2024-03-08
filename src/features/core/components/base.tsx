@@ -58,7 +58,7 @@ export const Heading2 = ({
 export const Heading8 = ({
   children,
   className = "",
-  color = "text-typo-150",
+  color = "text-[#ffffff80]",
   title,
 }: TypographyProps & { color?: string }) => (
   <div
@@ -78,7 +78,7 @@ export const BodyMedium = ({
 }: TypographyProps) => (
   <div
     className={[
-      "text-[16px] font-normal leading-[24px] text-typo-125",
+      "text-[16px] font-normal leading-[24px] text-[#ffffffb3]",
       className,
     ].join(" ")}
     title={title}
@@ -93,7 +93,10 @@ type NavLinkProps = {
 };
 
 export const NavLink = ({ children, href }: NavLinkProps) => (
-  <Link className="text-left font-normal leading-[24px] underline" href={href}>
+  <Link
+    className="text-left font-normal leading-[24px] underline underline-offset-[2px]"
+    href={href}
+  >
     {children}
   </Link>
 );
