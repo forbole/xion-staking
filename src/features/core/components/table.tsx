@@ -28,14 +28,14 @@ export const HeaderTitleBase = <SortMethod extends string>({
     >
       <button
         className={[
-          "flex flex-row items-center gap-[8px]",
+          "flex flex-row items-center gap-[8px] uppercase",
           onSort ? "cursor-pointer" : "",
         ].join(" ")}
         onClick={() => {
           if (!onSort || !sort) return;
 
           const nextIndex =
-            (1 + sortingOrder.indexOf(sort)) % sortingOrder.length;
+            (1 + sortingOrder.indexOf(sort)) % (sortingOrder.length - 1); // -1 for none
 
           const nextSorting = sortingOrder[nextIndex];
 

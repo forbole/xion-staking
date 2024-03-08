@@ -79,7 +79,7 @@ const ValidatorRow = ({
               style={{ height: 50, minHeight: 50, minWidth: 50, width: 50 }}
             />
           </div>
-          <div className="flex flex-col justify-start gap-2 text-left">
+          <div className="flex flex-col justify-center gap-2 text-left">
             <div className="max-w-[300px] overflow-hidden truncate text-[14px] font-bold leading-[20px]">
               {validator.description.moniker}
             </div>

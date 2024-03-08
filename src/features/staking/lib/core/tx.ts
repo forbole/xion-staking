@@ -40,7 +40,6 @@ const getUxionAmount = (coin: Coin) => {
 };
 
 const getTxVerifier = (eventType: string) => (result: DeliverTxResponse) => {
-  // @TODO
   // eslint-disable-next-line no-console
   console.log("debug: base.ts: result", result);
 
