@@ -19,7 +19,7 @@ export const xionToUSD = 10;
 
 export const defaultAvatar = `${basePath}/default-avatar.svg`;
 
-// Even if this can be retrieved from the params, hardcode it to avoid and
+// Even if this can be retrieved from the params, hardcode it to avoid an
 // extra request. It can be retrieved with this:
 // const params = await queryClient.staking.params();
 export const unbondingDays = isTestnet ? 3 : 21;

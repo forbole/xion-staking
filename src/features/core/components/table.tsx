@@ -41,7 +41,7 @@ export const HeaderTitleBase = <SortMethod extends string>({
                   return "180deg";
                 }
 
-                return sortingIndex === 1 ? "0deg" : "90deg";
+                return "0deg";
               })(),
             }}
           />
