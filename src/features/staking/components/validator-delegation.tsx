@@ -5,6 +5,7 @@ import BigNumber from "bignumber.js";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { minDisplayedXion } from "@/constants";
 import {
   Button,
   ButtonPill,
@@ -90,9 +91,19 @@ export default function ValidatorDelegation() {
   ) : (
     <div className="grid min-w-[1000px] grid-cols-4 rounded-[24px] bg-bg-600 p-[24px]">
       <div className="relative">
-        <Heading8>Claimable Rewards</Heading8>
+        <Heading8>Claimable Rewards (XION)</Heading8>
         <div className="mb-[8px] mt-[12px] flex flex-row items-center gap-[8px]">
-          <Heading2>{formatXionToUSD(totalRewards)}</Heading2>
+          <div className="flex flex-col gap-[8px]">
+            {totalRewards && (
+              <Heading2 title={[totalRewards.amount, "XION"].join(" ")}>
+                {formatToSmallDisplay(
+                  new BigNumber(totalRewards.amount),
+                  minDisplayedXion,
+                )}
+              </Heading2>
+            )}
+            <Heading8>{formatXionToUSD(totalRewards)}</Heading8>
+          </div>
           {getCanClaimAnyRewards(staking.state) && (
             <ButtonPill
               onClick={() => {

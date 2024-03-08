@@ -29,7 +29,7 @@ export const HeaderTitleBase = <SortMethod extends string>({
       <button
         className={[
           "flex flex-row items-center gap-[8px] uppercase",
-          onSort ? "cursor-pointer" : "",
+          onSort ? "cursor-pointer" : "cursor-default",
         ].join(" ")}
         onClick={() => {
           if (!onSort || !sort) return;
