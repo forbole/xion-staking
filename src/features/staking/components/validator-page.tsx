@@ -193,7 +193,7 @@ export default function ValidatorPage() {
           </div>
           <DivisorHorizontal className="min-w-[1000px]" />
           <div className="grid min-w-[1000px] grid-cols-4">
-            <div className="col-span-2">
+            <div className="col-span-2 flex flex-col gap-[8px]">
               <Heading8 color="text-white">XION Address</Heading8>
               <div className="inline-flex flex-row gap-2 break-all">
                 {validatorDetails.operatorAddress}{" "}
@@ -201,7 +201,7 @@ export default function ValidatorPage() {
               </div>
             </div>
             {validatorDetails.description.website && (
-              <div>
+              <div className="flex flex-col gap-[8px]">
                 <Heading8 color="text-white">Website</Heading8>
                 <Link
                   href={validatorDetails.description.website}
@@ -212,7 +212,7 @@ export default function ValidatorPage() {
               </div>
             )}
             {validatorDetails.description.securityContact && (
-              <div>
+              <div className="flex flex-col gap-[8px]">
                 <Heading8 color="text-white">Security Contact</Heading8>
                 <Link
                   href={`mailto:${validatorDetails.description.securityContact}`}
@@ -222,7 +222,7 @@ export default function ValidatorPage() {
               </div>
             )}
           </div>
-          <div>
+          <div className="flex flex-col gap-[8px]">
             <Heading8 color="text-white">Details</Heading8>
             <div>
               <div>{validatorDetails.description.details}</div>

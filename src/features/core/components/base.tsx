@@ -113,7 +113,7 @@ export const ButtonPill = ({
   <button
     {...props}
     className={[
-      "cursor-pointer rounded-full bg-bg-550 px-[8px] py-[4px] text-white hover:bg-bg-600 disabled:cursor-not-allowed disabled:bg-bg-600 disabled:text-typo-150",
+      "cursor-pointer rounded-full bg-bg-550 px-[16px] py-[4px] text-white hover:bg-bg-600 disabled:cursor-not-allowed disabled:bg-bg-600 disabled:text-typo-150",
       variant === "danger" ? "[&]:bg-dangerBg [&]:text-danger" : "",
       className,
     ].join(" ")}
@@ -323,8 +323,8 @@ export const TabButton = ({ active, ...props }: TabButtonProps) => (
   <button
     {...props}
     className={[
-      "pb-[4px] text-[12px] uppercase leading-[12px] tracking-[1.5px]",
-      active ? "border-b-[1px]" : "",
+      "border-b-[1px] pb-[4px] text-[12px] uppercase leading-[12px] tracking-[1.5px]",
+      active ? "border-b-white" : "border-b-transparent",
     ].join(" ")}
   />
 );

@@ -36,7 +36,7 @@ const minGridWidth = 800;
 
 const gridStyle = {
   gap: "16px",
-  gridTemplateColumns: "60px 1.5fr repeat(3, 1fr) 80px 80px",
+  gridTemplateColumns: "60px 1.3fr repeat(3, 1fr) 80px 100px",
   minWidth: minGridWidth,
 };
 
@@ -61,7 +61,7 @@ const ValidatorRow = ({
 
   return (
     <div
-      className="flex w-full flex-col items-center justify-between gap-2"
+      className="flex w-full flex-col items-center justify-between gap-0"
       style={{
         minWidth: minGridWidth,
       }}

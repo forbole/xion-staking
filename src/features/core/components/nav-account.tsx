@@ -18,8 +18,10 @@ const Account = () => (
     <span className="font-bold">Account</span>{" "}
     <span
       className={[
-        "rounded-[4px] bg-successBg p-[4px] text-[12px] uppercase",
-        isTestnet ? "text-chain-testnet" : "text-chain-mainnet",
+        "rounded-[4px] p-[4px] text-[12px] uppercase",
+        isTestnet
+          ? "bg-chain-testnetBg text-chain-testnetFg"
+          : "bg-chain-mainnetBg text-chain-mainnetFg",
       ].join(" ")}
     >
       {isTestnet ? "Testnet" : "Mainnet"}

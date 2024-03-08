@@ -19,8 +19,10 @@ const config: Config = {
           600: "#1A1A1A",
         },
         chain: {
-          mainnet: "#CAF033",
-          testnet: "#FFAA4A",
+          mainnetBg: "#CAF03320",
+          mainnetFg: "#CAF033",
+          testnetBg: "#FFAA4A20",
+          testnetFg: "#FFAA4A",
         },
         danger: "#D74506",
         dangerBg: "#402217",
