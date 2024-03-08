@@ -4,6 +4,7 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: process.env.QUICK_BUILD === "true",
   },
+  trailingSlash: true, // This is important when deploying in GH pages
   typescript: {
     ignoreBuildErrors: process.env.QUICK_BUILD === "true",
   },
