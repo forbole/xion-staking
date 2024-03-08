@@ -1,7 +1,8 @@
 import { useAbstraxionAccount, useModal } from "@burnt-labs/abstraxion";
+import BigNumber from "bignumber.js";
 import { memo } from "react";
 
-import { basePath } from "@/constants";
+import { basePath, minDisplayedXion } from "@/constants";
 import {
   BodyMedium,
   Button,
@@ -19,11 +20,16 @@ import {
   getTotalDelegation,
   getTotalRewards,
 } from "../context/selectors";
-import { getEmptyXionCoin } from "../lib/core/coins";
-import { formatAPR, formatCoin, formatXionToUSD } from "../lib/formatters";
+import { getEmptyXionCoin, normaliseCoin } from "../lib/core/coins";
+import {
+  formatAPR,
+  formatCoin,
+  formatToSmallDisplay,
+  formatXionToUSD,
+} from "../lib/formatters";
 import { DivisorVertical } from "./divisor";
 
-const divisorStyle = "absolute bottom-[24px] right-[10px] top-[24px]";
+const divisorStyle = "absolute bottom-[24px] right-[-8px] top-[24px]";
 const columnStyle = "relative flex h-full flex-col items-start gap-3 p-[24px]";
 
 const StakingOverview = () => {
@@ -34,7 +40,7 @@ const StakingOverview = () => {
   if (!isConnected) {
     return (
       <div
-        className="flex min-h-[212px] flex-col items-center justify-center gap-[32px] px-[12px] uppercase"
+        className="flex min-h-[212px] flex-col items-center justify-center gap-[8px] px-[12px] uppercase"
         style={{
           backgroundImage: `url(${basePath}/overview-bg.png)`,
           borderRadius: 24,
@@ -63,11 +69,13 @@ const StakingOverview = () => {
 
   const apr = getAPR(staking.state);
 
-  const availableDelegation = staking.state.tokens || getEmptyXionCoin();
+  const availableDelegation = staking.state.tokens
+    ? normaliseCoin(staking.state.tokens)
+    : getEmptyXionCoin();
 
   return (
     <div
-      className="grid min-h-[144px] flex-col items-center justify-center gap-[32px] overflow-auto"
+      className="grid min-h-[144px] flex-col items-center justify-center gap-[8px] overflow-auto"
       style={{
         backgroundImage: `url(${basePath}/overview-bg.png)`,
         borderRadius: 24,
@@ -75,9 +83,14 @@ const StakingOverview = () => {
       }}
     >
       <div className={columnStyle}>
-        <Heading8>Claimable Rewards</Heading8>
+        <Heading8>Claimable Rewards (XION)</Heading8>
         <div className="flex flex-row items-center gap-4">
-          <Heading2>{formatXionToUSD(totalRewards)}</Heading2>
+          <Heading2 title={[totalRewards.amount, "XION"].join(" ")}>
+            {formatToSmallDisplay(
+              new BigNumber(totalRewards.amount),
+              minDisplayedXion,
+            )}
+          </Heading2>
           {getCanClaimAnyRewards(staking.state) && (
             <ButtonPill
               onClick={() => {
@@ -95,7 +108,7 @@ const StakingOverview = () => {
             </ButtonPill>
           )}
         </div>
-        <BodyMedium>{formatCoin(totalRewards)}</BodyMedium>
+        <BodyMedium>{formatXionToUSD(totalRewards)}</BodyMedium>
         <div className={divisorStyle}>
           <DivisorVertical />
         </div>
@@ -108,17 +121,24 @@ const StakingOverview = () => {
         </div>
       </div>
       <div className={columnStyle}>
-        <Heading8>Delegated Amount</Heading8>
-        <Heading2>{formatXionToUSD(totalDelegation)}</Heading2>
-        <BodyMedium>{formatCoin(totalDelegation)}</BodyMedium>
+        <Heading8>Delegated Amount (XION)</Heading8>
+        <Heading2 title={formatCoin(totalDelegation)}>
+          {formatToSmallDisplay(
+            new BigNumber(totalDelegation.amount),
+            minDisplayedXion,
+          )}
+        </Heading2>
+        <BodyMedium>{formatXionToUSD(totalDelegation)}</BodyMedium>
         <div className={divisorStyle}>
           <DivisorVertical />
         </div>
       </div>
       <div className={columnStyle}>
-        <Heading8>Available For Delegation</Heading8>
-        <Heading2>{formatXionToUSD(availableDelegation)}</Heading2>
-        <BodyMedium>{formatCoin(availableDelegation)}</BodyMedium>
+        <Heading8>Available For Delegation (XION)</Heading8>
+        <Heading2 title={formatCoin(availableDelegation)}>
+          {formatToSmallDisplay(new BigNumber(availableDelegation.amount))}
+        </Heading2>
+        <BodyMedium>{formatXionToUSD(availableDelegation)}</BodyMedium>
       </div>
     </div>
   );

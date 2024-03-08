@@ -11,33 +11,45 @@ import { clipboard, loader, loader2, search } from "../lib/icons";
 
 type TypographyProps = PropsWithChildren & {
   className?: string;
+  title?: string;
 };
 
-export const Title = ({ children, className = "" }: TypographyProps) => (
+export const Title = ({ children, className = "", title }: TypographyProps) => (
   <div
     className={[
       "text-[24px] font-bold leading-[28px] text-white",
       className,
     ].join(" ")}
+    title={title}
   >
     {children}
   </div>
 );
 
-export const HeroText = ({ children, className = "" }: TypographyProps) => (
+export const HeroText = ({
+  children,
+  className = "",
+  title,
+}: TypographyProps) => (
   <div
     className={["text-[32px] font-light leading-[38px]", className].join(" ")}
+    title={title}
   >
     {children}
   </div>
 );
 
-export const Heading2 = ({ children, className = "" }: TypographyProps) => (
+export const Heading2 = ({
+  children,
+  className = "",
+  title,
+}: TypographyProps) => (
   <div
     className={[
       "text-white; text-[40px] font-bold leading-[36px]",
       className,
     ].join(" ")}
+    title={title}
   >
     {children}
   </div>
@@ -47,22 +59,29 @@ export const Heading8 = ({
   children,
   className = "",
   color = "text-typo-150",
+  title,
 }: TypographyProps & { color?: string }) => (
   <div
     className={["text-[14px] font-bold leading-[16px]", color, className].join(
       " ",
     )}
+    title={title}
   >
     {children}
   </div>
 );
 
-export const BodyMedium = ({ children, className = "" }: TypographyProps) => (
+export const BodyMedium = ({
+  children,
+  className = "",
+  title,
+}: TypographyProps) => (
   <div
     className={[
       "text-[16px] font-normal leading-[24px] text-typo-125",
       className,
     ].join(" ")}
+    title={title}
   >
     {children}
   </div>

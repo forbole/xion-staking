@@ -16,7 +16,12 @@ const Account = () => (
   <span className="flex flex-row items-center gap-[8px] rounded-[8px] bg-bg-600 px-[16px] py-[18px]">
     <span dangerouslySetInnerHTML={{ __html: wallet }} />
     <span className="font-bold">Account</span>{" "}
-    <span className="rounded-[4px] bg-successBg p-[4px] text-[12px] uppercase text-success">
+    <span
+      className={[
+        "rounded-[4px] bg-successBg p-[4px] text-[12px] uppercase",
+        isTestnet ? "text-chain-testnet" : "text-chain-mainnet",
+      ].join(" ")}
+    >
       {isTestnet ? "Testnet" : "Mainnet"}
     </span>
   </span>

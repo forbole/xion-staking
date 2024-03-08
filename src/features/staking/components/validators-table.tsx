@@ -90,7 +90,7 @@ const ValidatorRow = ({
               validator.operatorAddress,
               staking.state,
             ) && (
-              <div className="rounded-[2px] bg-successBg p-[2px] text-[11px] font-medium leading-[16px] tracking-normal text-success">
+              <div className="rounded-[2px] bg-successBg px-[8px] py-[2px] text-[11px] font-medium leading-[16px] tracking-normal text-success">
                 You staked
               </div>
             )}

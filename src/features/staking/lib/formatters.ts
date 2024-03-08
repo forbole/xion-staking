@@ -40,8 +40,15 @@ export const formatVotingPowerPerc = (perc: null | number) => {
   return `${percNum}%`;
 };
 
-export const formatToSmallDisplay = (num: BigNumber) =>
-  Intl.NumberFormat("en", { notation: "compact" }).format(num.toNumber());
+export const formatToSmallDisplay = (num: BigNumber, minNumber?: number) => {
+  if (minNumber && num.lt(minNumber)) {
+    return `<${minNumber}`;
+  }
+
+  return Intl.NumberFormat("en", { notation: "compact" }).format(
+    num.toNumber(),
+  );
+};
 
 export const formatCommission = (commissionRate: string, decimals: number) => {
   const comission = new BigNumber(commissionRate)
