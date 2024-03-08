@@ -36,7 +36,7 @@ const minGridWidth = 800;
 
 const gridStyle = {
   gap: "16px",
-  gridTemplateColumns: "60px 1.3fr repeat(3, 1fr) 80px 100px",
+  gridTemplateColumns: "350px repeat(3, 1fr) 80px 100px",
   minWidth: minGridWidth,
 };
 
@@ -70,17 +70,17 @@ const ValidatorRow = ({
         className="grid w-full items-center justify-between gap-2 p-4"
         style={gridStyle}
       >
-        <div className="flex items-center justify-start">
-          <img
-            alt="Validator logo"
-            className="block w-[50px] rounded-full"
-            src={logo}
-            style={{ height: 50, width: 50 }}
-          />
-        </div>
         <div className="flex flex-1 flex-row justify-start gap-4">
+          <div className="flex items-center justify-start">
+            <img
+              alt="Validator logo"
+              className="block w-[50px] rounded-full"
+              src={logo}
+              style={{ height: 50, minHeight: 50, minWidth: 50, width: 50 }}
+            />
+          </div>
           <div className="flex flex-col justify-start gap-2 text-left">
-            <div className="text-[14px] font-bold leading-[20px]">
+            <div className="max-w-[300px] overflow-hidden truncate text-[14px] font-bold leading-[20px]">
               {validator.description.moniker}
             </div>
             <AddressShort address={validator.operatorAddress} />
@@ -263,7 +263,6 @@ const ValidatorsTable = () => {
           className="grid w-full items-center justify-between gap-2 bg-bg-500 p-4 uppercase"
           style={gridStyle}
         >
-          <div />
           <HeaderTitle
             onSort={setSortMethod}
             sort={sortMethod}
@@ -273,6 +272,7 @@ const ValidatorsTable = () => {
           </HeaderTitle>
           <HeaderTitle
             onSort={setSortMethod}
+            rigthAlign
             sort={sortMethod}
             sorting={["staked-asc", "staked-desc"]}
           >
@@ -280,6 +280,7 @@ const ValidatorsTable = () => {
           </HeaderTitle>
           <HeaderTitle
             onSort={setSortMethod}
+            rigthAlign
             sort={sortMethod}
             sorting={["commission-asc", "commission-desc"]}
           >
@@ -287,6 +288,7 @@ const ValidatorsTable = () => {
           </HeaderTitle>
           <HeaderTitle
             onSort={setSortMethod}
+            rigthAlign
             sort={sortMethod}
             sorting={["voting-power-asc", "voting-power-desc"]}
           >

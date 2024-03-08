@@ -4,6 +4,7 @@ import { chevron } from "../lib/icons";
 
 type Props<SortMethod> = PropsWithChildren & {
   onSort?: (method: SortMethod) => void;
+  rigthAlign?: boolean;
   sort?: SortMethod;
   sorting?: [string, string];
 };
@@ -11,6 +12,7 @@ type Props<SortMethod> = PropsWithChildren & {
 export const HeaderTitleBase = <SortMethod extends string>({
   children,
   onSort,
+  rigthAlign,
   sort,
   sorting,
 }: Props<SortMethod>) => {
@@ -18,23 +20,32 @@ export const HeaderTitleBase = <SortMethod extends string>({
   const sortingIndex = sort ? sortingOrder.indexOf(sort) : -1;
 
   return (
-    <div className="text-[14px] font-normal leading-[14px] tracking-wider">
-      <span className="relative">
-        {children}{" "}
-        {!!onSort && !!sort && (
-          <button
-            className="absolute right-[-16px] top-[6px] cursor-pointer"
+    <div
+      className={[
+        "flex flex-row text-[14px] font-normal leading-[14px] tracking-wider",
+        rigthAlign ? "justify-end" : "",
+      ].join(" ")}
+    >
+      <button
+        className={[
+          "flex flex-row items-center gap-[8px]",
+          onSort ? "cursor-pointer" : "",
+        ].join(" ")}
+        onClick={() => {
+          if (!onSort || !sort) return;
+
+          const nextIndex =
+            (1 + sortingOrder.indexOf(sort)) % sortingOrder.length;
+
+          const nextSorting = sortingOrder[nextIndex];
+
+          onSort?.(nextSorting as SortMethod);
+        }}
+      >
+        <span>{children}</span>
+        {onSort && (
+          <span
             dangerouslySetInnerHTML={{ __html: chevron }}
-            onClick={() => {
-              if (!onSort) return;
-
-              const nextIndex =
-                (1 + sortingOrder.indexOf(sort)) % sortingOrder.length;
-
-              const nextSorting = sortingOrder[nextIndex];
-
-              onSort?.(nextSorting as SortMethod);
-            }}
             style={{
               rotate: (() => {
                 if (sortingIndex === 0) {
@@ -46,7 +57,7 @@ export const HeaderTitleBase = <SortMethod extends string>({
             }}
           />
         )}
-      </span>
+      </button>
     </div>
   );
 };

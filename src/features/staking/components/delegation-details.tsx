@@ -67,13 +67,13 @@ export const DetailsTrigger = ({
 
 const gridStyle = {
   gap: "16px",
-  gridTemplateColumns: "60px 1.5fr repeat(4, 1fr)",
+  gridTemplateColumns: "2fr repeat(4, 1fr)",
   minWidth: 800,
   overflow: "auto",
 };
 
 const rowStyle =
-  "grid w-full items-center justify-between gap-2 p-2 mb-[24px] last:mb-[0px] bg-black rounded-[8px]";
+  "grid w-full items-center justify-between gap-2 p-2 mb-[16px] last:mb-[0px] bg-black rounded-[8px]";
 
 const wrapperStyle =
   "w-full overflow-auto rounded-[24px] bg-bg-600 pb-4 text-typo-100 px-[16px]";
@@ -112,15 +112,15 @@ const DelegationRowBase = ({
 
   return (
     <div className={rowStyle} style={gridStyle}>
-      <div className="flex items-center justify-start">
-        <img
-          alt="Validator logo"
-          className="block w-[50px] rounded-full"
-          src={logo}
-          style={{ height: 50, width: 50 }}
-        />
-      </div>
       <div className="flex flex-1 flex-row justify-start gap-4">
+        <div className="flex items-center justify-start">
+          <img
+            alt="Validator logo"
+            className="block w-[50px] rounded-full"
+            src={logo}
+            style={{ height: 50, width: 50 }}
+          />
+        </div>
         <div className="flex flex-col justify-start gap-2 text-left">
           <div className="text-[14px] font-bold leading-[20px]">
             {validator?.description.moniker || ""}
@@ -288,7 +288,7 @@ const DelegationHeaderTitle = HeaderTitleBase<DelegationSortMethod>;
 const UnbondingHeaderTitle = HeaderTitleBase<SortMethod>;
 
 const headerStyle =
-  "grid w-full items-center justify-between gap-2 p-4 uppercase";
+  "grid w-full items-center justify-between gap-2 py-4 px-2 uppercase";
 
 const DelegationDetails = () => {
   const stakingRef = useStaking();
@@ -357,17 +357,18 @@ const DelegationDetails = () => {
           return (
             <div className={wrapperStyle}>
               <div className={headerStyle} style={gridStyle}>
-                <div />
                 <DelegationHeaderTitle>Delegations</DelegationHeaderTitle>
                 <DelegationHeaderTitle
                   onSort={setDelegationsSortMethod}
+                  rigthAlign
                   sort={delegationsSortMethod}
                   sorting={["staked-asc", "staked-desc"]}
                 >
-                  <div className="text-right">Staked Amount</div>
+                  Staked Amount
                 </DelegationHeaderTitle>
                 <DelegationHeaderTitle
                   onSort={setDelegationsSortMethod}
+                  rigthAlign
                   sort={delegationsSortMethod}
                   sorting={["commission-asc", "commission-desc"]}
                 >
@@ -375,6 +376,7 @@ const DelegationDetails = () => {
                 </DelegationHeaderTitle>
                 <DelegationHeaderTitle
                   onSort={setDelegationsSortMethod}
+                  rigthAlign
                   sort={delegationsSortMethod}
                   sorting={["rewards-asc", "rewards-desc"]}
                 >
@@ -423,20 +425,23 @@ const DelegationDetails = () => {
           return (
             <div className={wrapperStyle}>
               <div className={headerStyle} style={gridStyle}>
-                <div />
-                <UnbondingHeaderTitle>Unstakings</UnbondingHeaderTitle>
+                <UnbondingHeaderTitle rigthAlign>
+                  Unstakings
+                </UnbondingHeaderTitle>
                 <UnbondingHeaderTitle
                   onSort={setUnbondingsSortMethod}
+                  rigthAlign
                   sort={unbondingsSortMethod}
                   sorting={["staked-asc", "staked-desc"]}
                 >
                   <div className="text-right">Staked Amount</div>
                 </UnbondingHeaderTitle>
-                <UnbondingHeaderTitle>
+                <UnbondingHeaderTitle rigthAlign>
                   <div className="text-right">Status</div>
                 </UnbondingHeaderTitle>
                 <UnbondingHeaderTitle
                   onSort={setUnbondingsSortMethod}
+                  rigthAlign
                   sort={unbondingsSortMethod}
                   sorting={["date-asc", "date-desc"]}
                 >
