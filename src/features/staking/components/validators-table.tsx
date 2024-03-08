@@ -12,7 +12,10 @@ import {
   TabButton,
   Title,
 } from "@/features/core/components/base";
-import { HeaderTitleBase } from "@/features/core/components/table";
+import {
+  HeaderTitleBase,
+  ValidatorLogo,
+} from "@/features/core/components/table";
 import { sortUtil } from "@/features/core/utils";
 
 import { useStaking } from "../context/hooks";
@@ -71,16 +74,9 @@ const ValidatorRow = ({
         style={gridStyle}
       >
         <div className="flex flex-1 flex-row justify-start gap-4">
-          <div className="flex items-center justify-start">
-            <img
-              alt="Validator logo"
-              className="block w-[50px] rounded-full"
-              src={logo}
-              style={{ height: 50, minHeight: 50, minWidth: 50, width: 50 }}
-            />
-          </div>
-          <div className="flex flex-col justify-center gap-2 text-left">
-            <div className="max-w-[300px] overflow-hidden truncate text-[14px] font-bold leading-[20px]">
+          <ValidatorLogo logo={logo} />
+          <div className="flex flex-col justify-center gap-[2px] text-left">
+            <div className="max-w-[150px] overflow-hidden truncate text-[14px] font-bold leading-[20px] md:max-w-[300px]">
               {validator.description.moniker}
             </div>
             <AddressShort address={validator.operatorAddress} />

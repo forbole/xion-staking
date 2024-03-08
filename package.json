@@ -13,7 +13,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@burnt-labs/abstraxion": "^1.0.0-alpha.38",
+    "@burnt-labs/abstraxion": "^1.0.0-alpha.39",
     "@burnt-labs/constants": "^0.1.0-alpha.6",
     "@burnt-labs/ui": "^0.1.0-alpha.7",
     "@cosmjs/cosmwasm-stargate": "^0.32.2",

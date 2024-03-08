@@ -7,7 +7,7 @@ type Props = {
 const AddressShort = ({ address }: Props) => {
   if (!address) return null;
 
-  const charsDisplayed = 5;
+  const charsDisplayed = 7;
 
   const formattedAddress = (() => {
     const left = address.slice(0, charsDisplayed);
