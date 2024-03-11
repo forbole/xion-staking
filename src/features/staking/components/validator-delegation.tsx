@@ -95,32 +95,34 @@ export default function ValidatorDelegation() {
         <Heading8>Claimable Rewards (XION)</Heading8>
         <div className="mb-[8px] mt-[12px] flex flex-row items-center gap-[8px]">
           <div className="flex flex-col gap-[8px]">
-            {totalRewards && (
-              <Heading2 title={[totalRewards.amount, "XION"].join(" ")}>
-                {formatToSmallDisplay(
-                  new BigNumber(totalRewards.amount),
-                  minDisplayedXion,
-                )}
-              </Heading2>
-            )}
+            <div className="flex flex-row items-center gap-[12px]">
+              {totalRewards && (
+                <Heading2 title={[totalRewards.amount, "XION"].join(" ")}>
+                  {formatToSmallDisplay(
+                    new BigNumber(totalRewards.amount),
+                    minDisplayedXion,
+                  )}
+                </Heading2>
+              )}
+              {getCanClaimAnyRewards(staking.state) && (
+                <ButtonPill
+                  onClick={() => {
+                    staking.dispatch(
+                      setModalOpened({
+                        content: {
+                          delegations: staking.state.delegations?.items || [],
+                        },
+                        type: "rewards",
+                      }),
+                    );
+                  }}
+                >
+                  Claim
+                </ButtonPill>
+              )}
+            </div>
             <BodyMedium>{formatXionToUSD(totalRewards)}</BodyMedium>
           </div>
-          {getCanClaimAnyRewards(staking.state) && (
-            <ButtonPill
-              onClick={() => {
-                staking.dispatch(
-                  setModalOpened({
-                    content: {
-                      delegations: staking.state.delegations?.items || [],
-                    },
-                    type: "rewards",
-                  }),
-                );
-              }}
-            >
-              Claim
-            </ButtonPill>
-          )}
         </div>
         <div className="absolute bottom-0 right-[20px] top-0">
           <DivisorVertical />
