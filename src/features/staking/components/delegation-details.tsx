@@ -70,8 +70,8 @@ export const DetailsTrigger = ({
 
 const gridStyle = {
   gap: "16px",
-  gridTemplateColumns: "2fr repeat(4, 1fr)",
-  minWidth: 800,
+  gridTemplateColumns: "1.5fr repeat(4, 1.05fr)",
+  minWidth: 1000,
   overflow: "auto",
 };
 
@@ -221,15 +221,8 @@ const UnbondingRow = ({
 
   return (
     <div className={rowStyle} style={gridStyle}>
-      <div className="flex items-center justify-start">
-        <img
-          alt="Validator logo"
-          className="block w-[50px] rounded-full"
-          src={logo}
-          style={{ height: 50, width: 50 }}
-        />
-      </div>
       <div className="flex flex-1 flex-row justify-start gap-4">
+        <ValidatorLogo logo={logo} />
         <div className="flex flex-col justify-start gap-2 text-left">
           <div className="text-[14px] font-bold leading-[20px]">
             {validator?.description.moniker || ""}
@@ -421,9 +414,7 @@ const DelegationDetails = () => {
           return (
             <div className={wrapperStyle}>
               <div className={headerStyle} style={gridStyle}>
-                <UnbondingHeaderTitle rigthAlign>
-                  Unstakings
-                </UnbondingHeaderTitle>
+                <UnbondingHeaderTitle>Unstakings</UnbondingHeaderTitle>
                 <UnbondingHeaderTitle
                   onSort={setUnbondingsSortMethod}
                   rigthAlign

@@ -166,40 +166,42 @@ export default function ValidatorDelegation() {
         <div>
           <Heading8>Unstakings (XION)</Heading8>
           <div className="mb-[8px] mt-[12px]">
-            <Heading2>
-              {userTotalUnbondings
-                ? formatToSmallDisplay(
-                    new BigNumber(userTotalUnbondings.amount),
-                  )
-                : "-"}
-            </Heading2>
+            <div className="flex flex-row items-center gap-[12px]">
+              <Heading2>
+                {userTotalUnbondings
+                  ? formatToSmallDisplay(
+                      new BigNumber(userTotalUnbondings.amount),
+                    )
+                  : "-"}
+              </Heading2>
+              {!!unbondings?.length && (
+                <div className="flex h-full flex-row items-end justify-end text-right">
+                  <span>
+                    <ButtonPill
+                      className="text-[14px]"
+                      onClick={() => {
+                        staking.dispatch(
+                          setModalOpened({
+                            content: {
+                              unbondings,
+                            },
+                            type: "cancel-unstaking",
+                          }),
+                        );
+                      }}
+                      variant="danger"
+                    >
+                      Cancel Unstake
+                    </ButtonPill>
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
           <BodyMedium>
             {userTotalUnbondings ? formatXionToUSD(userTotalUnbondings) : "-"}
           </BodyMedium>
         </div>
-        {!!unbondings?.length && (
-          <div className="flex h-full flex-row items-end justify-end text-right">
-            <span>
-              <ButtonPill
-                className="text-[14px]"
-                onClick={() => {
-                  staking.dispatch(
-                    setModalOpened({
-                      content: {
-                        unbondings,
-                      },
-                      type: "cancel-unstaking",
-                    }),
-                  );
-                }}
-                variant="danger"
-              >
-                Cancel Unstake
-              </ButtonPill>
-            </span>
-          </div>
-        )}
       </div>
     </div>
   );
