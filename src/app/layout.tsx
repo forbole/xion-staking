@@ -6,7 +6,7 @@ import "@burnt-labs/ui/dist/index.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { dashboardUrl, rpcEndpoint } from "@/constants";
+import { dashboardUrl, faucetContractAddress, rpcEndpoint } from "@/constants";
 import BaseWrapper from "@/features/core/components/base-wrapper";
 import { CoreProvider } from "@/features/core/context/provider";
 import { StakingProvider } from "@/features/staking/context/provider";
@@ -14,7 +14,9 @@ import { StakingProvider } from "@/features/staking/context/provider";
 import "./globals.css";
 
 const abstraxionConfig = {
-  contracts: [],
+  contracts: [
+    faucetContractAddress
+  ],
   dashboardUrl,
   rpcUrl: rpcEndpoint,
   stake: true,
