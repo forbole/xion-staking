@@ -1,5 +1,8 @@
 import BigNumber from "bignumber.js";
-import type { Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
+import {
+  BondStatus,
+  type Validator,
+} from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import { memo, useEffect, useState } from "react";
 
 import {
@@ -98,7 +101,7 @@ type DelegationRowProps = {
 
 const DelegationRowBase = ({
   delegation,
-  disabled,
+  disabled: disabledProp,
   index,
   staking,
   validator,
@@ -137,7 +140,9 @@ const DelegationRowBase = ({
       </div>
       <div className="flex flex-row items-center justify-end gap-[8px]">
         <ButtonPill
-          disabled={disabled}
+          disabled={
+            disabledProp || validator?.status !== BondStatus.BOND_STATUS_BONDED
+          }
           onClick={() => {
             if (!validator) return;
 
@@ -154,7 +159,9 @@ const DelegationRowBase = ({
         <FloatingDropdown Trigger={Menu} id={`delegation-${index}`}>
           <div className="flex flex-col gap-[12px] rounded-[8px] bg-bg-600 py-[4px]">
             <ButtonLink
-              disabled={!getCanClaimRewards(delegation?.rewards) || disabled}
+              disabled={
+                !getCanClaimRewards(delegation?.rewards) || disabledProp
+              }
               onClick={() => {
                 if (!validator) return;
 
@@ -171,7 +178,7 @@ const DelegationRowBase = ({
               Claim rewards
             </ButtonLink>
             <ButtonLink
-              disabled={disabled}
+              disabled={disabledProp}
               onClick={() => {
                 if (!validator) return;
 

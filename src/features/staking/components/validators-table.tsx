@@ -167,9 +167,8 @@ const ValidatorsTable = () => {
       currentTab === "active"
         ? (v) => v.status === BondStatus.BOND_STATUS_BONDED
         : (v) =>
-            v.status ===
-            (BondStatus.BOND_STATUS_UNBONDED ||
-              BondStatus.BOND_STATUS_UNBONDING),
+            v.status === BondStatus.BOND_STATUS_UNBONDED ||
+            v.status === BondStatus.BOND_STATUS_UNBONDING,
     )
     .slice()
     .sort((a, b) => {
