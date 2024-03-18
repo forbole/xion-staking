@@ -12,6 +12,7 @@ import DelegationDetails, {
 import StakingModals from "./staking-modals";
 import StakingOverview from "./staking-overview";
 import ValidatorsTable from "./validators-table";
+import Faucet from "./faucet";
 
 function StakingPage() {
   const { staking } = useStaking();
@@ -31,6 +32,7 @@ function StakingPage() {
             />
           )}
         </div>
+        <Faucet />
         <StakingOverview />
         {isShowingDetails && canShowDetail && <DelegationDetails />}
         <ValidatorsTable />

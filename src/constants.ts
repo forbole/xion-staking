@@ -9,6 +9,10 @@ export const dashboardUrl = undefined;
 // export const rpcEndpoint = "https://rpc.xion-testnet-1.burnt.com:443";
 export const rpcEndpoint = "https://rpc.xion-testnet.forbole.com";
 
+// This only exists on testnet.
+export const faucetContractAddress =
+  "xion1z8gr3jn7rd5leyvz7z3zmelxmrz6q8lv7flc3a4u8kltwj6leags8u64qx";
+
 export const basePath =
   process.env.NEXT_PUBLIC_IS_DEPLOYMENT === "true" ? "/xion-staking" : "";
 
