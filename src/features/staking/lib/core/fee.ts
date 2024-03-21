@@ -46,7 +46,7 @@ type FeeOpts = {
 
 export const getCosmosFee = async ({
   address,
-  amount = [{ amount: "1000", denom: "uxion" }],
+  amount = [{ amount: "0", denom: "uxion" }],
   gasLimit = "400000",
   memo = "",
   msgs,
