@@ -42,11 +42,13 @@ export const HeroText = ({
 export const Heading2 = ({
   children,
   className = "",
+  responsive = false,
   title,
-}: TypographyProps) => (
+}: TypographyProps & { responsive?: boolean }) => (
   <div
     className={[
       "text-white; text-[40px] font-bold leading-[36px]",
+      responsive ? "&:text-[24px] &:leading-[28px]" : "",
       className,
     ].join(" ")}
     title={title}

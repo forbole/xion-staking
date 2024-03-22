@@ -58,10 +58,8 @@ const CommonModal = ({ children, ...props }: Props) => {
       }}
     >
       <div
-        className="relative w-full overflow-auto px-[16px] py-[40px] md:p-[50px]"
+        className="relative min-h-[100vh] w-full overflow-auto bg-[#000] px-[16px] py-[80px] md:min-h-[unset] md:rounded-[48px] md:p-[50px] md:py-[40px]"
         style={{
-          backgroundColor: "#000",
-          borderRadius: "48px",
           boxShadow: "0px 0px 50px 0px #FFFFFF40",
           boxSizing: "border-box",
           display: "flex",

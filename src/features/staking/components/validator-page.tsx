@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@burnt-labs/ui";
 import BigNumber from "bignumber.js";
 import { BondStatus } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import Link from "next/link";
@@ -10,6 +9,7 @@ import { useEffect, useState } from "react";
 import { basePath, defaultAvatar } from "@/constants";
 import {
   BodyMedium,
+  Button,
   ClipboardCopy,
   Heading2,
   Heading8,
@@ -107,25 +107,28 @@ export default function ValidatorPage() {
             borderRadius: 16,
           }}
         >
-          <div className="flex w-full min-w-[1000px] flex-row items-center gap-[16px]">
-            <img
-              alt="Validator logo"
-              className="block w-[80px] rounded-full"
-              src={logo || defaultAvatar}
-            />
-            <div className="flex flex-1 items-center gap-[16px]">
-              <div className="text-[32px] font-bold leading-[36px] text-white">
-                {validatorDetails.description.moniker || ""}
-              </div>
-              {hasStakedInValidator && (
-                <div className="rounded-[4px] bg-successBg px-[8px] py-[4px] text-[11px] text-success">
-                  You staked
+          <div className="flex w-full flex-col items-center gap-[16px] md:min-w-[1000px] md:flex-row">
+            <div className="flex w-full flex-row justify-between gap-[16px]">
+              <img
+                alt="Validator logo"
+                className="block w-[80px] rounded-full"
+                src={logo || defaultAvatar}
+              />
+              <div className="flex flex-1 items-center gap-[16px]">
+                <div className="text-[32px] font-bold leading-[36px] text-white">
+                  {validatorDetails.description.moniker || ""}
                 </div>
-              )}
+                {hasStakedInValidator && (
+                  <div className="rounded-[4px] bg-successBg px-[8px] py-[4px] text-[11px] text-success">
+                    You staked
+                  </div>
+                )}
+              </div>
             </div>
             {validatorDetails.status === BondStatus.BOND_STATUS_BONDED && (
-              <div>
+              <div className="flex w-full md:w-[unset]">
                 <Button
+                  className="w-full md:w-max"
                   disabled={!stakingRef.isConnected}
                   onClick={() => {
                     stakingRef.staking.dispatch(
@@ -141,12 +144,14 @@ export default function ValidatorPage() {
               </div>
             )}
           </div>
-          <DivisorHorizontal className="min-w-[1000px]" />
-          <div className="grid min-w-[1000px] grid-cols-4">
+          <DivisorHorizontal className="md:min-w-[1000px]" />
+          <div className="grid grid-cols-2 md:min-w-[1000px] md:grid-cols-4">
             <div className="relative">
               <Heading8>Total Stake (XION)</Heading8>
               <div className="mb-[8px] mt-[12px]">
-                <Heading2>{formatToSmallDisplay(totalStakeBN)}</Heading2>
+                <Heading2 responsive>
+                  {formatToSmallDisplay(totalStakeBN)}
+                </Heading2>
               </div>
               <BodyMedium>
                 {formatXionToUSD(getXionCoin(totalStakeBN))}
@@ -158,7 +163,7 @@ export default function ValidatorPage() {
             <div className="relative">
               <Heading8>Commission Rate</Heading8>
               <div className="mb-[8px] mt-[12px]">
-                <Heading2>
+                <Heading2 responsive>
                   {formatCommission(
                     validatorDetails.commission.commissionRates.rate,
                     2,
@@ -172,7 +177,7 @@ export default function ValidatorPage() {
             <div className="relative">
               <Heading8>Voting Power</Heading8>
               <div className="mb-[8px] mt-[12px]">
-                <Heading2>{votingPowerPercStr}</Heading2>
+                <Heading2 responsive>{votingPowerPercStr}</Heading2>
               </div>
               <div className="absolute bottom-0 right-[20px] top-0">
                 <DivisorVertical />
@@ -181,7 +186,7 @@ export default function ValidatorPage() {
             <div className="relative">
               <Heading8>My Delegation (XION)</Heading8>
               <div className="mb-[8px] mt-[12px]">
-                <Heading2>
+                <Heading2 responsive>
                   {myDelegationToValidator
                     ? formatToSmallDisplay(
                         new BigNumber(
@@ -196,9 +201,9 @@ export default function ValidatorPage() {
               </BodyMedium>
             </div>
           </div>
-          <DivisorHorizontal className="min-w-[1000px]" />
-          <div className="grid min-w-[1000px] grid-cols-4">
-            <div className="col-span-2 flex flex-col gap-[8px]">
+          <DivisorHorizontal className="md:min-w-[1000px]" />
+          <div className="grid grid-cols-1 gap-[24px] md:min-w-[1000px] md:grid-cols-4 md:gap-0">
+            <div className="flex flex-col gap-[8px] md:col-span-2">
               <Heading8 color="text-white">XION Address</Heading8>
               <div className="inline-flex flex-row gap-2 break-all">
                 {validatorDetails.operatorAddress}{" "}
