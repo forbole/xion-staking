@@ -34,7 +34,7 @@ const Faucet = () => {
         return;
       }
 
-      if (parseInt(staking.state.tokens?.amount) > result.maxBalance) {
+      if (parseInt(staking.state.tokens?.amount) >= result.maxBalance) {
         setLastFaucetStatus({
           ...result,
 
