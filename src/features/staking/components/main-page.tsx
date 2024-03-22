@@ -16,7 +16,7 @@ import ValidatorsTable from "./validators-table";
 
 function StakingPage() {
   const { staking } = useStaking();
-  const [isShowingDetails, setIsShowingDetails] = useState(false);
+  const [isShowingDetails, setIsShowingDetails] = useState(true);
 
   const canShowDetail = getCanShowDetails(staking.state);
 

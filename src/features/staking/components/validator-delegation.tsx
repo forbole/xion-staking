@@ -50,7 +50,7 @@ export default function ValidatorDelegation() {
   const address = searchParams.get("address");
   const stakingRef = useStaking();
   const [, setShowAbstraxion] = useModal();
-  const [isShowingDetails, setIsShowingDetails] = useState(false);
+  const [isShowingDetails, setIsShowingDetails] = useState(true);
 
   const { isConnected, staking } = stakingRef;
 
