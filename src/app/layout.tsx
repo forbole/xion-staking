@@ -14,9 +14,7 @@ import { StakingProvider } from "@/features/staking/context/provider";
 import "./globals.css";
 
 const abstraxionConfig = {
-  contracts: [
-    faucetContractAddress
-  ],
+  contracts: [faucetContractAddress],
   dashboardUrl,
   rpcUrl: rpcEndpoint,
   stake: true,

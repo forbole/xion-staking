@@ -9,10 +9,10 @@ import DelegationDetails, {
   DetailsTrigger,
   getCanShowDetails,
 } from "./delegation-details";
+import Faucet from "./faucet";
 import StakingModals from "./staking-modals";
 import StakingOverview from "./staking-overview";
 import ValidatorsTable from "./validators-table";
-import Faucet from "./faucet";
 
 function StakingPage() {
   const { staking } = useStaking();
