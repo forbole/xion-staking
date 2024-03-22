@@ -32,7 +32,18 @@ import DelegationDetails, {
   DetailsTrigger,
   getCanShowDetails,
 } from "./delegation-details";
-import { DivisorVertical } from "./divisor";
+import { DivisorHorizontal, DivisorVertical } from "./divisor";
+
+const Divisor = () => (
+  <>
+    <div className="absolute bottom-0 right-[20px] top-0 hidden md:block">
+      <DivisorVertical />
+    </div>
+    <div className="block w-full translate-y-[12px] md:hidden">
+      <DivisorHorizontal />
+    </div>
+  </>
+);
 
 export default function ValidatorDelegation() {
   const searchParams = useSearchParams();
@@ -90,7 +101,7 @@ export default function ValidatorDelegation() {
       </div>
     </div>
   ) : (
-    <div className="grid min-w-[1000px] grid-cols-4 rounded-[24px] bg-bg-600 p-[24px]">
+    <div className="flex flex-col gap-[32px] rounded-[24px] bg-bg-600 p-[24px] md:grid md:grid-cols-4 md:gap-0">
       <div className="relative">
         <Heading8>Claimable Rewards (XION)</Heading8>
         <div className="mb-[8px] mt-[12px] flex flex-row items-center gap-[8px]">
@@ -124,9 +135,7 @@ export default function ValidatorDelegation() {
             <BodyMedium>{formatXionToUSD(totalRewards)}</BodyMedium>
           </div>
         </div>
-        <div className="absolute bottom-0 right-[20px] top-0">
-          <DivisorVertical />
-        </div>
+        <Divisor />
       </div>
       <div className="relative">
         <Heading8>My Delegation (XION)</Heading8>
@@ -138,9 +147,7 @@ export default function ValidatorDelegation() {
           )}
         </div>
         <BodyMedium>{formatXionToUSD(userTotalDelegation)}</BodyMedium>
-        <div className="absolute bottom-0 right-[20px] top-0">
-          <DivisorVertical />
-        </div>
+        <Divisor />
       </div>
       <div className="flex flex-row gap-[16px]">
         <div className="relative w-full">
@@ -157,9 +164,7 @@ export default function ValidatorDelegation() {
               ? formatXionToUSD(getXionCoin(availableToStakeBN))
               : "-"}
           </BodyMedium>
-          <div className="absolute bottom-0 right-[20px] top-0">
-            <DivisorVertical />
-          </div>
+          <Divisor />
         </div>
       </div>
       <div className="flex flex-row gap-[16px]">

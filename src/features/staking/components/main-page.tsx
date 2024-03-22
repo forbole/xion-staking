@@ -24,7 +24,10 @@ function StakingPage() {
     <>
       <div className="page-container flex flex-col gap-6 px-[12px] pb-[24px] md:px-[24px]">
         <div className="mt-[40px] flex flex-row justify-between text-left">
-          <Title>Your Staking Overview</Title>
+          <Title>
+            <span className="hidden md:block">Your Staking Overview</span>
+            <span className="block md:hidden">Your Overview</span>
+          </Title>
           {canShowDetail && (
             <DetailsTrigger
               isShowingDetails={isShowingDetails}

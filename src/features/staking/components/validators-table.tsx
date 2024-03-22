@@ -35,11 +35,13 @@ import {
 import AddressShort from "./address-short";
 import TokenColors from "./token-colors";
 
-const minGridWidth = 800;
+const minGridWidth = 1000;
+
+const commonGridClasses =
+  "grid-cols-[150px_repeat(3,1fr)_80px_100px] md:grid-cols-[350px_repeat(3,1fr)_80px_100px]";
 
 const gridStyle = {
   gap: "16px",
-  gridTemplateColumns: "350px repeat(3, 1fr) 80px 100px",
   minWidth: minGridWidth,
 };
 
@@ -70,7 +72,10 @@ const ValidatorRow = ({
       }}
     >
       <div
-        className="grid w-full items-center justify-between gap-2 p-4"
+        className={[
+          "grid w-full items-center justify-between gap-2 p-4",
+          commonGridClasses,
+        ].join(" ")}
         style={gridStyle}
       >
         <div className="flex flex-1 flex-row justify-start gap-4">
@@ -241,7 +246,11 @@ const ValidatorsTable = () => {
               setCurrentTab("active");
             }}
           >
-            Active ({activeValidators.length})
+            Active
+            <span className="hidden md:inline-block">
+              {" "}
+              ({activeValidators.length})
+            </span>
           </TabButton>
           <TabButton
             active={currentTab === "inactive"}
@@ -249,13 +258,20 @@ const ValidatorsTable = () => {
               setCurrentTab("inactive");
             }}
           >
-            Inactive ({inactiveValidators.length})
+            Inactive
+            <span className="ml-[4px] hidden md:inline-block">
+              {" "}
+              ({inactiveValidators.length})
+            </span>
           </TabButton>
         </div>
       </div>
       <div className="min-h-[100px] overflow-auto rounded-[24px] bg-bg-600 pb-4 text-typo-100">
         <div
-          className="grid w-full items-center justify-between gap-2 bg-bg-500 p-4 uppercase"
+          className={[
+            "grid w-full items-center justify-between gap-2 bg-bg-500 p-4 uppercase",
+            commonGridClasses,
+          ].join(" ")}
           style={gridStyle}
         >
           <HeaderTitle

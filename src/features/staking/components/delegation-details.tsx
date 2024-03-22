@@ -56,12 +56,12 @@ export const DetailsTrigger = ({
   setIsShowingDetails,
 }: Props) => (
   <button
-    className="text-primary-500 flex flex-row items-center gap-2"
+    className="text-primary-500 flex flex-row items-center gap-2 text-[14px]"
     onClick={() => {
       setIsShowingDetails(!isShowingDetails);
     }}
   >
-    {isShowingDetails ? "Hide details" : "Show details"}
+    {isShowingDetails ? "Hide details" : "View details"}
     <div
       dangerouslySetInnerHTML={{ __html: pointer }}
       style={{
