@@ -27,10 +27,21 @@ import {
   formatToSmallDisplay,
   formatXionToUSD,
 } from "../lib/formatters";
-import { DivisorVertical } from "./divisor";
+import { DivisorHorizontal, DivisorVertical } from "./divisor";
 
-const divisorStyle = "absolute bottom-[24px] right-[-8px] top-[24px]";
-const columnStyle = "relative flex h-full flex-col items-start gap-3 p-[24px]";
+const columnStyle =
+  "relative flex w-full h-full flex-col items-start gap-3 p-[24px]";
+
+const Divisor = () => (
+  <>
+    <div className="absolute bottom-[24px] right-[-8px] top-[24px] hidden md:block">
+      <DivisorVertical />
+    </div>
+    <div className="w-full translate-y-[24px] md:hidden">
+      <DivisorHorizontal />
+    </div>
+  </>
+);
 
 const StakingOverview = () => {
   const { isConnected } = useAbstraxionAccount();
@@ -75,9 +86,10 @@ const StakingOverview = () => {
 
   return (
     <div
-      className="grid min-h-[144px] flex-col items-center justify-center gap-[8px] overflow-auto"
+      className="flex min-h-[144px] flex-col items-center justify-center gap-[8px] overflow-auto md:grid"
       style={{
         backgroundImage: `url(${basePath}/overview-bg.png)`,
+        backgroundSize: "cover",
         borderRadius: 24,
         gridTemplateColumns: "1fr 1fr 1fr 1fr",
       }}
@@ -109,16 +121,12 @@ const StakingOverview = () => {
           )}
         </div>
         <BodyMedium>{formatXionToUSD(totalRewards)}</BodyMedium>
-        <div className={divisorStyle}>
-          <DivisorVertical />
-        </div>
+        <Divisor />
       </div>
       <div className={columnStyle}>
         <Heading8>APR</Heading8>
         <Heading2>{formatAPR(apr)}</Heading2>
-        <div className={divisorStyle}>
-          <DivisorVertical />
-        </div>
+        <Divisor />
       </div>
       <div className={columnStyle}>
         <Heading8>Delegated Amount (XION)</Heading8>
@@ -129,9 +137,7 @@ const StakingOverview = () => {
           )}
         </Heading2>
         <BodyMedium>{formatXionToUSD(totalDelegation)}</BodyMedium>
-        <div className={divisorStyle}>
-          <DivisorVertical />
-        </div>
+        <Divisor />
       </div>
       <div className={columnStyle}>
         <Heading8>Available For Delegation (XION)</Heading8>
