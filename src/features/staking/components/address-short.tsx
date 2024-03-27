@@ -2,9 +2,10 @@ import { toast } from "react-toastify";
 
 type Props = {
   address: string;
+  className?: string;
 };
 
-const AddressShort = ({ address }: Props) => {
+const AddressShort = ({ address, className }: Props) => {
   if (!address) return null;
 
   const charsDisplayed = 7;
@@ -19,7 +20,10 @@ const AddressShort = ({ address }: Props) => {
 
   return (
     <button
-      className="cursor-pointer text-left text-[12px] font-normal leading-[20px] text-typo-200"
+      className={[
+        "cursor-pointer text-left text-[12px] font-normal leading-[20px] text-typo-200",
+        className,
+      ].join(" ")}
       onClick={() => {
         navigator.clipboard.writeText(address);
 

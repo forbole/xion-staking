@@ -5,49 +5,51 @@ import {
   useAbstraxionSigningClient,
   useModal,
 } from "@burnt-labs/abstraxion";
-import { Button } from "@burnt-labs/ui";
 
-import { isTestnet } from "@/constants";
+import AddressShort from "@/features/staking/components/address-short";
 
 import { wallet } from "../lib/icons";
-import { ButtonPill, FloatingDropdown } from "./base";
+import { Button, ClipboardCopy, FloatingDropdown } from "./base";
 
 const Account = () => (
   <span className="flex flex-row items-center gap-[8px] rounded-[8px] bg-bg-600 px-[16px] py-[18px]">
     <span dangerouslySetInnerHTML={{ __html: wallet }} />
-    <span className="font-bold">Account</span>{" "}
-    <span
-      className={[
-        "rounded-[4px] p-[4px] text-[12px] uppercase",
-        isTestnet
-          ? "bg-chain-testnetBg text-chain-testnetFg"
-          : "bg-chain-mainnetBg text-chain-mainnetFg",
-      ].join(" ")}
-    >
-      {isTestnet ? "Testnet" : "Mainnet"}
-    </span>
   </span>
 );
 
 const NavAccount = () => {
   const [, setShowAbstraxion] = useModal();
-  const { isConnected } = useAbstraxionAccount();
+  const { data, isConnected } = useAbstraxionAccount();
   const { logout } = useAbstraxionSigningClient();
 
   return (
     <div className="cursor-pointer">
       {isConnected ? (
-        <FloatingDropdown Trigger={Account} id="nav-account">
-          <div className="flex items-center justify-center rounded-[16px] bg-bg-600 px-[24px] py-[12px]">
-            <ButtonPill
-              className="bg-transparent"
+        <FloatingDropdown
+          Trigger={Account}
+          id="nav-account"
+          placement="bottom-end"
+        >
+          <div className="flex flex-col gap-[32px] rounded-[16px] bg-bg-600 p-[24px]">
+            <div className="flex flex-col gap-[12px]">
+              <div className="text-[14px]">XION Address</div>
+              <div className="flex min-w-[250px] flex-row justify-between rounded-[8px] bg-[#000] px-[16px] py-[20px] text-[#fff]">
+                <AddressShort
+                  address={data.bech32Address}
+                  className="text-[16px] text-[#fff]"
+                />
+                <ClipboardCopy textToCopy={data.bech32Address} />
+              </div>
+            </div>
+            <Button
+              className="w-full flex-1 py-[8px] uppercase"
               onClick={() => {
                 logout?.();
               }}
-              variant="danger"
+              variant="danger-naked"
             >
               Log out
-            </ButtonPill>
+            </Button>
           </div>
         </FloatingDropdown>
       ) : (

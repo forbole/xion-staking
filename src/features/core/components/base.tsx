@@ -199,7 +199,7 @@ type ButtonProps = React.DetailedHTMLProps<
   HTMLButtonElement
 > & {
   isLoading?: boolean;
-  variant?: "danger" | "default" | "success";
+  variant?: "danger-naked" | "danger" | "default" | "success";
 };
 
 export const Button = ({
@@ -211,6 +211,9 @@ export const Button = ({
   const colors = (() => {
     if (variant === "danger")
       return "text-danger disabled:text-typo-150 bg-[#D745061A]";
+
+    if (variant === "danger-naked")
+      return "text-danger disabled:text-typo-150 bg-transparent border-[1px] border-danger disabled:border-typo-150";
 
     if (variant === "success")
       return "bg-success text-black disabled:bg-green-400";
