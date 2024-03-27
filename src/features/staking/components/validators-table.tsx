@@ -275,6 +275,7 @@ const ValidatorsTable = () => {
           style={gridStyle}
         >
           <HeaderTitle
+            mobile
             onSort={setSortMethod}
             sort={sortMethod}
             sorting={["name-asc", "name-desc"]}
@@ -282,6 +283,7 @@ const ValidatorsTable = () => {
             Validator
           </HeaderTitle>
           <HeaderTitle
+            mobile
             onSort={setSortMethod}
             rigthAlign
             sort={sortMethod}
@@ -290,6 +292,7 @@ const ValidatorsTable = () => {
             <div className="text-right">Staked Amount</div>
           </HeaderTitle>
           <HeaderTitle
+            mobile
             onSort={setSortMethod}
             rigthAlign
             sort={sortMethod}
@@ -298,6 +301,7 @@ const ValidatorsTable = () => {
             <div className="text-right">Commission</div>
           </HeaderTitle>
           <HeaderTitle
+            mobile
             onSort={setSortMethod}
             rigthAlign
             sort={sortMethod}
