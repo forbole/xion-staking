@@ -33,6 +33,7 @@ import {
   formatVotingPowerPerc,
 } from "../lib/formatters";
 import AddressShort from "./address-short";
+import { DivisorHorizontal } from "./divisor";
 import TokenColors from "./token-colors";
 
 const minGridWidth = 1000;
@@ -64,21 +65,81 @@ const ValidatorRow = ({
   const votingPowerPerc = getVotingPowerPerc(validator?.tokens, staking.state);
   const votingPowerPercStr = formatVotingPowerPerc(votingPowerPerc);
 
+  const stakedAmountEl = (
+    <TokenColors
+      text={formatCoin(
+        getXionCoinFromUXion(new BigNumber(validator.tokens)),
+        true,
+      )}
+    />
+  );
+
+  const commissionEl = formatCommission(
+    validator.commission.commissionRates.rate,
+    2,
+  );
+
+  const detailsEl = (
+    <NavLink href={`/validator?address=${validator.operatorAddress}`}>
+      Details
+    </NavLink>
+  );
+
   return (
-    <div
-      className="flex w-full flex-col items-center justify-between gap-0"
-      style={{
-        minWidth: minGridWidth,
-      }}
-    >
+    <>
       <div
-        className={[
-          "grid w-full items-center justify-between gap-2 p-4",
-          commonGridClasses,
-        ].join(" ")}
-        style={gridStyle}
+        className="hidden w-full flex-col items-center justify-between gap-0 md:flex"
+        style={{
+          minWidth: minGridWidth,
+        }}
       >
-        <div className="flex flex-1 flex-row justify-start gap-4">
+        <div
+          className={[
+            "grid w-full items-center justify-between gap-2 p-4",
+            commonGridClasses,
+          ].join(" ")}
+          style={gridStyle}
+        >
+          <div className="flex flex-1 flex-row justify-start gap-4">
+            <ValidatorLogo logo={logo} />
+            <div className="flex flex-col justify-center gap-[2px] text-left">
+              <div className="max-w-[150px] overflow-hidden truncate text-[14px] font-bold leading-[20px] md:max-w-[300px]">
+                {validator.description.moniker}
+              </div>
+              <AddressShort address={validator.operatorAddress} />
+            </div>
+            <div className="flex min-w-max flex-col items-center justify-center">
+              {getHasStakedInValidator(
+                validator.operatorAddress,
+                staking.state,
+              ) && (
+                <div className="rounded-[2px] bg-successBg px-[8px] py-[2px] text-[11px] font-medium leading-[16px] tracking-normal text-success">
+                  You staked
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="text-right">{stakedAmountEl}</div>
+          <div className="text-right">{commissionEl}</div>
+          {votingPowerPerc && (
+            <div className="text-right">{votingPowerPercStr}</div>
+          )}
+          <div className="text-right">{detailsEl}</div>
+          {onStake && (
+            <div>
+              <ButtonPill disabled={disabled} onClick={onStake}>
+                Delegate
+              </ButtonPill>
+            </div>
+          )}
+        </div>
+        <div
+          className="box-content h-[1px] bg-bg-500"
+          style={{ width: "calc(100% - 48px)" }}
+        />
+      </div>
+      <div className="flex w-full flex-col items-center justify-between gap-[8px] p-[16px] md:hidden">
+        <div className="flex w-full flex-row justify-start gap-4">
           <ValidatorLogo logo={logo} />
           <div className="flex flex-col justify-center gap-[2px] text-left">
             <div className="max-w-[150px] overflow-hidden truncate text-[14px] font-bold leading-[20px] md:max-w-[300px]">
@@ -97,38 +158,31 @@ const ValidatorRow = ({
             )}
           </div>
         </div>
-        <div className="text-right">
-          <TokenColors
-            text={formatCoin(
-              getXionCoinFromUXion(new BigNumber(validator.tokens)),
-              true,
-            )}
-          />
+        <div className="flex w-full flex-row justify-between">
+          <span>Staked Amount</span>
+          <span>{stakedAmountEl}</span>
         </div>
-        <div className="text-right">
-          {formatCommission(validator.commission.commissionRates.rate, 2)}
+        <div className="flex w-full flex-row justify-between">
+          <span>Commission</span>
+          <span>{commissionEl}</span>
         </div>
         {votingPowerPerc && (
-          <div className="text-right">{votingPowerPercStr}</div>
+          <div className="flex w-full flex-row justify-between">
+            <span>Voting Power</span>
+            <span>{votingPowerPercStr}</span>
+          </div>
         )}
-        <div className="text-right">
-          <NavLink href={`/validator?address=${validator.operatorAddress}`}>
-            Details
-          </NavLink>
-        </div>
-        {onStake && (
-          <div>
+        <div className="flex w-full flex-row items-center justify-end gap-[24px]">
+          {detailsEl}
+          {onStake && (
             <ButtonPill disabled={disabled} onClick={onStake}>
               Delegate
             </ButtonPill>
-          </div>
-        )}
+          )}
+        </div>
+        <DivisorHorizontal className="&:bg-[#ffffff10] mt-[24px]" />
       </div>
-      <div
-        className="box-content h-[1px] bg-bg-500"
-        style={{ width: "calc(100% - 48px)" }}
-      />
-    </div>
+    </>
   );
 };
 
@@ -269,7 +323,7 @@ const ValidatorsTable = () => {
       <div className="min-h-[100px] overflow-auto rounded-[24px] bg-bg-600 pb-4 text-typo-100">
         <div
           className={[
-            "grid w-full items-center justify-between gap-2 bg-bg-500 p-4 uppercase",
+            "hidden w-full items-center justify-between gap-2 bg-bg-500 p-4 uppercase md:grid",
             commonGridClasses,
           ].join(" ")}
           style={gridStyle}
