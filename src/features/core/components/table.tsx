@@ -3,6 +3,7 @@ import type { PropsWithChildren } from "react";
 import { chevron } from "../lib/icons";
 
 type Props<SortMethod> = PropsWithChildren & {
+  mobile?: boolean;
   onSort?: (method: SortMethod) => void;
   rigthAlign?: boolean;
   sort?: SortMethod;
@@ -11,6 +12,7 @@ type Props<SortMethod> = PropsWithChildren & {
 
 export const HeaderTitleBase = <SortMethod extends string>({
   children,
+  mobile,
   onSort,
   rigthAlign,
   sort,
@@ -22,8 +24,9 @@ export const HeaderTitleBase = <SortMethod extends string>({
   return (
     <div
       className={[
-        "flex flex-row text-[14px] font-normal leading-[14px] tracking-wider",
+        "flex-row text-[14px] font-normal leading-[14px] tracking-wider",
         rigthAlign ? "justify-end" : "",
+        mobile ? "flex" : "hidden md:flex",
       ].join(" ")}
     >
       <button

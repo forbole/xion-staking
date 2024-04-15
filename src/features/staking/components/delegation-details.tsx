@@ -74,12 +74,11 @@ export const DetailsTrigger = ({
 const gridStyle = {
   gap: "16px",
   gridTemplateColumns: "1.5fr repeat(4, 1.05fr)",
-  minWidth: 1000,
   overflow: "auto",
 };
 
 const rowStyle =
-  "grid w-full items-center justify-between gap-2 p-2 mb-[16px] last:mb-[0px] bg-black rounded-[8px]";
+  "w-full items-center justify-between gap-2 p-2 mb-[16px] last:mb-[0px] bg-black rounded-[8px]";
 
 const wrapperStyle =
   "w-full overflow-auto rounded-[24px] bg-bg-600 pb-4 text-typo-100 px-[16px]";
@@ -116,87 +115,137 @@ const DelegationRowBase = ({
 
   const logo = useValidatorLogo(validator?.description.identity);
 
-  return (
-    <div className={rowStyle} style={gridStyle}>
-      <div className="flex flex-1 flex-row justify-start gap-4">
-        <ValidatorLogo logo={logo} />
-        <div className="flex flex-col justify-center gap-[2px] text-left">
-          <div className="max-w-[150px] overflow-hidden truncate text-[14px] font-bold leading-[20px] md:max-w-[250px]">
-            {validator?.description.moniker || ""}
-          </div>
-          <AddressShort address={validator?.operatorAddress || ""} />
-        </div>
-      </div>
-      <div className="text-right">
-        <TokenColors text={formatCoin(delegation.balance)} />
-      </div>
-      <div className="text-right">
-        {validator
-          ? formatCommission(validator.commission.commissionRates.rate, 0)
-          : ""}
-      </div>
-      <div className="text-right">
-        <TokenColors text={formatCoin(delegation.rewards)} />
-      </div>
-      <div className="flex flex-row items-center justify-end gap-[8px]">
-        <ButtonPill
-          disabled={
-            disabledProp || validator?.status !== BondStatus.BOND_STATUS_BONDED
-          }
+  const floatingDropdown = (isMobile: boolean) => (
+    <FloatingDropdown
+      Trigger={Menu}
+      id={`delegation-${index}-${isMobile.toString()}`}
+      placement="bottom-end"
+    >
+      <div
+        className={[
+          "flex-col gap-[12px] rounded-[8px] bg-bg-600 py-[4px]",
+          isMobile ? "flex md:hidden" : "hidden md:flex",
+        ].join(" ")}
+      >
+        <ButtonLink
+          disabled={!getCanClaimRewards(delegation?.rewards) || disabledProp}
+          onClick={() => {
+            if (!validator) return;
+
+            staking.dispatch(
+              setModalOpened({
+                content: {
+                  delegations: [delegation],
+                },
+                type: "rewards",
+              }),
+            );
+          }}
+        >
+          Claim rewards
+        </ButtonLink>
+        <ButtonLink
+          disabled={disabledProp}
           onClick={() => {
             if (!validator) return;
 
             staking.dispatch(
               setModalOpened({
                 content: { validator },
-                type: "delegate",
+                type: "undelegate",
               }),
             );
           }}
+          variant="danger"
         >
-          Delegate
-        </ButtonPill>
-        <FloatingDropdown Trigger={Menu} id={`delegation-${index}`}>
-          <div className="flex flex-col gap-[12px] rounded-[8px] bg-bg-600 py-[4px]">
-            <ButtonLink
-              disabled={
-                !getCanClaimRewards(delegation?.rewards) || disabledProp
-              }
-              onClick={() => {
-                if (!validator) return;
-
-                staking.dispatch(
-                  setModalOpened({
-                    content: {
-                      delegations: [delegation],
-                    },
-                    type: "rewards",
-                  }),
-                );
-              }}
-            >
-              Claim rewards
-            </ButtonLink>
-            <ButtonLink
-              disabled={disabledProp}
-              onClick={() => {
-                if (!validator) return;
-
-                staking.dispatch(
-                  setModalOpened({
-                    content: { validator },
-                    type: "undelegate",
-                  }),
-                );
-              }}
-              variant="danger"
-            >
-              Undelegate
-            </ButtonLink>
-          </div>
-        </FloatingDropdown>
+          Undelegate
+        </ButtonLink>
       </div>
-    </div>
+    </FloatingDropdown>
+  );
+
+  const delegateButtonProps = {
+    disabled:
+      disabledProp || validator?.status !== BondStatus.BOND_STATUS_BONDED,
+    onClick: () => {
+      if (!validator) return;
+
+      staking.dispatch(
+        setModalOpened({
+          content: { validator },
+          type: "delegate",
+        }),
+      );
+    },
+  };
+
+  return (
+    <>
+      <div
+        className={[rowStyle, "hidden min-w-[1000px] md:grid"].join(" ")}
+        style={gridStyle}
+      >
+        <div className="flex flex-1 flex-row justify-start gap-4">
+          <ValidatorLogo logo={logo} />
+          <div className="flex flex-col justify-center gap-[2px] text-left">
+            <div className="max-w-[150px] overflow-hidden truncate text-[14px] font-bold leading-[20px] md:max-w-[250px]">
+              {validator?.description.moniker || ""}
+            </div>
+            <AddressShort address={validator?.operatorAddress || ""} />
+          </div>
+        </div>
+        <div className="text-right">
+          <TokenColors text={formatCoin(delegation.balance)} />
+        </div>
+        <div className="text-right">
+          {validator
+            ? formatCommission(validator.commission.commissionRates.rate, 0)
+            : ""}
+        </div>
+        <div className="text-right">
+          <TokenColors text={formatCoin(delegation.rewards)} />
+        </div>
+        <div className="flex flex-row items-center justify-end gap-[8px]">
+          <ButtonPill {...delegateButtonProps}>Delegate</ButtonPill>
+          {floatingDropdown(false)}
+        </div>
+      </div>
+      <div
+        className={[rowStyle, "flex w-full flex-col px-[16px] md:hidden"].join(
+          " ",
+        )}
+      >
+        <div className="flex w-full flex-1 flex-row justify-start gap-4">
+          <ValidatorLogo logo={logo} />
+          <div className="flex flex-col justify-center gap-[2px] text-left">
+            <div className="max-w-[150px] overflow-hidden truncate text-[14px] font-bold leading-[20px] md:max-w-[250px]">
+              {validator?.description.moniker || ""}
+            </div>
+            <AddressShort address={validator?.operatorAddress || ""} />
+          </div>
+        </div>
+        <div className="flex w-full flex-row justify-between">
+          <span>Staked amount</span>
+          <TokenColors text={formatCoin(delegation.balance)} />
+        </div>
+        {validator && (
+          <div className="flex w-full flex-row justify-between">
+            <span>Commission</span>
+            <span>
+              {formatCommission(validator.commission.commissionRates.rate, 0)}
+            </span>
+          </div>
+        )}
+        <div className="flex w-full flex-row justify-between">
+          <span>Rewards</span>
+          <TokenColors text={formatCoin(delegation.rewards)} />
+        </div>
+        <div className="flex w-full flex-row items-center justify-end gap-[8px] ">
+          <ButtonPill {...delegateButtonProps}>Delegate</ButtonPill>
+          {floatingDropdown(true)}
+        </div>
+      </div>
+    </>
   );
 };
 
@@ -226,41 +275,79 @@ const UnbondingRow = ({
     }
   }, [validatorAddress, staking]);
 
+  const cancelProps = {
+    disabled,
+    onClick: () => {
+      staking.dispatch(
+        setModalOpened({
+          content: { unbondings: [unbonding] },
+          type: "cancel-unstaking",
+        }),
+      );
+    },
+  };
+
   return (
-    <div className={rowStyle} style={gridStyle}>
-      <div className="flex flex-1 flex-row justify-start gap-4">
-        <ValidatorLogo logo={logo} />
-        <div className="flex flex-col justify-start gap-2 text-left">
-          <div className="text-[14px] font-bold leading-[20px]">
-            {validator?.description.moniker || ""}
+    <>
+      <div
+        className={[rowStyle, "hidden min-w-[1000px] md:grid"].join(" ")}
+        style={gridStyle}
+      >
+        <div className="flex flex-1 flex-row justify-start gap-4">
+          <ValidatorLogo logo={logo} />
+          <div className="flex flex-col justify-start gap-2 text-left">
+            <div className="text-[14px] font-bold leading-[20px]">
+              {validator?.description.moniker || ""}
+            </div>
+            <AddressShort address={validator?.operatorAddress || ""} />
           </div>
-          <AddressShort address={validator?.operatorAddress || ""} />
+        </div>
+        <div className="text-right">
+          <TokenColors text={formatCoin(unbonding.balance)} />
+        </div>
+        <div className="text-right">Unbonding</div>
+        <div className="text-right">
+          {formatUnbondingCompletionTime(unbonding.completionTime)}
+        </div>
+        <div className="text-right">
+          <ButtonPill {...cancelProps} variant="danger">
+            Cancel Unstake
+          </ButtonPill>
         </div>
       </div>
-      <div className="text-right">
-        <TokenColors text={formatCoin(unbonding.balance)} />
+      <div
+        className={[rowStyle, "flex w-full flex-col px-[16px] md:hidden"].join(
+          " ",
+        )}
+      >
+        <div className="flex w-full flex-1 flex-row justify-start gap-4">
+          <ValidatorLogo logo={logo} />
+          <div className="flex flex-col justify-start gap-2 text-left">
+            <div className="text-[14px] font-bold leading-[20px]">
+              {validator?.description.moniker || ""}
+            </div>
+            <AddressShort address={validator?.operatorAddress || ""} />
+          </div>
+        </div>
+        <div className="flex w-full flex-row justify-between">
+          <span>Amount</span>
+          <TokenColors text={formatCoin(unbonding.balance)} />
+        </div>
+        <div className="flex w-full flex-row justify-between">
+          <span>Status</span>
+          <span>Unbonding</span>
+        </div>
+        <div className="flex w-full flex-row justify-between">
+          <span>Completion</span>
+          {formatUnbondingCompletionTime(unbonding.completionTime)}
+        </div>
+        <div className="flex w-full flex-row justify-end">
+          <ButtonPill {...cancelProps} variant="danger">
+            Cancel Unstake
+          </ButtonPill>
+        </div>
       </div>
-      <div className="text-right">Unbonding</div>
-      <div className="text-right">
-        {formatUnbondingCompletionTime(unbonding.completionTime)}
-      </div>
-      <div className="text-right">
-        <ButtonPill
-          disabled={disabled}
-          onClick={() => {
-            staking.dispatch(
-              setModalOpened({
-                content: { unbondings: [unbonding] },
-                type: "cancel-unstaking",
-              }),
-            );
-          }}
-          variant="danger"
-        >
-          Cancel Unstake
-        </ButtonPill>
-      </div>
-    </div>
+    </>
   );
 };
 
@@ -284,7 +371,7 @@ const DelegationHeaderTitle = HeaderTitleBase<DelegationSortMethod>;
 const UnbondingHeaderTitle = HeaderTitleBase<SortMethod>;
 
 const headerStyle =
-  "grid w-full items-center justify-between gap-2 py-4 px-2 uppercase";
+  "grid w-full items-center justify-between gap-2 py-4 px-2 uppercase md:min-w-[1000px]";
 
 const DelegationDetails = () => {
   const stakingRef = useStaking();
@@ -353,7 +440,9 @@ const DelegationDetails = () => {
           return (
             <div className={wrapperStyle}>
               <div className={headerStyle} style={gridStyle}>
-                <DelegationHeaderTitle>Delegations</DelegationHeaderTitle>
+                <DelegationHeaderTitle mobile>
+                  Delegations
+                </DelegationHeaderTitle>
                 <DelegationHeaderTitle
                   onSort={setDelegationsSortMethod}
                   rigthAlign
@@ -421,7 +510,7 @@ const DelegationDetails = () => {
           return (
             <div className={wrapperStyle}>
               <div className={headerStyle} style={gridStyle}>
-                <UnbondingHeaderTitle>Unstakings</UnbondingHeaderTitle>
+                <UnbondingHeaderTitle mobile>Unstakings</UnbondingHeaderTitle>
                 <UnbondingHeaderTitle
                   onSort={setUnbondingsSortMethod}
                   rigthAlign
