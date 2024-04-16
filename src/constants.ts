@@ -6,12 +6,12 @@ export const isTestnet = true;
 
 export const dashboardUrl = undefined;
 
-// export const rpcEndpoint = "https://rpc.xion-testnet-1.burnt.com:443";
-export const rpcEndpoint = "https://rpc.xion-testnet.forbole.com";
+export const rpcEndpoint = "https://rpc.xion-testnet-1.burnt.com:443";
+// export const rpcEndpoint = "https://rpc.xion-testnet.forbole.com";
 
 // This only exists on testnet.
 export const faucetContractAddress =
-  "xion1z8gr3jn7rd5leyvz7z3zmelxmrz6q8lv7flc3a4u8kltwj6leags8u64qx";
+  "xion132dxh4k3dpyalq6tfq7006h8kpk3m30f4mwc5dgqefy6akudm50s96mn6q";
 
 export const basePath =
   process.env.NEXT_PUBLIC_IS_DEPLOYMENT === "true" ? "/xion-staking" : "";
@@ -28,4 +28,4 @@ export const unbondingDays = isTestnet ? 3 : 21;
 // Arbitrary value to avoid using a bigger fee than the actual reward
 export const minClaimableXion = 0.00001;
 
-export const minDisplayedXion = 0.001;
+export const minDisplayedXion = 0.000001;

@@ -3,6 +3,7 @@
 import { AbstraxionProvider } from "@burnt-labs/abstraxion";
 import "@burnt-labs/abstraxion/dist/index.css";
 import "@burnt-labs/ui/dist/index.css";
+import { Analytics } from "@vercel/analytics/react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -32,6 +33,7 @@ export default function RootLayout({
           <CoreProvider>
             <StakingProvider>
               <BaseWrapper>{children}</BaseWrapper>
+              <Analytics />
             </StakingProvider>
           </CoreProvider>
         </AbstraxionProvider>
