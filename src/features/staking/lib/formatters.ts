@@ -1,7 +1,7 @@
 import type { Coin } from "@cosmjs/stargate";
 import BigNumber from "bignumber.js";
 
-import { xionToUSD } from "@/constants";
+import { minDisplayedXion, minDisplayedXionDecs, xionToUSD } from "@/constants";
 
 import { getEmptyXionCoin, normaliseCoin } from "./core/coins";
 
@@ -13,10 +13,8 @@ export const formatCoin = (coin: Coin, compact?: boolean) => {
     return `${amount.toFormat()} ${resolved.denom}`;
   }
 
-  const minDisplayed = 0.0001;
-
-  if (amount.lt(minDisplayed)) {
-    return `<${minDisplayed} ${resolved.denom}`;
+  if (amount.lt(minDisplayedXion)) {
+    return `<${minDisplayedXion} ${resolved.denom}`;
   }
 
   if (compact) {
@@ -27,7 +25,7 @@ export const formatCoin = (coin: Coin, compact?: boolean) => {
     return `${formatter.format(amount.toNumber())} ${resolved.denom}`;
   }
 
-  return `${amount.toFormat(4)} ${resolved.denom}`;
+  return `${amount.toFormat(minDisplayedXionDecs)} ${resolved.denom}`;
 };
 
 export const formatVotingPowerPerc = (perc: null | number) => {

@@ -28,4 +28,5 @@ export const unbondingDays = isTestnet ? 3 : 21;
 // Arbitrary value to avoid using a bigger fee than the actual reward
 export const minClaimableXion = 0.00001;
 
-export const minDisplayedXion = 0.000001;
+export const minDisplayedXionDecs = 6;
+export const minDisplayedXion = 10 ** -minDisplayedXionDecs;
