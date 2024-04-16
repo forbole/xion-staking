@@ -33,6 +33,7 @@ import {
   formatVotingPowerPerc,
   formatXionToUSD,
 } from "../lib/formatters";
+import { parseWebsite } from "../lib/utils/misc";
 import { DivisorHorizontal, DivisorVertical } from "./divisor";
 import StakingModals from "./staking-modals";
 import ValidatorDelegation from "./validator-delegation";
@@ -89,6 +90,8 @@ export default function ValidatorPage() {
     validatorDetails.operatorAddress,
     stakingRef.staking.state,
   );
+
+  const validatorWebsite = parseWebsite(validatorDetails.description.website);
 
   return (
     <>
@@ -210,14 +213,11 @@ export default function ValidatorPage() {
                 <ClipboardCopy textToCopy={validatorDetails.operatorAddress} />
               </div>
             </div>
-            {validatorDetails.description.website && (
+            {validatorWebsite && (
               <div className="flex flex-col gap-[8px]">
                 <Heading8 color="text-white">Website</Heading8>
-                <Link
-                  href={validatorDetails.description.website}
-                  target="_blank"
-                >
-                  {validatorDetails.description.website}
+                <Link href={validatorWebsite} target="_blank">
+                  {validatorWebsite}
                 </Link>
               </div>
             )}
