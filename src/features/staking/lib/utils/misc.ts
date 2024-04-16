@@ -1,5 +1,5 @@
 const urlMapping: Record<string, string | undefined> = {
-  // "https://www.stakelab.fr": "https://www.stakelab.zone",
+  "https://www.stakelab.fr": "https://www.stakelab.zone",
 };
 
 export const parseWebsite = (website?: string) => {
