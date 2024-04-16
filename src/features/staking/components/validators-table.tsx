@@ -60,7 +60,7 @@ const ValidatorRow = ({
   validator,
 }: ValidatorItemProps) => {
   const { identity } = validator.description;
-  const logo = useValidatorLogo(identity);
+  const logo = useValidatorLogo(identity, validator.operatorAddress);
 
   const votingPowerPerc = getVotingPowerPerc(validator?.tokens, staking.state);
   const votingPowerPercStr = formatVotingPowerPerc(votingPowerPerc);
