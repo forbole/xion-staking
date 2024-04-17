@@ -23,7 +23,11 @@ import { setModalOpened } from "../../context/reducer";
 import { getTokensAvailableBG } from "../../context/selectors";
 import { getXionCoin } from "../../lib/core/coins";
 import type { StakeAddresses } from "../../lib/core/tx";
-import { formatToSmallDisplay } from "../../lib/formatters";
+import {
+  formatCoin,
+  formatToSmallDisplay,
+  formatXionToUSD,
+} from "../../lib/formatters";
 
 type Step = "completed" | "input" | "review";
 
@@ -215,15 +219,18 @@ const StakingModal = () => {
               </div>
               {availableTokens &&
                 (() => {
-                  const availableUSD = availableTokens.times(xionToUSD);
+                  const availableTokensCoin = {
+                    amount: availableTokens.toString(),
+                    denom: "XION",
+                  };
 
                   return (
                     <div className="mt-[40px] flex w-full flex-col items-center justify-center gap-[12px] uppercase">
                       <Heading8>Available for delegation (XION)</Heading8>
-                      <Heading2>
-                        {formatToSmallDisplay(availableTokens)}
-                      </Heading2>
-                      <Heading8>${formatToSmallDisplay(availableUSD)}</Heading8>
+                      <Heading2>{formatCoin(availableTokensCoin)}</Heading2>
+                      <Heading8>
+                        {formatXionToUSD(availableTokensCoin)}
+                      </Heading8>
                     </div>
                   );
                 })()}

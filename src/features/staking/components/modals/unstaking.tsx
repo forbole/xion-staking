@@ -23,7 +23,11 @@ import { setModalOpened } from "../../context/reducer";
 import { getTotalDelegation } from "../../context/selectors";
 import { getXionCoin } from "../../lib/core/coins";
 import type { StakeAddresses } from "../../lib/core/tx";
-import { formatToSmallDisplay, formatXionToUSD } from "../../lib/formatters";
+import {
+  formatCoin,
+  formatToSmallDisplay,
+  formatXionToUSD,
+} from "../../lib/formatters";
 
 type Step = "completed" | "input" | "review";
 
@@ -217,24 +221,13 @@ const UnstakingModal = () => {
                   Unstake From {validator.description.moniker}
                 </HeroText>
               </div>
-              {delegatedTokens &&
-                (() => {
-                  const availableUSD = new BigNumber(
-                    delegatedTokens.amount,
-                  ).times(xionToUSD);
-
-                  return (
-                    <div className="mt-[40px] flex w-full flex-col items-center justify-center gap-[12px] uppercase">
-                      <Heading8>Available amount (XION)</Heading8>
-                      <Heading2>
-                        {formatToSmallDisplay(
-                          new BigNumber(delegatedTokens.amount),
-                        )}
-                      </Heading2>
-                      <Heading8>${formatToSmallDisplay(availableUSD)}</Heading8>
-                    </div>
-                  );
-                })()}
+              {delegatedTokens && (
+                <div className="mt-[40px] flex w-full flex-col items-center justify-center gap-[12px] uppercase">
+                  <Heading8>Available amount (XION)</Heading8>
+                  <Heading2>{formatCoin(delegatedTokens)}</Heading2>
+                  <Heading8>{formatXionToUSD(delegatedTokens)}</Heading8>
+                </div>
+              )}
               <div className="mt-[40px] flex w-full flex-row justify-between">
                 <div>Amount</div>
                 {!!amountUSD && (

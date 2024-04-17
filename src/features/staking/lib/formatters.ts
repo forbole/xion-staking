@@ -25,7 +25,7 @@ export const formatCoin = (coin: Coin, compact?: boolean) => {
     return `${formatter.format(amount.toNumber())} ${resolved.denom}`;
   }
 
-  return `${amount.toFormat(minDisplayedXionDecs)} ${resolved.denom}`;
+  return `${amount.toFormat(Math.min(minDisplayedXionDecs, amount.decimalPlaces() || Infinity))} ${resolved.denom}`;
 };
 
 export const formatVotingPowerPerc = (perc: null | number) => {
