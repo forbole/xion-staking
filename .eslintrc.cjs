@@ -56,8 +56,6 @@ module.exports = {
 
     "@stylistic/padding-line-between-statements": paddingLineBetweenStatements,
 
-    "tailwindcss/classnames-order": "error",
-
     "@typescript-eslint/consistent-type-imports": "error",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-shadow": "error",

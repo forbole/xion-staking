@@ -6,8 +6,8 @@ export const isTestnet = true;
 
 export const dashboardUrl = undefined;
 
-export const rpcEndpoint = "https://rpc.xion-testnet-1.burnt.com:443";
-// export const rpcEndpoint = "https://rpc.xion-testnet.forbole.com";
+// export const rpcEndpoint = "https://rpc.xion-testnet-1.burnt.com:443";
+export const rpcEndpoint = "https://rpc.xion-testnet.forbole.com";
 
 // This only exists on testnet.
 export const faucetContractAddress =
@@ -17,8 +17,6 @@ export const basePath =
   process.env.NEXT_PUBLIC_IS_DEPLOYMENT === "true" ? "/xion-staking" : "";
 
 export const xionToUSD = 10;
-
-export const defaultAvatar = `${basePath}/default-avatar.svg`;
 
 // // Even if this can be retrieved from the params, hardcode it to avoid an
 // // extra request. It can be retrieved with this:

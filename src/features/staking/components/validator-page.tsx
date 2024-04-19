@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { basePath, defaultAvatar } from "@/constants";
+import { basePath } from "@/constants";
 import {
   BodyMedium,
   Button,
@@ -115,11 +115,15 @@ export default function ValidatorPage() {
         >
           <div className="flex w-full flex-col items-center gap-[16px] md:min-w-[1000px] md:flex-row">
             <div className="flex w-full flex-row justify-between gap-[16px]">
-              <img
-                alt="Validator logo"
-                className="block w-[80px] rounded-full"
-                src={logo || defaultAvatar}
-              />
+              {logo ? (
+                <img
+                  alt="Validator logo"
+                  className="block w-[80px] rounded-full"
+                  src={logo}
+                />
+              ) : (
+                <span className="block h-[80px] w-[80px] rounded-full bg-defaultLogo" />
+              )}
               <div className="flex flex-1 items-center gap-[16px]">
                 <div className="text-[32px] font-bold leading-[36px] text-white">
                   {validatorDetails.description.moniker || ""}

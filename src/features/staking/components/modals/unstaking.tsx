@@ -224,7 +224,9 @@ const UnstakingModal = () => {
               {delegatedTokens && (
                 <div className="mt-[40px] flex w-full flex-col items-center justify-center gap-[12px] uppercase">
                   <Heading8>Available amount (XION)</Heading8>
-                  <Heading2>{formatCoin(delegatedTokens)}</Heading2>
+                  <Heading2>
+                    {formatCoin(delegatedTokens, undefined, true)}
+                  </Heading2>
                   <Heading8>{formatXionToUSD(delegatedTokens)}</Heading8>
                 </div>
               )}

@@ -26,6 +26,7 @@ const config: Config = {
         },
         danger: "#D74506",
         dangerBg: "#402217",
+        defaultLogo: "#949494",
         success: "#04C700",
         successBg: "#04C7001A",
         typo: {

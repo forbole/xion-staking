@@ -227,7 +227,9 @@ const StakingModal = () => {
                   return (
                     <div className="mt-[40px] flex w-full flex-col items-center justify-center gap-[12px] uppercase">
                       <Heading8>Available for delegation (XION)</Heading8>
-                      <Heading2>{formatCoin(availableTokensCoin)}</Heading2>
+                      <Heading2>
+                        {formatCoin(availableTokensCoin, undefined, true)}
+                      </Heading2>
                       <Heading8>
                         {formatXionToUSD(availableTokensCoin)}
                       </Heading8>

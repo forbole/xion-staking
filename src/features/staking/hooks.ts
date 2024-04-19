@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { basePath, defaultAvatar } from "@/constants";
+import { basePath } from "@/constants";
 
 import { keybaseClient } from "./lib/utils/keybase-client";
 
@@ -39,5 +39,5 @@ export const useValidatorLogo = (
     })();
   }, [identity, operatorAddress]);
 
-  return logo || defaultAvatar;
+  return logo;
 };
