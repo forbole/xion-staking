@@ -43,9 +43,17 @@ export const formatVotingPowerPerc = (perc: null | number) => {
   return `${percNum}%`;
 };
 
-export const formatToSmallDisplay = (num: BigNumber, minNumber?: number) => {
+export const formatToSmallDisplay = (
+  num: BigNumber,
+  minNumber?: number,
+  maxDecimals?: number,
+) => {
   if (minNumber && num.lt(minNumber)) {
     return `<${minNumber}`;
+  }
+
+  if (maxDecimals) {
+    return num.toFormat(Math.min(maxDecimals, num.decimalPlaces() || Infinity));
   }
 
   return Intl.NumberFormat("en", { notation: "compact" }).format(
