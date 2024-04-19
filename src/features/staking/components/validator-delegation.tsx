@@ -106,7 +106,7 @@ export default function ValidatorDelegation() {
         <Heading8>Claimable Rewards (XION)</Heading8>
         <div className="mb-[8px] mt-[12px] flex flex-row items-center gap-[8px]">
           <div className="flex flex-col gap-[8px]">
-            <div className="flex flex-row items-center gap-[12px]">
+            <div className="flex flex-row flex-wrap items-center gap-[12px]">
               {totalRewards && (
                 <Heading2 title={[totalRewards.amount, "XION"].join(" ")}>
                   {formatToSmallDisplay(
