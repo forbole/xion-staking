@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { PropsWithChildren } from "react";
 
 import { chevron } from "../lib/icons";
@@ -65,14 +66,23 @@ export const HeaderTitleBase = <SortMethod extends string>({
   );
 };
 
-export const ValidatorLogo = ({ logo }: { logo: null | string }) => (
+export const ValidatorLogo = ({
+  height = 50,
+  logo,
+  width = 50,
+}: {
+  height?: number;
+  logo: null | string;
+  width?: number;
+}) => (
   <div className="flex items-center justify-start">
     {logo ? (
-      <img
+      <Image
         alt="Validator logo"
-        className="block w-[50px] rounded-full"
+        className="block rounded-full"
+        height={height}
         src={logo}
-        style={{ height: 50, minHeight: 50, minWidth: 50, width: 50 }}
+        width={width}
       />
     ) : (
       <span className="block h-[50px] w-[50px] rounded-full bg-defaultLogo" />

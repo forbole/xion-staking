@@ -81,6 +81,12 @@ export const getUnbondingDelegations = async (address: string) => {
   return await queryClient.staking.delegatorUnbondingDelegations(address);
 };
 
+export const getRedelegation = async (delegatorAddress: string) => {
+  const queryClient = await getStakingQueryClient();
+
+  return await queryClient.staking.redelegations(delegatorAddress, "", "");
+};
+
 export const getRewards = async (address: string, validatorAddress: string) => {
   const queryClient = await getStakingQueryClient();
 

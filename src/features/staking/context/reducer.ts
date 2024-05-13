@@ -7,6 +7,11 @@ export type StakingAction =
       type: "ADD_DELEGATIONS";
     }
   | {
+      content: NonNullable<StakingState["redelegations"]>;
+      reset: boolean;
+      type: "ADD_REDELEGATIONS";
+    }
+  | {
       content: NonNullable<StakingState["unbondings"]>;
       reset: boolean;
       type: "ADD_UNBONDINGS";
@@ -94,6 +99,15 @@ export const addUnbondings = (
   content: unbondings,
   reset,
   type: "ADD_UNBONDINGS",
+});
+
+export const addRedelegations = (
+  redelegation: Content<"ADD_REDELEGATIONS">,
+  reset: boolean,
+): StakingAction => ({
+  content: redelegation,
+  reset,
+  type: "ADD_REDELEGATIONS",
 });
 
 export const setValidatorDetails = (
@@ -185,6 +199,24 @@ const getUniqueUnbondings = (
   });
 };
 
+const getUniqueRedelegations = (
+  redelegations: NonNullable<StakingState["redelegations"]>["items"],
+) => {
+  const validatorIds = new Set<string>();
+
+  return redelegations.filter((redelegation) => {
+    const key = redelegation.id;
+
+    if (validatorIds.has(key)) {
+      return false;
+    }
+
+    validatorIds.add(key);
+
+    return true;
+  });
+};
+
 export const reducer = (
   state: StakingState,
   action: StakingAction,
@@ -254,6 +286,26 @@ export const reducer = (
       return {
         ...state,
         unbondings: currentUnbondings,
+      };
+    }
+
+    case "ADD_REDELEGATIONS": {
+      const currentRedelegations = (!action.reset && state.redelegations) || {
+        items: [],
+        nextKey: null,
+        total: null,
+      };
+
+      currentRedelegations.total = action.content.total;
+      currentRedelegations.nextKey = action.content.nextKey;
+
+      currentRedelegations.items = getUniqueRedelegations(
+        action.content.items.concat(currentRedelegations.items),
+      );
+
+      return {
+        ...state,
+        redelegations: currentRedelegations,
       };
     }
 
