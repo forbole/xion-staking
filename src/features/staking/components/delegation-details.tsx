@@ -1,3 +1,4 @@
+import type { Coin } from "@cosmjs/stargate";
 import BigNumber from "bignumber.js";
 import {
   BondStatus,
@@ -131,6 +132,20 @@ const DelegationRowBase = ({
         ].join(" ")}
       >
         <ButtonLink
+          onClick={() => {
+            if (!validator) return;
+
+            staking.dispatch(
+              setModalOpened({
+                content: { validator },
+                type: "redelegate",
+              }),
+            );
+          }}
+        >
+          Redelegate
+        </ButtonLink>
+        <ButtonLink
           disabled={!getCanClaimRewards(delegation?.rewards) || disabledProp}
           onClick={() => {
             if (!validator) return;
@@ -254,27 +269,31 @@ const DelegationRowBase = ({
 
 const DelegationRow = memo(DelegationRowBase);
 
-type UnbondingRowProps = {
-  disabled?: boolean;
+type UnbondingRedelegationRowProps = {
+  balance: Coin;
+  completionTime: number;
+  onCancel?: () => void;
   stakingRef: ReturnType<typeof useStaking>;
-  unbonding: NonNullable<StakingState["unbondings"]>["items"][number];
+  status: string;
   validator?: Validator;
+  validatorAddress: string;
 };
 
-const UnbondingRow = ({
-  disabled,
+const UnbondingRedelegationRow = ({
+  balance,
+  completionTime,
+  onCancel,
   stakingRef,
-  unbonding,
+  status,
   validator,
-}: UnbondingRowProps) => {
+  validatorAddress,
+}: UnbondingRedelegationRowProps) => {
   const { staking } = stakingRef;
 
   const logo = useValidatorLogo(
     validator?.description.identity,
     validator?.operatorAddress,
   );
-
-  const validatorAddress = unbonding.validator;
 
   useEffect(() => {
     if (validatorAddress) {
@@ -283,15 +302,8 @@ const UnbondingRow = ({
   }, [validatorAddress, staking]);
 
   const cancelProps = {
-    disabled,
-    onClick: () => {
-      staking.dispatch(
-        setModalOpened({
-          content: { unbondings: [unbonding] },
-          type: "cancel-unstaking",
-        }),
-      );
-    },
+    disabled: !onCancel,
+    onClick: onCancel,
   };
 
   return (
@@ -310,16 +322,18 @@ const UnbondingRow = ({
           </div>
         </div>
         <div className="text-right">
-          <TokenColors text={formatCoin(unbonding.balance)} />
+          <TokenColors text={formatCoin(balance)} />
         </div>
         <div className="text-right">Unbonding</div>
         <div className="text-right">
-          {formatUnbondingCompletionTime(unbonding.completionTime)}
+          {formatUnbondingCompletionTime(completionTime)}
         </div>
         <div className="text-right">
-          <ButtonPill {...cancelProps} variant="danger">
-            Cancel Unstake
-          </ButtonPill>
+          {!!onCancel && (
+            <ButtonPill {...cancelProps} variant="danger">
+              Cancel Unstake
+            </ButtonPill>
+          )}
         </div>
       </div>
       <div
@@ -338,21 +352,23 @@ const UnbondingRow = ({
         </div>
         <div className="flex w-full flex-row justify-between">
           <span>Amount</span>
-          <TokenColors text={formatCoin(unbonding.balance)} />
+          <TokenColors text={formatCoin(balance)} />
         </div>
         <div className="flex w-full flex-row justify-between">
           <span>Status</span>
-          <span>Unbonding</span>
+          <span>{status}</span>
         </div>
         <div className="flex w-full flex-row justify-between">
           <span>Completion</span>
-          {formatUnbondingCompletionTime(unbonding.completionTime)}
+          {formatUnbondingCompletionTime(completionTime)}
         </div>
-        <div className="flex w-full flex-row justify-end">
-          <ButtonPill {...cancelProps} variant="danger">
-            Cancel Unstake
-          </ButtonPill>
-        </div>
+        {!!onCancel && (
+          <div className="flex w-full flex-row justify-end">
+            <ButtonPill {...cancelProps} variant="danger">
+              Cancel Unstake
+            </ButtonPill>
+          </div>
+        )}
       </div>
     </>
   );
@@ -393,12 +409,13 @@ const DelegationDetails = () => {
 
   const validatorsMap = getAllValidators(staking.state);
 
-  const { delegations, unbondings } = staking.state;
+  const { delegations, redelegations, unbondings } = staking.state;
 
   const hasDelegations = !!delegations?.items.length;
   const hasUnbondings = !!unbondings?.items.length;
+  const hasRedelegations = !!redelegations?.items.length;
 
-  if (!hasDelegations && !hasUnbondings) {
+  if (!hasDelegations && !hasUnbondings && !hasRedelegations) {
     return null;
   }
 
@@ -487,9 +504,12 @@ const DelegationDetails = () => {
             </div>
           );
         })()}
-      {hasUnbondings &&
+      {(hasUnbondings || hasRedelegations) &&
         (() => {
-          const sortedUnbondings = unbondings.items.slice().sort((a, b) => {
+          const sortedUnbondings = [
+            ...(unbondings?.items ?? []),
+            ...(redelegations?.items ?? []),
+          ].sort((a, b) => {
             switch (unbondingsSortMethod) {
               case "amount-asc":
               case "amount-desc":
@@ -517,12 +537,14 @@ const DelegationDetails = () => {
           return (
             <div className={wrapperStyle}>
               <div className={headerStyle} style={gridStyle}>
-                <UnbondingHeaderTitle mobile>Unstakings</UnbondingHeaderTitle>
+                <UnbondingHeaderTitle mobile>
+                  Unstakings/Redelegations
+                </UnbondingHeaderTitle>
                 <UnbondingHeaderTitle
                   onSort={setUnbondingsSortMethod}
                   rigthAlign
                   sort={unbondingsSortMethod}
-                  sorting={["staked-asc", "staked-desc"]}
+                  sorting={["amount-asc", "amount-desc"]}
                 >
                   <div className="text-right">Staked Amount</div>
                 </UnbondingHeaderTitle>
@@ -533,19 +555,42 @@ const DelegationDetails = () => {
                   onSort={setUnbondingsSortMethod}
                   rigthAlign
                   sort={unbondingsSortMethod}
-                  sorting={["date-asc", "date-desc"]}
+                  sorting={["completion-asc", "completion-desc"]}
                 >
                   <div className="text-right">Completion Time</div>
                 </UnbondingHeaderTitle>
               </div>
-              {sortedUnbondings.map((unbonding, index) => (
-                <UnbondingRow
-                  key={index}
-                  stakingRef={stakingRef}
-                  unbonding={unbonding}
-                  validator={validatorsMap[unbonding.validator]}
-                />
-              ))}
+              {sortedUnbondings.map((unbondingRedelegation, index) => {
+                const isUnbonding = "validator" in unbondingRedelegation;
+
+                const validatorAddress = isUnbonding
+                  ? unbondingRedelegation.validator
+                  : unbondingRedelegation.dstValidator;
+
+                const onCancel = isUnbonding
+                  ? () => {
+                      staking.dispatch(
+                        setModalOpened({
+                          content: { unbondings: [unbondingRedelegation] },
+                          type: "cancel-unstaking",
+                        }),
+                      );
+                    }
+                  : undefined;
+
+                return (
+                  <UnbondingRedelegationRow
+                    balance={unbondingRedelegation.balance}
+                    completionTime={unbondingRedelegation.completionTime}
+                    key={index}
+                    onCancel={onCancel}
+                    stakingRef={stakingRef}
+                    status={isUnbonding ? "Unbonding" : "Redelegation"}
+                    validator={validatorsMap[validatorAddress]}
+                    validatorAddress={validatorAddress}
+                  />
+                );
+              })}
             </div>
           );
         })()}

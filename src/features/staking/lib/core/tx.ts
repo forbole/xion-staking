@@ -1,13 +1,15 @@
-import {
-  type Coin,
-  type DeliverTxResponse,
-  type MsgDelegateEncodeObject,
-  type MsgUndelegateEncodeObject,
-  type MsgWithdrawDelegatorRewardEncodeObject,
+import type {
+  Coin,
+  DeliverTxResponse,
+  MsgBeginRedelegateEncodeObject,
+  MsgDelegateEncodeObject,
+  MsgUndelegateEncodeObject,
+  MsgWithdrawDelegatorRewardEncodeObject,
 } from "@cosmjs/stargate";
 import BigNumber from "bignumber.js";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import {
+  MsgBeginRedelegate,
   MsgCancelUnbondingDelegation,
   MsgDelegate,
   MsgUndelegate,
@@ -122,6 +124,49 @@ export const unstakeAmount = async (
   return await client
     .signAndBroadcast(addresses.delegator, [messageWrapper], fee, memo)
     .then(getTxVerifier("unbond"))
+    .catch(handleTxError);
+};
+
+export type RedelegateParams = {
+  amount: Coin;
+  client: NonNullable<AbstraxionSigningClient>;
+  delegatorAddress: string;
+  memo: string;
+  validatorDstAddress: string;
+  validatorSrcAddress: string;
+};
+
+export const redelegate = async ({
+  amount: initialAmount,
+  client,
+  delegatorAddress,
+  memo,
+  validatorDstAddress,
+  validatorSrcAddress,
+}: RedelegateParams) => {
+  const amount = getUxionAmount(initialAmount);
+
+  const msg = MsgBeginRedelegate.fromPartial({
+    amount,
+    delegatorAddress,
+    validatorDstAddress,
+    validatorSrcAddress,
+  });
+
+  const messageWrapper: MsgBeginRedelegateEncodeObject = {
+    typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate",
+    value: msg,
+  };
+
+  const fee = await getCosmosFee({
+    address: delegatorAddress,
+    memo,
+    msgs: [messageWrapper],
+  });
+
+  return await client
+    .signAndBroadcast(delegatorAddress, [messageWrapper], fee, memo)
+    .then(getTxVerifier("redelegate"))
     .catch(handleTxError);
 };
 

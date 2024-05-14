@@ -8,6 +8,16 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: process.env.QUICK_BUILD === "true",
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 's3.amazonaws.com',
+        port: '',
+        pathname: '**',
+      },
+    ],
+  },
   ...(useProxy
     ? {
         rewrites: async () => [
@@ -22,7 +32,6 @@ const nextConfig = {
           process.env.NEXT_PUBLIC_IS_DEPLOYMENT === "true"
             ? "/xion-staking"
             : undefined,
-        output: "export",
       }),
 };
 
