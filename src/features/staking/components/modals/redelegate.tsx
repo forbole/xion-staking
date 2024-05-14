@@ -20,6 +20,7 @@ import CommonModal, {
   ModalDescription,
 } from "@/features/core/components/common-modal";
 import { ValidatorLogo } from "@/features/core/components/table";
+import { chevron } from "@/features/core/lib/icons";
 import AddressShort from "@/features/staking/components/address-short";
 import { useValidatorLogo } from "@/features/staking/hooks";
 
@@ -58,16 +59,6 @@ const ValidatorOption = ({
   );
 };
 
-const SelectArrow = ({ open = false }: { open?: boolean }) => (
-  <img
-    alt="down-arrow"
-    className={["ml-auto mr-4", open ? "rotate-180" : ""].join(" ")}
-    height={24}
-    src="/down-arrow.svg"
-    width={24}
-  />
-);
-
 const NoValidatorSelected = () => (
   <div className="flex gap-2 bg-black">
     <ValidatorLogo logo={null} />
@@ -75,7 +66,10 @@ const NoValidatorSelected = () => (
       <span>Select Validator</span>
       <span>XION Address</span>
     </div>
-    <SelectArrow />
+    <span
+      className="ml-auto mr-4 self-center"
+      dangerouslySetInnerHTML={{ __html: chevron }}
+    />
   </div>
 );
 
@@ -86,13 +80,16 @@ const ValidatorSelected = ({ validator }: { validator: Validator }) => {
   );
 
   return (
-    <div className="flex gap-2 bg-black">
+    <div className="flex gap-2 bg-black ">
       <ValidatorLogo logo={logo} />
       <div className="flex flex-col items-start gap-1 bg-black p-2">
         <span>{validator.description.moniker}</span>
         <AddressShort address={validator.operatorAddress} />
       </div>
-      <SelectArrow />
+      <span
+        className="ml-auto mr-4 self-center"
+        dangerouslySetInnerHTML={{ __html: chevron }}
+      />
     </div>
   );
 };
