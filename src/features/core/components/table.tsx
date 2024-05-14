@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { PropsWithChildren } from "react";
 
 import { chevron } from "../lib/icons";
@@ -77,7 +76,7 @@ export const ValidatorLogo = ({
 }) => (
   <div className="flex items-center justify-start">
     {logo ? (
-      <Image
+      <img
         alt="Validator logo"
         className="block rounded-full"
         height={height}

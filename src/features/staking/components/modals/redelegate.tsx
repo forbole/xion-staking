@@ -2,7 +2,6 @@ import type { SelectOption } from "@mui/base";
 import { Option, Select } from "@mui/base";
 import BigNumber from "bignumber.js";
 import type { Validator } from "cosmjs-types/cosmos/staking/v1beta1/staking";
-import Image from "next/image";
 import type { FormEventHandler } from "react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -60,7 +59,7 @@ const ValidatorOption = ({
 };
 
 const SelectArrow = ({ open = false }: { open?: boolean }) => (
-  <Image
+  <img
     alt="down-arrow"
     className={["ml-auto mr-4", open ? "rotate-180" : ""].join(" ")}
     height={24}
