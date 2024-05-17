@@ -177,7 +177,7 @@ export const InputBox = ({ error, ...props }: InputProps) => (
         error ? "border-danger" : "border-[rgba(255,255,255,0.2)]",
       ].join(" ")}
     />
-    <span className="absolute bottom-0 right-[12px] top-0 flex h-full items-center  text-[48px] text-typo-300">
+    <span className="absolute bottom-0 right-[12px] top-0 flex h-full items-center text-[48px] font-bold text-[#949494]">
       XION
     </span>
   </span>
