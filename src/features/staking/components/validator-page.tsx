@@ -180,9 +180,12 @@ export default function ValidatorPage() {
                   )}
                 </Heading2>
               </div>
-              <div className="absolute bottom-0 right-[20px] top-0">
+              <div className="absolute bottom-0 right-[20px] top-0 hidden md:block">
                 <DivisorVertical />
               </div>
+            </div>
+            <div className="col-span-2 h-1 py-4 md:hidden">
+              <DivisorHorizontal className="md:min-w-[1000px]" />
             </div>
             <div className="relative">
               <Heading8>Voting Power</Heading8>
