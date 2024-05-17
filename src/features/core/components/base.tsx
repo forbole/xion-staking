@@ -191,7 +191,7 @@ export const OpenInput = ({ className, ...props }: InputProps) => (
   <input
     {...props}
     className={[
-      "h-[50px] w-full border-b-[1px] border-b-bg-400 bg-black py-[8px] focus:outline-none",
+      "h-[50px] w-full border-b-[1px] border-b-bg-400 bg-transparent py-[8px] focus:outline-none",
       className,
     ].join(" ")}
   />

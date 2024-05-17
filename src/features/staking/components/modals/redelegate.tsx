@@ -194,7 +194,7 @@ const RedelegateModal = () => {
         stakingRef.staking.dispatch(setModalOpened(null));
       }}
     >
-      <div className="min-w-[90vw] md:min-w-[390px]">
+      <div className="flex min-h-full min-w-[90vw] grow flex-col md:min-w-[390px]">
         {(() => {
           const getUnstakingSummary = () => (
             <>
@@ -228,6 +228,7 @@ const RedelegateModal = () => {
                 </div>
                 {getUnstakingSummary()}
                 <Button
+                  className="mt-auto"
                   disabled={isLoading}
                   onClick={() => {
                     stakingRef.staking.dispatch(setModalOpened(null));
@@ -255,6 +256,7 @@ const RedelegateModal = () => {
                 </div>
                 {getUnstakingSummary()}
                 <Button
+                  className="mt-auto"
                   isLoading={isLoading}
                   onClick={() => {
                     if (!client || !dstValidator) return;
