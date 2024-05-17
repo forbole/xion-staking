@@ -64,10 +64,10 @@ const NoValidatorSelected = () => (
     <ValidatorLogo logo={null} />
     <div className="flex flex-col items-start gap-1 bg-black p-2">
       <span>Select Validator</span>
-      <span>XION Address</span>
+      <span className="text-typo-200">XION Address</span>
     </div>
     <span
-      className="ml-auto mr-4 self-center"
+      className="ml-auto self-center"
       dangerouslySetInnerHTML={{ __html: chevron }}
     />
   </div>
@@ -87,7 +87,7 @@ const ValidatorSelected = ({ validator }: { validator: Validator }) => {
         <AddressShort address={validator.operatorAddress} />
       </div>
       <span
-        className="ml-auto mr-4 self-center"
+        className="ml-auto self-center"
         dangerouslySetInnerHTML={{ __html: chevron }}
       />
     </div>
@@ -296,7 +296,7 @@ const RedelegateModal = () => {
                   Redelegate From {validator.description.moniker}
                 </HeroText>
               </div>
-              <div className="flex justify-between">
+              <div className="mb-4 flex justify-between">
                 <span>To</span>
                 <div>
                   Available:{" "}
@@ -306,7 +306,7 @@ const RedelegateModal = () => {
                 </div>
               </div>
               <Select
-                className="m-4 w-full"
+                className="w-full rounded-lg border border-white border-opacity-10 bg-black px-[20px] py-[20px]"
                 id="validator"
                 onChange={(_, validatorAddress) => {
                   if (!!validatorAddress) {

@@ -84,7 +84,21 @@ export const ValidatorLogo = ({
         width={width}
       />
     ) : (
-      <span className="block h-[50px] w-[50px] rounded-full bg-defaultLogo" />
+      <span
+        className="block rounded-full"
+        style={{
+          background: `
+    linear-gradient(to bottom right, #000000 0%, #666666 50%) bottom right,
+    linear-gradient(to bottom left, #000000 0%, #666666 50%) bottom left,
+    linear-gradient(to top left, #000000 0%, #666666 50%) top left,
+    linear-gradient(to top right, #000000 0%, #666666 50%) top right
+  `,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "50% 50%",
+          height: "50px",
+          width: "50px",
+        }}
+      />
     )}
   </div>
 );
