@@ -51,7 +51,7 @@ const ValidatorOption = ({
 
   return (
     <Option value={operatorAddress}>
-      <div className="flex gap-2 bg-black py-2 pl-6 lg:min-w-96">
+      <div className="flex cursor-pointer gap-2 bg-black py-2 pl-6 lg:min-w-[390px]">
         <ValidatorLogo height={24} logo={logo} width={24} />
         <span>{moniker}</span>
       </div>
@@ -323,7 +323,7 @@ const RedelegateModal = () => {
                   )
                 }
               >
-                <div className="max-h-96 overflow-x-visible overflow-y-scroll">
+                <div className="max-h-96 overflow-x-visible overflow-y-scroll rounded-lg border border-white border-opacity-10 bg-black">
                   {Object.values(validators).map((v) => (
                     <ValidatorOption key={v.operatorAddress} validator={v} />
                   ))}
