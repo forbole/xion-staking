@@ -58,7 +58,7 @@ const CommonModal = ({ children, ...props }: Props) => {
       }}
     >
       <div
-        className="relative min-h-[100vh] w-full overflow-auto px-[16px] py-[80px] md:min-h-[unset] md:rounded-[48px] md:p-[50px] md:py-[40px]"
+        className="relative min-h-[100vh] w-full overflow-auto px-[16px] py-[80px] md:min-h-[unset] md:rounded-[48px] md:p-[48px]"
         style={{
           boxShadow: "0px 0px 50px 0px #FFFFFF40",
           boxSizing: "border-box",
@@ -74,7 +74,7 @@ const CommonModal = ({ children, ...props }: Props) => {
         }}
       >
         <button
-          className="absolute right-[12px] top-[12px] w-[36px] cursor-pointer"
+          className="absolute right-[24px] top-[24px] h-[24px] w-[24px] cursor-pointer"
           dangerouslySetInnerHTML={{ __html: cross }}
           onClick={props.onRequestClose}
         />
