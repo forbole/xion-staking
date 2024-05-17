@@ -187,10 +187,13 @@ export const FormError = ({ children }: PropsWithChildren) => (
   <div className="mt-[8px] text-danger">{children}</div>
 );
 
-export const OpenInput = (props: InputProps) => (
+export const OpenInput = ({ className, ...props }: InputProps) => (
   <input
     {...props}
-    className="h-[50px] w-full border-b-[1px] border-b-bg-400 bg-black py-[8px] focus:outline-none"
+    className={[
+      "h-[50px] w-full border-b-[1px] border-b-bg-400 bg-black py-[8px] focus:outline-none",
+      className,
+    ].join(" ")}
   />
 );
 

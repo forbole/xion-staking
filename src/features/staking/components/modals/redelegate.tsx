@@ -358,6 +358,7 @@ const RedelegateModal = () => {
                 </div>
                 <div className="mt-[40px] w-full">
                   <OpenInput
+                    className="placeholder:text-[#6C6A6A]"
                     disabled={isLoading}
                     onChange={(e) => {
                       setMemo(e.target.value);
