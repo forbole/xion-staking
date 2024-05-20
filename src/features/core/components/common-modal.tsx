@@ -54,13 +54,13 @@ const CommonModal = ({ children, ...props }: Props) => {
         overlay: {
           backdropFilter: "blur(10px)",
           backgroundColor: "rgba(0, 0, 0, 0.5)",
+          WebkitBackdropFilter: "blur(10px)",
         },
       }}
     >
       <div
-        className="relative min-h-[100vh] w-full overflow-auto px-[16px] pb-[40px] pt-[80px] md:min-h-[unset] md:rounded-[48px] md:p-[48px]"
+        className="relative z-10 min-h-[100vh] w-full overflow-auto px-[16px] pb-[40px] pt-[80px] shadow-[0px_0px_50px_0px_#FFFFFF40] md:min-h-[unset] md:rounded-[48px] md:p-[48px]"
         style={{
-          boxShadow: "0px 0px 50px 0px #FFFFFF40",
           boxSizing: "border-box",
           display: "flex",
           flexDirection: "column",
