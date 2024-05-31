@@ -1,22 +1,25 @@
 import type { Coin } from "@cosmjs/stargate";
 import BigNumber from "bignumber.js";
 
-import { xionToUSD } from "@/constants";
+import { minDisplayedXion, minDisplayedXionDecs, xionToUSD } from "@/constants";
 
 import { getEmptyXionCoin, normaliseCoin } from "./core/coins";
 
-export const formatCoin = (coin: Coin, compact?: boolean) => {
+export const formatCoin = (
+  coin: Coin,
+  compact?: boolean,
+  noDenom?: boolean,
+) => {
   const resolved = normaliseCoin(coin);
   const amount = new BigNumber(resolved.amount);
+  const denomSuffix = noDenom ? "" : ` ${resolved.denom}`;
 
   if (amount.eq(0)) {
-    return `${amount.toFormat()} ${resolved.denom}`;
+    return `${amount.toFormat()}${denomSuffix}`;
   }
 
-  const minDisplayed = 0.0001;
-
-  if (amount.lt(minDisplayed)) {
-    return `<${minDisplayed} ${resolved.denom}`;
+  if (amount.lt(minDisplayedXion)) {
+    return `<${minDisplayedXion}${denomSuffix}`;
   }
 
   if (compact) {
@@ -24,10 +27,10 @@ export const formatCoin = (coin: Coin, compact?: boolean) => {
       notation: "compact",
     });
 
-    return `${formatter.format(amount.toNumber())} ${resolved.denom}`;
+    return `${formatter.format(amount.toNumber())}${denomSuffix}`;
   }
 
-  return `${amount.toFormat(4)} ${resolved.denom}`;
+  return `${amount.toFormat(Math.min(minDisplayedXionDecs, amount.decimalPlaces() || Infinity))}${denomSuffix}`;
 };
 
 export const formatVotingPowerPerc = (perc: null | number) => {
@@ -40,9 +43,17 @@ export const formatVotingPowerPerc = (perc: null | number) => {
   return `${percNum}%`;
 };
 
-export const formatToSmallDisplay = (num: BigNumber, minNumber?: number) => {
+export const formatToSmallDisplay = (
+  num: BigNumber,
+  minNumber?: number,
+  maxDecimals?: number,
+) => {
   if (minNumber && num.lt(minNumber)) {
     return `<${minNumber}`;
+  }
+
+  if (maxDecimals) {
+    return num.toFormat(Math.min(maxDecimals, num.decimalPlaces() || Infinity));
   }
 
   return Intl.NumberFormat("en", { notation: "compact" }).format(

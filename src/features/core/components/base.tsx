@@ -177,7 +177,7 @@ export const InputBox = ({ error, ...props }: InputProps) => (
         error ? "border-danger" : "border-[rgba(255,255,255,0.2)]",
       ].join(" ")}
     />
-    <span className="absolute bottom-0 right-[12px] top-0 flex h-full items-center  text-[48px] text-typo-300">
+    <span className="absolute bottom-0 right-[12px] top-0 flex h-full items-center text-[48px] font-bold text-[#949494]">
       XION
     </span>
   </span>
@@ -187,10 +187,13 @@ export const FormError = ({ children }: PropsWithChildren) => (
   <div className="mt-[8px] text-danger">{children}</div>
 );
 
-export const OpenInput = (props: InputProps) => (
+export const OpenInput = ({ className, ...props }: InputProps) => (
   <input
     {...props}
-    className="h-[50px] w-full border-b-[1px] border-b-bg-400 bg-black py-[8px] focus:outline-none"
+    className={[
+      "h-[50px] w-full border-b-[1px] border-b-bg-400 bg-transparent py-[8px] focus:outline-none",
+      className,
+    ].join(" ")}
   />
 );
 

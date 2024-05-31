@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { basePath, defaultAvatar } from "@/constants";
+import { basePath } from "@/constants";
 import {
   BodyMedium,
   Button,
@@ -33,6 +33,7 @@ import {
   formatVotingPowerPerc,
   formatXionToUSD,
 } from "../lib/formatters";
+import { parseWebsite } from "../lib/utils/misc";
 import { DivisorHorizontal, DivisorVertical } from "./divisor";
 import StakingModals from "./staking-modals";
 import ValidatorDelegation from "./validator-delegation";
@@ -46,7 +47,10 @@ export default function ValidatorPage() {
     ReturnType<typeof getValidatorDetailsAction>
   > | null>(null);
 
-  const logo = useValidatorLogo(validatorDetails?.description.identity);
+  const logo = useValidatorLogo(
+    validatorDetails?.description.identity,
+    validatorDetails?.operatorAddress,
+  );
 
   useEffect(() => {
     (async () => {
@@ -90,6 +94,8 @@ export default function ValidatorPage() {
     stakingRef.staking.state,
   );
 
+  const validatorWebsite = parseWebsite(validatorDetails.description.website);
+
   return (
     <>
       <div className="page-container flex w-full flex-col gap-[16px] px-[16px] pb-[32px]">
@@ -109,11 +115,15 @@ export default function ValidatorPage() {
         >
           <div className="flex w-full flex-col items-center gap-[16px] md:min-w-[1000px] md:flex-row">
             <div className="flex w-full flex-row justify-between gap-[16px]">
-              <img
-                alt="Validator logo"
-                className="block w-[80px] rounded-full"
-                src={logo || defaultAvatar}
-              />
+              {logo ? (
+                <img
+                  alt="Validator logo"
+                  className="block w-[80px] rounded-full"
+                  src={logo}
+                />
+              ) : (
+                <span className="block h-[80px] w-[80px] rounded-full bg-defaultLogo" />
+              )}
               <div className="flex flex-1 items-center gap-[16px]">
                 <div className="text-[32px] font-bold leading-[36px] text-white">
                   {validatorDetails.description.moniker || ""}
@@ -170,9 +180,12 @@ export default function ValidatorPage() {
                   )}
                 </Heading2>
               </div>
-              <div className="absolute bottom-0 right-[20px] top-0">
+              <div className="absolute bottom-0 right-[20px] top-0 hidden md:block">
                 <DivisorVertical />
               </div>
+            </div>
+            <div className="col-span-2 h-1 py-4 md:hidden">
+              <DivisorHorizontal className="md:min-w-[1000px]" />
             </div>
             <div className="relative">
               <Heading8>Voting Power</Heading8>
@@ -210,14 +223,11 @@ export default function ValidatorPage() {
                 <ClipboardCopy textToCopy={validatorDetails.operatorAddress} />
               </div>
             </div>
-            {validatorDetails.description.website && (
+            {validatorWebsite && (
               <div className="flex flex-col gap-[8px]">
                 <Heading8 color="text-white">Website</Heading8>
-                <Link
-                  href={validatorDetails.description.website}
-                  target="_blank"
-                >
-                  {validatorDetails.description.website}
+                <Link href={validatorWebsite} target="_blank">
+                  {validatorWebsite}
                 </Link>
               </div>
             )}

@@ -5,6 +5,7 @@ import {
   getDelegations,
   getInflation,
   getPool,
+  getRedelegation,
   getRewards,
   getUnbondingDelegations,
   getValidatorDetails,
@@ -12,10 +13,11 @@ import {
 } from "../lib/core/base";
 import type { AbstraxionSigningClient } from "../lib/core/client";
 import { sumAllCoins } from "../lib/core/coins";
-import type { StakeAddresses } from "../lib/core/tx";
-import { stakeAmount, unstakeAmount } from "../lib/core/tx";
+import type { RedelegateParams, StakeAddresses } from "../lib/core/tx";
+import { redelegate, stakeAmount, unstakeAmount } from "../lib/core/tx";
 import {
   addDelegations,
+  addRedelegations,
   addUnbondings,
   setExtraValidators,
   setInflation,
@@ -26,7 +28,7 @@ import {
   setValidators,
 } from "./reducer";
 import { getAllValidators } from "./selectors";
-import type { StakingContextType, Unbonding } from "./state";
+import type { Redelegation, StakingContextType, Unbonding } from "./state";
 
 export const fetchStakingDataAction = async (staking: StakingContextType) => {
   try {
@@ -82,51 +84,80 @@ export const fetchUserDataAction = async (
   try {
     staking.dispatch(setIsInfoLoading(true));
 
-    const [balance, delegations, unbondings] = await Promise.all([
-      getBalance(address),
-      getDelegations(address).then(async (newDelegations) => ({
-        items: await Promise.all(
-          newDelegations.delegationResponses.map(async (del) => ({
-            balance: del.balance,
-            rewards: await getRewards(
-              address,
-              del.delegation.validatorAddress,
-            ).then((rewards) => sumAllCoins(rewards)),
-            validatorAddress: del.delegation.validatorAddress,
-          })),
-        ),
-        pagination: newDelegations.pagination,
-      })),
-      getUnbondingDelegations(address)
-        .then((unbondingResponse) => ({
-          items: unbondingResponse.unbondingResponses.reduce((acc, res) => {
-            acc.push(
-              ...res.entries.map(
-                (entry) =>
-                  ({
-                    balance: { amount: entry.balance, denom: "uxion" },
-                    completionTime: Number(entry.completionTime.seconds),
-                    completionTimeNanos: entry.completionTime.nanos,
-                    creationHeight: entry.creationHeight,
-                    id: entry.unbondingId.toString(),
-                    validator: res.validatorAddress,
-                  }) satisfies Unbonding,
-              ),
-            );
-
-            return acc;
-          }, [] as Unbonding[]),
-          pagination: unbondingResponse.pagination,
-        }))
-        .catch(() =>
-          // It is expected that this will throw when there are no unbondings
-          ({ items: [], pagination: null }),
-        )
-        .then((result) => ({
-          items: result.items,
-          pagination: result.pagination,
+    const [balance, delegations, unbondings, redelegations] = await Promise.all(
+      [
+        getBalance(address),
+        getDelegations(address).then(async (newDelegations) => ({
+          items: await Promise.all(
+            newDelegations.delegationResponses.map(async (del) => ({
+              balance: del.balance,
+              rewards: await getRewards(
+                address,
+                del.delegation.validatorAddress,
+              ).then((rewards) => sumAllCoins(rewards)),
+              validatorAddress: del.delegation.validatorAddress,
+            })),
+          ),
+          pagination: newDelegations.pagination,
         })),
-    ]);
+        getUnbondingDelegations(address)
+          .then((unbondingResponse) => ({
+            items: unbondingResponse.unbondingResponses.reduce((acc, res) => {
+              acc.push(
+                ...res.entries.map(
+                  (entry) =>
+                    ({
+                      balance: { amount: entry.balance, denom: "uxion" },
+                      completionTime: Number(entry.completionTime.seconds),
+                      completionTimeNanos: entry.completionTime.nanos,
+                      creationHeight: entry.creationHeight,
+                      id: entry.unbondingId.toString(),
+                      validator: res.validatorAddress,
+                    }) satisfies Unbonding,
+                ),
+              );
+
+              return acc;
+            }, [] as Unbonding[]),
+            pagination: unbondingResponse.pagination,
+          }))
+          .catch(() =>
+            // It is expected that this will throw when there are no unbondings
+            ({ items: [], pagination: null }),
+          )
+          .then((result) => ({
+            items: result.items,
+            pagination: result.pagination,
+          })),
+        getRedelegation(address)
+          .then((redelegationsResponses) => ({
+            items: redelegationsResponses.redelegationResponses
+              .map((res) =>
+                res.entries.map(
+                  (entry): Redelegation => ({
+                    balance: { amount: entry.balance, denom: "uxion" },
+                    completionTime: Number(
+                      entry.redelegationEntry.completionTime.seconds,
+                    ),
+                    completionTimeNanos:
+                      entry.redelegationEntry.completionTime.nanos,
+                    creationHeight: entry.redelegationEntry.creationHeight,
+                    delegatorAddress: res.redelegation.delegatorAddress,
+                    dstValidator: res.redelegation.validatorDstAddress,
+                    id: entry.redelegationEntry.unbondingId.toString(),
+                    srcValidator: res.redelegation.validatorSrcAddress,
+                  }),
+                ),
+              )
+              .flat(1),
+            pagination: redelegationsResponses.pagination,
+          }))
+          .catch(() =>
+            // It is expected that this will throw when there are no redeledations
+            ({ items: [], pagination: null }),
+          ),
+      ],
+    );
 
     staking.dispatch(setTokens(balance));
 
@@ -147,6 +178,17 @@ export const fetchUserDataAction = async (
           items: unbondings.items,
           nextKey: unbondings.pagination?.nextKey || null,
           total: unbondings.pagination?.total || null,
+        },
+        true,
+      ),
+    );
+
+    staking.dispatch(
+      addRedelegations(
+        {
+          items: redelegations.items,
+          nextKey: redelegations.pagination?.nextKey || null,
+          total: redelegations.pagination?.total || null,
         },
         true,
       ),
@@ -183,6 +225,17 @@ export const unstakeValidatorAction = async (
 
   return async () => {
     await fetchUserDataAction(addresses.delegator, staking);
+  };
+};
+
+export const redelegateAction = async (
+  redelegateParams: RedelegateParams,
+  staking: StakingContextType,
+) => {
+  await redelegate(redelegateParams);
+
+  return async () => {
+    await fetchUserDataAction(redelegateParams.delegatorAddress, staking);
   };
 };
 

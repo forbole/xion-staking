@@ -23,6 +23,17 @@ export type Unbonding = {
   validator: string;
 };
 
+export type Redelegation = {
+  balance: Coin;
+  completionTime: number;
+  completionTimeNanos: number;
+  creationHeight: bigint;
+  delegatorAddress: string;
+  dstValidator: string;
+  id: string;
+  srcValidator: string;
+};
+
 type Delegation = {
   balance: Coin;
   rewards: Coin;
@@ -44,6 +55,10 @@ type ModalContent =
     }
   | {
       content: { validator: Validator };
+      type: "redelegate";
+    }
+  | {
+      content: { validator: Validator };
       type: "undelegate";
     }
   | null;
@@ -57,6 +72,7 @@ export type StakingState = {
   isInfoLoading: boolean;
   modal: ModalContent | null;
   pool: null | Pool;
+  redelegations: Paginated<Redelegation>;
   tokens: Coin | null;
   unbondings: Paginated<Unbonding>;
   validatorDetails: null | Validator;
@@ -75,6 +91,7 @@ export const defaultState: StakingState = {
   isInfoLoading: false,
   modal: null,
   pool: null,
+  redelegations: null,
   tokens: null,
   unbondings: null,
   validatorDetails: null,

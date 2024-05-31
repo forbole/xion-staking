@@ -54,13 +54,13 @@ const CommonModal = ({ children, ...props }: Props) => {
         overlay: {
           backdropFilter: "blur(10px)",
           backgroundColor: "rgba(0, 0, 0, 0.5)",
+          WebkitBackdropFilter: "blur(10px)",
         },
       }}
     >
       <div
-        className="relative min-h-[100vh] w-full overflow-auto bg-[#000] px-[16px] py-[80px] md:min-h-[unset] md:rounded-[48px] md:p-[50px] md:py-[40px]"
+        className="relative z-10 min-h-[100vh] w-full overflow-auto px-[16px] pb-[40px] pt-[80px] shadow-[0px_0px_50px_0px_#FFFFFF40] md:min-h-[unset] md:rounded-[48px] md:p-[48px]"
         style={{
-          boxShadow: "0px 0px 50px 0px #FFFFFF40",
           boxSizing: "border-box",
           display: "flex",
           flexDirection: "column",
@@ -74,7 +74,7 @@ const CommonModal = ({ children, ...props }: Props) => {
         }}
       >
         <button
-          className="absolute right-[12px] top-[12px] w-[36px] cursor-pointer"
+          className="absolute right-[24px] top-[24px] h-[24px] w-[24px] cursor-pointer"
           dangerouslySetInnerHTML={{ __html: cross }}
           onClick={props.onRequestClose}
         />

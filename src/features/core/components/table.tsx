@@ -65,13 +65,40 @@ export const HeaderTitleBase = <SortMethod extends string>({
   );
 };
 
-export const ValidatorLogo = ({ logo }: { logo: string }) => (
+export const ValidatorLogo = ({
+  height = 50,
+  logo,
+  width = 50,
+}: {
+  height?: number;
+  logo: null | string;
+  width?: number;
+}) => (
   <div className="flex items-center justify-start">
-    <img
-      alt="Validator logo"
-      className="block w-[50px] rounded-full"
-      src={logo}
-      style={{ height: 50, minHeight: 50, minWidth: 50, width: 50 }}
-    />
+    {logo ? (
+      <img
+        alt="Validator logo"
+        className="block rounded-full"
+        height={height}
+        src={logo}
+        width={width}
+      />
+    ) : (
+      <span
+        className="block rounded-full"
+        style={{
+          background: `
+    linear-gradient(to bottom right, #000000 0%, #666666 50%) bottom right,
+    linear-gradient(to bottom left, #000000 0%, #666666 50%) bottom left,
+    linear-gradient(to top left, #000000 0%, #666666 50%) top left,
+    linear-gradient(to top right, #000000 0%, #666666 50%) top right
+  `,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "50% 50%",
+          height: "50px",
+          width: "50px",
+        }}
+      />
+    )}
   </div>
 );

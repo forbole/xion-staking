@@ -60,7 +60,7 @@ const ValidatorRow = ({
   validator,
 }: ValidatorItemProps) => {
   const { identity } = validator.description;
-  const logo = useValidatorLogo(identity);
+  const logo = useValidatorLogo(identity, validator.operatorAddress);
 
   const votingPowerPerc = getVotingPowerPerc(validator?.tokens, staking.state);
   const votingPowerPercStr = formatVotingPowerPerc(votingPowerPerc);
@@ -286,7 +286,7 @@ const ValidatorsTable = () => {
   return (
     <>
       <div className="flex flex-col  md:grid md:grid-cols-3">
-        <div className="flex w-full flex-col justify-start gap-[32px] md:flex-row md:gap-[16px]">
+        <div className="mb-[16px] flex w-full flex-row justify-start gap-[12px] md:mb-[0px] md:gap-[16px]">
           <Title>Validators</Title>
           <SearchInput
             onChange={(e) => setSearchValue(e.target.value)}

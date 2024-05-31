@@ -2,7 +2,7 @@ import { useAbstraxionAccount, useModal } from "@burnt-labs/abstraxion";
 import BigNumber from "bignumber.js";
 import { memo } from "react";
 
-import { basePath, minDisplayedXion } from "@/constants";
+import { basePath } from "@/constants";
 import {
   BodyMedium,
   Button,
@@ -96,12 +96,9 @@ const StakingOverview = () => {
     >
       <div className={columnStyle}>
         <Heading8>Claimable Rewards (XION)</Heading8>
-        <div className="flex flex-row items-center gap-4">
+        <div className="flex flex-row flex-wrap items-center gap-4">
           <Heading2 title={[totalRewards.amount, "XION"].join(" ")}>
-            {formatToSmallDisplay(
-              new BigNumber(totalRewards.amount),
-              minDisplayedXion,
-            )}
+            {formatToSmallDisplay(new BigNumber(totalRewards.amount), 0.001, 3)}
           </Heading2>
           {getCanClaimAnyRewards(staking.state) && (
             <ButtonPill
@@ -133,7 +130,8 @@ const StakingOverview = () => {
         <Heading2 title={formatCoin(totalDelegation)}>
           {formatToSmallDisplay(
             new BigNumber(totalDelegation.amount),
-            minDisplayedXion,
+            undefined,
+            2,
           )}
         </Heading2>
         <BodyMedium>{formatXionToUSD(totalDelegation)}</BodyMedium>
