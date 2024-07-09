@@ -217,9 +217,7 @@ const UnstakingModal = () => {
           return (
             <>
               <div className="mb-[35px] text-center uppercase">
-                <HeroText>
-                  Unstake From {validator.description.moniker}
-                </HeroText>
+                <HeroText>Unbond From {validator.description.moniker}</HeroText>
               </div>
               {delegatedTokens && (
                 <div className="mt-[40px] flex w-full flex-col items-center justify-center gap-[12px] uppercase">
@@ -269,7 +267,7 @@ const UnstakingModal = () => {
                 </div>
                 <div className="mt-[48px] w-full">
                   <Button disabled={isLoading} type="submit">
-                    Unstake Now
+                    Unbond Now
                   </Button>
                 </div>
               </form>
