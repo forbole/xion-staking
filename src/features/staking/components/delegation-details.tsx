@@ -272,9 +272,9 @@ const DelegationRow = memo(DelegationRowBase);
 type UnbondingRedelegationRowProps = {
   balance: Coin;
   completionTime: number;
+  isUnbonding: boolean;
   onCancel?: () => void;
   stakingRef: ReturnType<typeof useStaking>;
-  status: string;
   validator?: Validator;
   validatorAddress: string;
 };
@@ -282,9 +282,9 @@ type UnbondingRedelegationRowProps = {
 const UnbondingRedelegationRow = ({
   balance,
   completionTime,
+  isUnbonding,
   onCancel,
   stakingRef,
-  status,
   validator,
   validatorAddress,
 }: UnbondingRedelegationRowProps) => {
@@ -324,14 +324,16 @@ const UnbondingRedelegationRow = ({
         <div className="text-right">
           <TokenColors text={formatCoin(balance)} />
         </div>
-        <div className="text-right">Unbonding</div>
+        <div className="text-right">
+          {isUnbonding ? "Unbonding" : "Redelegation"}
+        </div>
         <div className="text-right">
           {formatUnbondingCompletionTime(completionTime)}
         </div>
         <div className="text-right">
           {!!onCancel && (
             <ButtonPill {...cancelProps} variant="danger">
-              Cancel Unstake
+              Cancel unbonding
             </ButtonPill>
           )}
         </div>
@@ -356,7 +358,7 @@ const UnbondingRedelegationRow = ({
         </div>
         <div className="flex w-full flex-row justify-between">
           <span>Status</span>
-          <span>{status}</span>
+          <span>{isUnbonding ? "Unbonding" : "Redelegation"}</span>
         </div>
         <div className="flex w-full flex-row justify-between">
           <span>Completion</span>
@@ -365,7 +367,7 @@ const UnbondingRedelegationRow = ({
         {!!onCancel && (
           <div className="flex w-full flex-row justify-end">
             <ButtonPill {...cancelProps} variant="danger">
-              Cancel Unstake
+              Cancel unbonding
             </ButtonPill>
           </div>
         )}
@@ -538,7 +540,7 @@ const DelegationDetails = () => {
             <div className={wrapperStyle}>
               <div className={headerStyle} style={gridStyle}>
                 <UnbondingHeaderTitle mobile>
-                  Unstakings/Redelegations
+                  Unbondings/Redelegations
                 </UnbondingHeaderTitle>
                 <UnbondingHeaderTitle
                   onSort={setUnbondingsSortMethod}
@@ -582,10 +584,10 @@ const DelegationDetails = () => {
                   <UnbondingRedelegationRow
                     balance={unbondingRedelegation.balance}
                     completionTime={unbondingRedelegation.completionTime}
+                    isUnbonding={isUnbonding}
                     key={index}
                     onCancel={onCancel}
                     stakingRef={stakingRef}
-                    status={isUnbonding ? "Unbonding" : "Redelegation"}
                     validator={validatorsMap[validatorAddress]}
                     validatorAddress={validatorAddress}
                   />

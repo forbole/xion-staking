@@ -198,7 +198,7 @@ export default function ValidatorDelegation() {
                       }}
                       variant="danger"
                     >
-                      Cancel Unstake
+                      Cancel unbonding
                     </ButtonPill>
                   </span>
                 </div>
