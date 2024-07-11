@@ -3,7 +3,9 @@ import type { FormEventHandler } from "react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-import { xionToUSD } from "@/constants";
+
+
+import { XION_TO_USD } from "@/constants";
 import {
   Button,
   FormError,
@@ -17,6 +19,8 @@ import CommonModal, {
   ModalDescription,
 } from "@/features/core/components/common-modal";
 
+
+
 import { stakeValidatorAction } from "../../context/actions";
 import { useStaking } from "../../context/hooks";
 import { setModalOpened } from "../../context/reducer";
@@ -28,6 +32,7 @@ import {
   formatToSmallDisplay,
   formatXionToUSD,
 } from "../../lib/formatters";
+
 
 type Step = "completed" | "input" | "review";
 
@@ -71,7 +76,7 @@ const StakingModal = () => {
   const amountUSD = (() => {
     if (amountXIONParsed.isNaN()) return "";
 
-    return amountXIONParsed.times(xionToUSD);
+    return amountXIONParsed.times(XION_TO_USD);
   })();
 
   const hasErrors = Object.values(formError).some((v) => !!v);

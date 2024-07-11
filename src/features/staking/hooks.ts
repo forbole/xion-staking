@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { basePath } from "@/constants";
+
+
+import { BASE_PATH } from "@/config";
 
 import { keybaseClient } from "./lib/utils/keybase-client";
 
@@ -33,7 +35,7 @@ export const useValidatorLogo = (
         const fallbackLogo = fallbackLogoMap[operatorAddress];
 
         if (fallbackLogo) {
-          setLogo(basePath + fallbackLogo);
+          setLogo(BASE_PATH + fallbackLogo);
         }
       }
     })();

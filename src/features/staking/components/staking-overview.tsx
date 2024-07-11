@@ -2,32 +2,20 @@ import { useAbstraxionAccount, useModal } from "@burnt-labs/abstraxion";
 import BigNumber from "bignumber.js";
 import { memo } from "react";
 
-import { basePath } from "@/constants";
-import {
-  BodyMedium,
-  Button,
-  ButtonPill,
-  Heading2,
-  Heading8,
-  HeroText,
-} from "@/features/core/components/base";
+
+
+import { BASE_PATH } from "@/config";
+import { BodyMedium, Button, ButtonPill, Heading2, Heading8, HeroText } from "@/features/core/components/base";
+
+
 
 import { useStaking } from "../context/hooks";
 import { setModalOpened } from "../context/reducer";
-import {
-  getAPR,
-  getCanClaimAnyRewards,
-  getTotalDelegation,
-  getTotalRewards,
-} from "../context/selectors";
+import { getAPR, getCanClaimAnyRewards, getTotalDelegation, getTotalRewards } from "../context/selectors";
 import { getEmptyXionCoin, normaliseCoin } from "../lib/core/coins";
-import {
-  formatAPR,
-  formatCoin,
-  formatToSmallDisplay,
-  formatXionToUSD,
-} from "../lib/formatters";
+import { formatAPR, formatCoin, formatToSmallDisplay, formatXionToUSD } from "../lib/formatters";
 import { DivisorHorizontal, DivisorVertical } from "./divisor";
+
 
 const columnStyle =
   "relative flex w-full h-full flex-col items-start gap-3 p-[24px]";
@@ -53,7 +41,7 @@ const StakingOverview = () => {
       <div
         className="flex min-h-[212px] flex-col items-center justify-center gap-[8px] px-[12px] uppercase"
         style={{
-          backgroundImage: `url(${basePath}/overview-bg.png)`,
+          backgroundImage: `url(${BASE_PATH}/overview-bg.png)`,
           borderRadius: 24,
         }}
       >
@@ -88,7 +76,7 @@ const StakingOverview = () => {
     <div
       className="flex min-h-[144px] flex-col items-center justify-center gap-[8px] overflow-auto md:grid"
       style={{
-        backgroundImage: `url(${basePath}/overview-bg.png)`,
+        backgroundImage: `url(${BASE_PATH}/overview-bg.png)`,
         backgroundSize: "cover",
         borderRadius: 24,
         gridTemplateColumns: "1fr 1fr 1fr 1fr",

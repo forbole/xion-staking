@@ -1,7 +1,9 @@
 import { useAbstraxionAccount } from "@burnt-labs/abstraxion";
 import { memo, useCallback, useEffect, useState } from "react";
 
-import { isTestnet } from "@/constants";
+
+
+import { IS_TESTNET } from "@/config";
 import { Button } from "@/features/core/components/base";
 import { fetchUserDataAction } from "@/features/staking/context/actions";
 import { normaliseCoin } from "@/features/staking/lib/core/coins";
@@ -30,7 +32,7 @@ const Faucet = () => {
       const result = await getAddressLastFaucetTimestamp(address, client);
 
       // We need to hide this when not on testnet.
-      if (staking.state.tokens?.denom !== result.denom || !isTestnet) {
+      if (staking.state.tokens?.denom !== result.denom || !IS_TESTNET) {
         return;
       }
 

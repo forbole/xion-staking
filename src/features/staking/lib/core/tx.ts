@@ -15,7 +15,8 @@ import {
   MsgUndelegate,
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 
-import { faucetContractAddress, minClaimableXion } from "@/constants";
+import { FAUCET_CONTRACT_ADDRESS } from "@/config";
+import { MIN_CLAIMABLE_XION } from "@/constants";
 
 import type { Unbonding } from "../../context/state";
 import { type AbstraxionSigningClient } from "./client";
@@ -204,7 +205,7 @@ export const getCanClaimRewards = (rewards?: Coin) => {
 
   const normalised = normaliseCoin(rewards);
 
-  return new BigNumber(normalised.amount).gte(minClaimableXion);
+  return new BigNumber(normalised.amount).gte(MIN_CLAIMABLE_XION);
 };
 
 export const cancelUnbonding = async (
@@ -269,7 +270,7 @@ export const getAddressLastFaucetTimestamp = async (
   };
 
   return await client
-    .queryContractSmart(faucetContractAddress, msg)
+    .queryContractSmart(FAUCET_CONTRACT_ADDRESS, msg)
     .then((res: GetAccountLastClaimTimestampResponse) => {
       // Get the current timestamp in seconds
       const currentTimestampInSeconds = Math.floor(Date.now() / 1000);
@@ -306,6 +307,6 @@ export const faucetFunds = async (
   };
 
   return await client
-    .execute(address, faucetContractAddress, msg, "auto")
+    .execute(address, FAUCET_CONTRACT_ADDRESS, msg, "auto")
     .catch(handleTxError);
 };

@@ -3,7 +3,9 @@
 import { Abstraxion, useModal } from "@burnt-labs/abstraxion";
 import Link from "next/link";
 
-import { basePath, isTestnet } from "@/constants";
+
+
+import { BASE_PATH, IS_TESTNET } from "@/config";
 
 import NavAccount from "./nav-account";
 
@@ -23,17 +25,17 @@ export default function RootLayout({
         <div className="page-container m-auto flex h-[80px] flex-row items-center justify-between px-[16px]">
           <div className="flex flex-row items-center">
             <Link className="cursor-pointer" href="/">
-              <img alt="Xion Logo" src={`${basePath}/xion-logo.svg`} />
+              <img alt="Xion Logo" src={`${BASE_PATH}/xion-logo.svg`} />
             </Link>
             <span
               className={[
                 "ml-[8px] translate-y-[4px] rounded-[4px] p-[4px] text-[12px] uppercase",
-                isTestnet
+                IS_TESTNET
                   ? "bg-chain-testnetBg text-chain-testnetFg"
                   : "bg-chain-mainnetBg text-chain-mainnetFg",
               ].join(" ")}
             >
-              {isTestnet ? "Testnet" : "Mainnet"}
+              {IS_TESTNET ? "Testnet" : "Mainnet"}
             </span>
           </div>
           <NavAccount />
