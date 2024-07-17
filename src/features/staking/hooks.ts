@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 
-
-
 import { BASE_PATH } from "@/config";
 
 import { keybaseClient } from "./lib/utils/keybase-client";

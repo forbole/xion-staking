@@ -3,13 +3,19 @@ import type { FormEventHandler } from "react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-
-
 import { UNBONDING_DAYS, XION_TO_USD } from "@/constants";
-import { Button, FormError, Heading2, Heading8, HeroText, InputBox, OpenInput } from "@/features/core/components/base";
-import CommonModal, { ModalDescription } from "@/features/core/components/common-modal";
-
-
+import {
+  Button,
+  FormError,
+  Heading2,
+  Heading8,
+  HeroText,
+  InputBox,
+  OpenInput,
+} from "@/features/core/components/base";
+import CommonModal, {
+  ModalDescription,
+} from "@/features/core/components/common-modal";
 
 import { unstakeValidatorAction } from "../../context/actions";
 import { useStaking } from "../../context/hooks";
@@ -17,8 +23,11 @@ import { setModalOpened } from "../../context/reducer";
 import { getTotalDelegation } from "../../context/selectors";
 import { getXionCoin } from "../../lib/core/coins";
 import type { StakeAddresses } from "../../lib/core/tx";
-import { formatCoin, formatToSmallDisplay, formatXionToUSD } from "../../lib/formatters";
-
+import {
+  formatCoin,
+  formatToSmallDisplay,
+  formatXionToUSD,
+} from "../../lib/formatters";
 
 type Step = "completed" | "input" | "review";
 

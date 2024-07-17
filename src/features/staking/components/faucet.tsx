@@ -1,8 +1,6 @@
 import { useAbstraxionAccount } from "@burnt-labs/abstraxion";
 import { memo, useCallback, useEffect, useState } from "react";
 
-
-
 import { IS_TESTNET } from "@/config";
 import { Button } from "@/features/core/components/base";
 import { fetchUserDataAction } from "@/features/staking/context/actions";

@@ -1,16 +1,15 @@
 "use client";
 
-import { useAbstraxionAccount, useAbstraxionSigningClient, useModal } from "@burnt-labs/abstraxion";
-
-
+import {
+  useAbstraxionAccount,
+  useAbstraxionSigningClient,
+  useModal,
+} from "@burnt-labs/abstraxion";
 
 import AddressShort from "@/features/staking/components/address-short";
 
-
-
 import { wallet } from "../lib/icons";
 import { Button, ClipboardCopy, FloatingDropdown } from "./base";
-
 
 const Account = () => (
   <span className="flex flex-row items-center gap-[8px] rounded-[8px] bg-bg-600 px-[16px] py-[18px]">

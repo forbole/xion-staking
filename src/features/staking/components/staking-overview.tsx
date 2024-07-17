@@ -2,20 +2,32 @@ import { useAbstraxionAccount, useModal } from "@burnt-labs/abstraxion";
 import BigNumber from "bignumber.js";
 import { memo } from "react";
 
-
-
 import { BASE_PATH } from "@/config";
-import { BodyMedium, Button, ButtonPill, Heading2, Heading8, HeroText } from "@/features/core/components/base";
-
-
+import {
+  BodyMedium,
+  Button,
+  ButtonPill,
+  Heading2,
+  Heading8,
+  HeroText,
+} from "@/features/core/components/base";
 
 import { useStaking } from "../context/hooks";
 import { setModalOpened } from "../context/reducer";
-import { getAPR, getCanClaimAnyRewards, getTotalDelegation, getTotalRewards } from "../context/selectors";
+import {
+  getAPR,
+  getCanClaimAnyRewards,
+  getTotalDelegation,
+  getTotalRewards,
+} from "../context/selectors";
 import { getEmptyXionCoin, normaliseCoin } from "../lib/core/coins";
-import { formatAPR, formatCoin, formatToSmallDisplay, formatXionToUSD } from "../lib/formatters";
+import {
+  formatAPR,
+  formatCoin,
+  formatToSmallDisplay,
+  formatXionToUSD,
+} from "../lib/formatters";
 import { DivisorHorizontal, DivisorVertical } from "./divisor";
-
 
 const columnStyle =
   "relative flex w-full h-full flex-col items-start gap-3 p-[24px]";
