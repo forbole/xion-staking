@@ -296,7 +296,6 @@ export const FloatingDropdown = ({
             offset={offset}
             open={isOpen}
             placement={placement}
-            withTransition
           >
             {children}
           </BasePopup>

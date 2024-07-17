@@ -2,7 +2,9 @@ import BigNumber from "bignumber.js";
 import { memo, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
-import { minClaimableXion } from "@/constants";
+
+
+import { MIN_CLAIMABLE_XION } from "@/constants";
 import { Button, HeroText } from "@/features/core/components/base";
 import CommonModal, {
   ModalDescription,
@@ -39,7 +41,7 @@ const claimRewardsLoop = async (
 
       const normalised = normaliseCoin(delegation.rewards);
 
-      if (new BigNumber(normalised.amount).lt(minClaimableXion)) {
+      if (new BigNumber(normalised.amount).lt(MIN_CLAIMABLE_XION)) {
         return;
       }
 

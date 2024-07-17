@@ -7,7 +7,9 @@ import { Analytics } from "@vercel/analytics/react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { dashboardUrl, faucetContractAddress, rpcEndpoint } from "@/constants";
+
+
+import { FAUCET_CONTRACT_ADDRESS, RPC_ENDPOINT } from "@/config";
 import BaseWrapper from "@/features/core/components/base-wrapper";
 import { CoreProvider } from "@/features/core/context/provider";
 import { StakingProvider } from "@/features/staking/context/provider";
@@ -15,9 +17,8 @@ import { StakingProvider } from "@/features/staking/context/provider";
 import "./globals.css";
 
 const abstraxionConfig = {
-  contracts: [faucetContractAddress],
-  dashboardUrl,
-  rpcUrl: rpcEndpoint,
+  contracts: [FAUCET_CONTRACT_ADDRESS],
+  rpcUrl: RPC_ENDPOINT,
   stake: true,
 };
 

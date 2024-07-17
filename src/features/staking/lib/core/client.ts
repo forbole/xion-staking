@@ -18,7 +18,11 @@ import {
 } from "@cosmjs/stargate";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 
-import { rpcEndpoint } from "@/constants";
+
+
+import { RPC_ENDPOINT } from "@/config";
+
+
 
 export type AbstraxionSigningClient = NonNullable<
   ReturnType<typeof useAbstraxionSigningClient>["client"]
@@ -37,7 +41,7 @@ let stakingQueryClientPromise:
 export const getStakingQueryClient = () => {
   if (!stakingQueryClientPromise) {
     stakingQueryClientPromise = (async () => {
-      const cometClient = await Tendermint34Client.connect(rpcEndpoint);
+      const cometClient = await Tendermint34Client.connect(RPC_ENDPOINT);
 
       return QueryClient.withExtensions(
         cometClient,
@@ -57,7 +61,7 @@ let stargateClientPromise: Promise<StargateClient> | undefined = undefined;
 export const getStargateClient = () => {
   if (!stargateClientPromise) {
     stargateClientPromise = (async () => {
-      const client = await StargateClient.connect(rpcEndpoint);
+      const client = await StargateClient.connect(RPC_ENDPOINT);
 
       return client;
     })();
@@ -82,7 +86,7 @@ export const createLocalSigningClient = async (registry?: Registry) => {
     .then((accounts) => accounts[0]?.address);
 
   const client = await SigningStargateClient.connectWithSigner(
-    rpcEndpoint,
+    RPC_ENDPOINT,
     wallet,
     {
       registry,

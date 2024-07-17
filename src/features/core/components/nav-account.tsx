@@ -1,15 +1,16 @@
 "use client";
 
-import {
-  useAbstraxionAccount,
-  useAbstraxionSigningClient,
-  useModal,
-} from "@burnt-labs/abstraxion";
+import { useAbstraxionAccount, useAbstraxionSigningClient, useModal } from "@burnt-labs/abstraxion";
+
+
 
 import AddressShort from "@/features/staking/components/address-short";
 
+
+
 import { wallet } from "../lib/icons";
 import { Button, ClipboardCopy, FloatingDropdown } from "./base";
+
 
 const Account = () => (
   <span className="flex flex-row items-center gap-[8px] rounded-[8px] bg-bg-600 px-[16px] py-[18px]">
@@ -28,6 +29,7 @@ const NavAccount = () => {
         <FloatingDropdown
           Trigger={Account}
           id="nav-account"
+          offset={10}
           placement="bottom-end"
         >
           <div className="flex flex-col gap-[32px] rounded-[16px] bg-bg-600 p-[24px]">

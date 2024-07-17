@@ -5,7 +5,9 @@ import BigNumber from "bignumber.js";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { minDisplayedXion } from "@/constants";
+
+
+import { MIN_DISPLAYED_XION } from "@/constants";
 import {
   BodyMedium,
   Button,
@@ -111,7 +113,7 @@ export default function ValidatorDelegation() {
                 <Heading2 title={[totalRewards.amount, "XION"].join(" ")}>
                   {formatToSmallDisplay(
                     new BigNumber(totalRewards.amount),
-                    minDisplayedXion,
+                    MIN_DISPLAYED_XION,
                   )}
                 </Heading2>
               )}

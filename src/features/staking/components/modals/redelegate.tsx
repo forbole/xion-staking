@@ -6,34 +6,25 @@ import type { FormEventHandler } from "react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-import { unbondingDays, xionToUSD } from "@/constants";
-import {
-  Button,
-  FormError,
-  Heading2,
-  Heading8,
-  HeroText,
-  InputBox,
-  OpenInput,
-} from "@/features/core/components/base";
-import CommonModal, {
-  ModalDescription,
-} from "@/features/core/components/common-modal";
+
+
+import { UNBONDING_DAYS, XION_TO_USD } from "@/constants";
+import { Button, FormError, Heading2, Heading8, HeroText, InputBox, OpenInput } from "@/features/core/components/base";
+import CommonModal, { ModalDescription } from "@/features/core/components/common-modal";
 import { ValidatorLogo } from "@/features/core/components/table";
 import { chevron } from "@/features/core/lib/icons";
 import AddressShort from "@/features/staking/components/address-short";
 import { useValidatorLogo } from "@/features/staking/hooks";
+
+
 
 import { redelegateAction } from "../../context/actions";
 import { useStaking } from "../../context/hooks";
 import { setModalOpened } from "../../context/reducer";
 import { getTotalDelegation } from "../../context/selectors";
 import { getXionCoin } from "../../lib/core/coins";
-import {
-  formatCoin,
-  formatToSmallDisplay,
-  formatXionToUSD,
-} from "../../lib/formatters";
+import { formatCoin, formatToSmallDisplay, formatXionToUSD } from "../../lib/formatters";
+
 
 type Step = "completed" | "input" | "review";
 
@@ -150,7 +141,7 @@ const RedelegateModal = () => {
   const amountUSD = (() => {
     if (amountXIONParsed.isNaN()) return "";
 
-    return amountXIONParsed.times(xionToUSD);
+    return amountXIONParsed.times(XION_TO_USD);
   })();
 
   const delegatedTokens = getTotalDelegation(
@@ -251,7 +242,7 @@ const RedelegateModal = () => {
                     You are about to redelegate your token from{" "}
                     {validator.description.moniker} to
                     {dstValidator?.description.moniker}. Remember, you will not
-                    able to redelegate these token within {unbondingDays} days.
+                    able to redelegate these token within {UNBONDING_DAYS} days.
                   </ModalDescription>
                 </div>
                 {getUnstakingSummary()}

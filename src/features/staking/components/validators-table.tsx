@@ -4,6 +4,8 @@ import BigNumber from "bignumber.js";
 import { BondStatus } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import { memo, useState } from "react";
 
+
+
 import {
   ButtonPill,
   LoadingBanner,
@@ -17,6 +19,8 @@ import {
   ValidatorLogo,
 } from "@/features/core/components/table";
 import { sortUtil } from "@/features/core/utils";
+
+
 
 import { useStaking } from "../context/hooks";
 import { setModalOpened } from "../context/reducer";
@@ -35,6 +39,7 @@ import {
 import AddressShort from "./address-short";
 import { DivisorHorizontal } from "./divisor";
 import TokenColors from "./token-colors";
+
 
 const minGridWidth = 1000;
 
