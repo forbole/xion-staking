@@ -5,8 +5,6 @@ import BigNumber from "bignumber.js";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-
-
 import { MIN_DISPLAYED_XION } from "@/constants";
 import {
   BodyMedium,

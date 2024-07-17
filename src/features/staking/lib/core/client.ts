@@ -18,11 +18,7 @@ import {
 } from "@cosmjs/stargate";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 
-
-
 import { RPC_ENDPOINT } from "@/config";
-
-
 
 export type AbstraxionSigningClient = NonNullable<
   ReturnType<typeof useAbstraxionSigningClient>["client"]

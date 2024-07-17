@@ -2,8 +2,6 @@ import BigNumber from "bignumber.js";
 import { memo, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
-
-
 import { MIN_CLAIMABLE_XION } from "@/constants";
 import { Button, HeroText } from "@/features/core/components/base";
 import CommonModal, {

@@ -7,8 +7,6 @@ import { Analytics } from "@vercel/analytics/react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-
-
 import { FAUCET_CONTRACT_ADDRESS, RPC_ENDPOINT } from "@/config";
 import BaseWrapper from "@/features/core/components/base-wrapper";
 import { CoreProvider } from "@/features/core/context/provider";

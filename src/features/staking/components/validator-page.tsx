@@ -6,8 +6,6 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-
-
 import { BASE_PATH } from "@/config";
 import {
   BodyMedium,

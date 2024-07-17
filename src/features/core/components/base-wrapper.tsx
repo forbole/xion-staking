@@ -3,8 +3,6 @@
 import { Abstraxion, useModal } from "@burnt-labs/abstraxion";
 import Link from "next/link";
 
-
-
 import { BASE_PATH, IS_TESTNET } from "@/config";
 
 import NavAccount from "./nav-account";

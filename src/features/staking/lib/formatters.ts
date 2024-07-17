@@ -1,8 +1,6 @@
 import type { Coin } from "@cosmjs/stargate";
 import BigNumber from "bignumber.js";
 
-
-
 import {
   MIN_DISPLAYED_XION,
   MIN_DISPLAYED_XION_DECIMALS,
