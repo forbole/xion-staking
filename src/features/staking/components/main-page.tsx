@@ -9,7 +9,7 @@ import DelegationDetails, {
   DetailsTrigger,
   getCanShowDetails,
 } from "./delegation-details";
-import Faucet from "./faucet";
+// import Faucet from "./faucet";
 import StakingModals from "./staking-modals";
 import StakingOverview from "./staking-overview";
 import ValidatorsTable from "./validators-table";
@@ -35,7 +35,7 @@ function StakingPage() {
             />
           )}
         </div>
-        <Faucet />
+        {/* <Faucet /> */}
         <StakingOverview />
         {isShowingDetails && canShowDetail && <DelegationDetails />}
         <ValidatorsTable />

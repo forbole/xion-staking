@@ -27,12 +27,6 @@ export const BASE_PATH = getEnvBooleanOrThrow(
 export const FAUCET_CONTRACT_ADDRESS =
   "xion132dxh4k3dpyalq6tfq7006h8kpk3m30f4mwc5dgqefy6akudm50s96mn6q";
 
-// The RPC endpoint for the network
-export const RPC_ENDPOINT = getEnvStringOrThrow(
-  "NEXT_PUBLIC_RPC_ENDPOINT",
-  process.env.NEXT_PUBLIC_RPC_ENDPOINT,
-);
-
 const NETWORK_TYPE = getEnvStringOrThrow(
   "NEXT_PUBLIC_NETWORK_TYPE",
   process.env.NEXT_PUBLIC_NETWORK_TYPE,
