@@ -9,10 +9,11 @@ import DelegationDetails, {
   DetailsTrigger,
   getCanShowDetails,
 } from "./delegation-details";
-// import Faucet from "./faucet";
+import Faucet from "./faucet";
 import StakingModals from "./staking-modals";
 import StakingOverview from "./staking-overview";
 import ValidatorsTable from "./validators-table";
+import { IS_TESTNET } from "@/config";
 
 function StakingPage() {
   const { staking } = useStaking();
@@ -35,7 +36,7 @@ function StakingPage() {
             />
           )}
         </div>
-        {/* <Faucet /> */}
+        {IS_TESTNET && <Faucet />}
         <StakingOverview />
         {isShowingDetails && canShowDetail && <DelegationDetails />}
         <ValidatorsTable />
